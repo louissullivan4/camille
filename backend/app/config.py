@@ -13,5 +13,16 @@ class Settings(BaseSettings):
     LLM_EXTRACTION_MODEL: str = "claude-sonnet-4-6"
     LLM_CLASSIFICATION_MODEL: str = "claude-opus-4-6"
     LLM_REPORT_MODEL: str = "claude-opus-4-6"
+    EXTRACTION_CONCURRENCY: int = 3  # max parallel LLM calls; lower to avoid rate limits
+    # AWS / S3
+    AWS_ACCESS_KEY_ID: str = ""
+    AWS_SECRET_ACCESS_KEY: str = ""
+    AWS_REGION: str = "us-east-1"
+    S3_BUCKET_NAME: str = "camille-documents-local"
+    # External signals
+    NEWS_API_KEY: str = ""
+    PACER_API_KEY: str = ""
+    # Observability
+    SENTRY_DSN: str = ""
 
 settings = Settings()

@@ -1,0 +1,90 @@
+QUICKHIRE INC
+HUMAN-IN-THE-LOOP POLICY FOR AI-ASSISTED HIRING — VERSION 2.0
+Effective: January 15, 2026
+Approved by: Miranda Chu, Chief People Officer; Legal & Compliance
+Supersedes: Internal memo dated June 2023 (Marcus Webb)
+
+---
+
+1. PURPOSE
+
+This policy defines QuickHire's requirements for human review in AI-assisted hiring decisions. It replaces the informal memo-based guidance from 2023 and establishes a formal framework for human oversight of the Resume Screener AI.
+
+---
+
+2. SCOPE
+
+This policy applies to all use of the QuickHire Resume Screener AI across all open requisitions on the QuickHire platform, regardless of role level.
+
+---
+
+3. HUMAN REVIEW REQUIREMENTS
+
+3.1 Standard Requisitions
+
+For all standard requisitions (non-senior):
+
+- The Resume Screener AI produces a ranked list of candidates who scored above the advancement threshold.
+- A recruiter or hiring manager must review the AI-ranked list before any outreach is initiated.
+- The "not advancing" queue (candidates below threshold) is accessible to hiring managers and must be spot-checked for roles with fewer than 10 advancing candidates.
+- The hiring manager may advance any candidate from the not-advancing queue at their discretion.
+
+Note: Human reviewers see only the AI-filtered and ranked list. Candidates below the threshold require a deliberate step to access. This is an acknowledged limitation of the current workflow. Hiring managers should be aware that AI pre-filtering occurs before their review.
+
+3.2 Senior Requisitions (VP and Above)
+
+For VP+ requisitions, the requirements from the 2023 memo remain in effect:
+
+- A senior recruiter must review the full ranked list before any outreach.
+- The not-advancing queue must be reviewed by the senior recruiter.
+- Senior recruiter judgment takes precedence over the AI score.
+
+3.3 High-Volume Requisitions
+
+For requisitions receiving more than 500 applications, a random sample review of not-advancing candidates (minimum 5% of not-advancing pool) must be conducted by a recruiter.
+
+---
+
+4. ESCALATION PATH
+
+Escalation situations requiring Talent Operations leadership review:
+- Any case where a hiring manager disagrees with AI-ranked results for more than 30% of candidates
+- Any complaint or concern from an applicant about AI-assisted screening
+- Any requisition where the advancing pool contains fewer than 3 candidates
+- Suspected model error or inconsistent scoring behavior
+
+Escalation contact: talentops@quickhire.io | Slack: #talent-ops-escalations
+
+---
+
+5. OVERRIDE AUTHORITY
+
+The following roles have authority to override AI screening decisions:
+- Any recruiter or hiring manager (for their assigned requisitions)
+- Talent Operations Manager (for any requisition)
+- Chief People Officer (for any requisition)
+
+Override decisions must be documented in the ATS with a brief rationale.
+
+---
+
+6. REVIEW CADENCE
+
+The Talent Operations team will conduct a quarterly review of AI-assisted hiring outcomes including:
+- Aggregate advancement rates by role level
+- Recruiter override frequency and patterns
+- Any applicant complaints or escalations related to AI screening
+
+Quarterly review reports are filed with Legal & Compliance.
+
+---
+
+7. TRAINING
+
+All recruiters and hiring managers using the QuickHire platform must complete AI literacy training annually. Training covers how the Resume Screener works, its known limitations, and human review obligations under this policy.
+
+---
+
+This policy will be reviewed annually. Questions: legal@quickhire.io
+
+QuickHire Inc | Confidential

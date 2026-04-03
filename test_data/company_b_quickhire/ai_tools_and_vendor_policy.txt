@@ -1,0 +1,74 @@
+QUICKHIRE INC
+AI TOOLS USAGE AND VENDOR REGISTER
+Version: 1.0
+Date: November 12, 2025
+Owner: Engineering / Legal & Compliance
+Classification: Internal
+
+---
+
+1. PURPOSE
+
+This document registers all AI tools and third-party AI services currently in use at QuickHire, and sets out requirements for how they may be used. It is intended to provide visibility into our AI vendor landscape and establish minimum usage standards pending a full vendor risk management program.
+
+---
+
+2. AI TOOLS REGISTER
+
+2.1 Internally Developed Systems
+
+| System | Owner | Status | Documentation |
+|---|---|---|---|
+| Resume Screener AI | ML Platform | Production | Model card (Oct 2024) |
+
+2.2 Third-Party AI Services
+
+| Vendor / Tool | Use Case | Data Shared | Governance Status |
+|---|---|---|---|
+| OpenAI API (GPT-4) | Automated cover letter quality scoring (beta, not in production) | Candidate cover letter text | NOT GOVERNED — see note |
+| GitHub Copilot | Internal developer tooling | Code snippets | Standard enterprise agreement |
+| Grammarly Business | Internal communications | Internal document drafts | Standard enterprise agreement |
+
+Note on OpenAI API / ChatGPT:
+The OpenAI API is being evaluated by the engineering team for cover letter analysis as a potential addition to the screening pipeline. As of the date of this document, this integration has NOT been formally approved for production use. No security review, data protection assessment, or formal vendor agreement specific to AI use has been completed. Candidate data sent to the OpenAI API during the beta evaluation period is subject to OpenAI's standard API terms only.
+
+Legal & Compliance note: Use of the OpenAI API in any capacity involving candidate personal data requires a Data Processing Agreement and security review before any production deployment. This is currently an open action item (owner: Engineering, due: Q1 2026).
+
+---
+
+3. USAGE REQUIREMENTS
+
+Approved AI tools may be used within the scope defined in this register. Any new AI tools or third-party AI services must go through the following before use:
+1. Engineering security review
+2. Legal review for data protection implications
+3. Procurement DPA review if personal data is involved
+4. Addition to this register
+
+Employees must not use personal AI accounts (e.g., ChatGPT.com, Claude.ai) for processing candidate or customer data.
+
+---
+
+4. REGULATORY ALIGNMENT
+
+QuickHire is monitoring developments in AI-specific regulation. Key frameworks and laws on our radar:
+
+- NIST AI Risk Management Framework (NIST AI 100-1): We are reviewing this framework as a baseline for our internal AI governance program. A gap assessment against NIST AI 100-1 is planned for Q2 2026.
+- NYC Local Law 144: Applies to our use of the Resume Screener AI for employment decisions involving NYC-based candidates. We are assessing compliance requirements and have not yet completed the required independent bias audit or candidate notification process. This is an open compliance gap (owner: Legal).
+- EEOC Uniform Guidelines: Our initial bias audit methodology used EEOC disparate impact standards. An EEOC complaint related to the Resume Screener AI was received by the Legal team in January 2025 and is currently under review. Legal has advised this matter is confidential pending resolution.
+
+---
+
+5. OPEN ACTION ITEMS
+
+| Action | Owner | Due |
+|---|---|---|
+| OpenAI API DPA and security review | Engineering / Legal | Q1 2026 |
+| NYC LL144 independent bias audit | Legal / HR | Q2 2026 |
+| NIST AI 100-1 gap assessment | Engineering / ML | Q2 2026 |
+| Full vendor AI risk assessment program | Legal / Procurement | Q3 2026 |
+
+---
+
+This register will be updated quarterly. Questions: legal@quickhire.io
+
+QuickHire Inc | Confidential

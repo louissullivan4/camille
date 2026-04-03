@@ -28,4 +28,5 @@ Thumbs.db
 
 # Node
 node_modules/
-.next/
+
+results_*.json

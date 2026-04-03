@@ -1,0 +1,114 @@
+QUICKHIRE INC
+IT INCIDENT RESPONSE POLICY
+Version: 1.0
+Effective Date: August 1, 2025
+Approved by: Legal & Compliance, IT Security
+
+---
+
+1. PURPOSE
+
+This policy establishes QuickHire's procedures for identifying, responding to, and recovering from IT security incidents and service disruptions. It applies to all systems, applications, and data assets operated by QuickHire.
+
+---
+
+2. INCIDENT CLASSIFICATION
+
+Incidents are classified into three severity levels:
+
+SEVERITY 1 — CRITICAL
+- Customer data breach or unauthorized access to personal data
+- Complete service outage affecting all customers
+- Ransomware or destructive malware
+- Regulatory breach with mandatory notification requirements
+
+SEVERITY 2 — HIGH
+- Partial service outage affecting a subset of customers
+- Suspected unauthorized access to internal systems
+- Significant performance degradation affecting customer operations
+- Potential data loss (not yet confirmed)
+
+SEVERITY 3 — MEDIUM/LOW
+- Internal system outages with no customer impact
+- Minor performance degradation
+- Isolated user access issues
+- Policy violations without immediate security impact
+
+---
+
+3. INCIDENT RESPONSE PROCEDURE
+
+3.1 Detection and Reporting
+
+Any employee who observes or suspects an IT incident must report it immediately to:
+- Security team: security@quickhire.io
+- PagerDuty: use the "IT-Security" service tag for Severity 1/2
+
+3.2 Containment
+
+- On-call engineer performs initial triage within 30 minutes of Severity 1 page
+- Incident commander assigned for Severity 1 and 2 incidents
+- Affected systems isolated or placed in read-only mode as appropriate
+- Evidence preservation: logs must be preserved before any remediation actions
+
+3.3 Investigation
+
+- Root cause analysis conducted for all Severity 1 and Severity 2 incidents
+- Timeline reconstruction and impact assessment documented
+- External forensics engaged for incidents involving personal data
+
+3.4 Notification
+
+REGULATORY NOTIFICATION — Severity 1 incidents involving personal data:
+- Legal & Compliance team notified within 1 hour of classification
+- If personal data breach is confirmed, Legal assesses notification obligations under applicable law
+- GDPR: supervisory authority notification within 72 hours if applicable
+- State privacy laws (CCPA, etc.): notification per legal assessment
+- Legal counsel engaged for all Severity 1 personal data incidents
+
+Customer notification:
+- Customers affected by Severity 1 service outages notified within 4 hours via status page and email
+- Personal data incidents: notification timeline per Legal assessment
+
+3.5 Recovery
+
+- Service restoration plan documented before any recovery actions for Severity 1
+- Stakeholder sign-off required before declaring incident resolved
+- Post-incident monitoring period: minimum 72 hours for Severity 1
+
+---
+
+4. POST-INCIDENT REVIEW
+
+A post-incident review (PIR) is required for all Severity 1 and Severity 2 incidents.
+
+PIR must be completed within 5 business days of incident closure and include:
+- Timeline of events
+- Root cause analysis
+- Impact assessment (customers affected, data at risk)
+- Actions taken during response
+- Corrective actions and owners
+- Process improvements
+
+PIR documents are retained for 5 years and shared with Legal & Compliance.
+
+---
+
+5. AI SYSTEM CONSIDERATIONS
+
+This policy covers all IT systems operated by QuickHire including AI-powered tools such as the Resume Screener AI. However, this policy does not address AI-specific incident scenarios such as:
+- Model bias incidents
+- Incorrect AI predictions causing harm to candidates
+- Regulatory inquiries specific to automated decision-making
+
+AI-specific incident response procedures are under development by the ML and Legal teams. In the interim, any AI-related incidents should be escalated using this policy's Severity 1/2 procedures with the incident commander looping in the ML team lead and Legal immediately.
+
+---
+
+6. POLICY REVIEW
+
+This policy will be reviewed annually. Next review: August 2026.
+
+Questions: security@quickhire.io | legal@quickhire.io
+
+QuickHire Inc | Confidential

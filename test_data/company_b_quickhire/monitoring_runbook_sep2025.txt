@@ -1,0 +1,91 @@
+QUICKHIRE INC - ML PLATFORM TEAM
+RESUME SCREENER AI: MONITORING RUNBOOK
+Version: 1.2
+Last Updated: September 8, 2025
+Owner: Priya Nambiar, Senior ML Engineer
+Status: Active
+
+---
+
+1. OVERVIEW
+
+This runbook documents the operational monitoring setup for the Resume Screener AI (v2.3.1) deployed on AWS SageMaker. It is intended for the ML Platform team and on-call engineers.
+
+---
+
+2. MONITORING INFRASTRUCTURE
+
+All production metrics are collected via Amazon CloudWatch. Dashboards are available in the ml-platform AWS account under the "resume-screener-prod" dashboard group.
+
+Metrics collected:
+- Request latency (p50, p95, p99)
+- Error rate (% of failed scoring requests)
+- Throughput (requests per hour)
+- Score distribution (histogram of output scores, updated daily)
+- Advancement rate (% of resumes above threshold, by day and requisition type)
+
+---
+
+3. PERFORMANCE THRESHOLDS AND ALERTS
+
+The following CloudWatch alarms are configured:
+
+| Metric | Warning threshold | Critical threshold | Action |
+|---|---|---|---|
+| Error rate | > 0.5% | > 2% | Page on-call engineer |
+| p95 latency | > 800ms | > 2000ms | Page on-call engineer |
+| Advancement rate (daily) | < 15% or > 60% | < 10% or > 75% | Notify ML team |
+| Score distribution shift | Std dev change > 0.1 vs 30-day baseline | Std dev change > 0.2 | Notify ML team |
+
+Alerts are sent to: #ml-alerts Slack channel and paged via PagerDuty for critical thresholds.
+
+---
+
+4. MODEL PERFORMANCE MONITORING
+
+The ML team reviews model performance on a monthly basis using a sample of production decisions with ground-truth outcomes (provided by customers who share hiring outcome data).
+
+Metrics reviewed monthly:
+- Precision, Recall, F1 on available ground-truth sample
+- Advancement rate consistency across demographic segments (spot-check)
+- Customer complaint patterns related to screening results
+
+Performance review findings are logged in Confluence under ml-team/model-reviews.
+
+---
+
+5. RETRAINING TRIGGERS
+
+Model retraining is initiated under the following conditions:
+
+- F1 score on monthly ground-truth sample drops below 0.75 (confirmed over two consecutive monthly reviews)
+- Advancement rate drift: daily advancement rate falls outside 15–60% range for more than 5 consecutive business days
+- Significant distribution shift in score histogram (std dev change > 0.2 sustained over 7 days)
+- Product team or legal team escalation requesting retraining review
+
+Retraining requests are logged as tickets in the ml-team Jira project. Retraining process follows the ML model deployment checklist (see ml-team/deployment-checklist in Confluence).
+
+---
+
+6. INCIDENT RESPONSE FOR MODEL ISSUES
+
+If a model-related incident is suspected (e.g., incorrect scoring behavior, customer complaint about results):
+
+1. Page the ML on-call via PagerDuty (use tag: resume-screener-prod)
+2. Preserve logs for the affected time period (do not delete CloudWatch logs)
+3. Escalate to Talent Operations if customer-facing impact is confirmed
+4. Consult the IT Incident Response Policy for escalation beyond the ML team
+
+Note: Rollback to the previous model version (v2.2.0) is possible but requires coordination with the ML team and Talent Operations due to scoring threshold changes between versions. Rollback is not self-service — contact priya@quickhire.io.
+
+---
+
+7. KNOWN LIMITATIONS
+
+- Performance monitoring relies on ground-truth data voluntarily shared by customers. Coverage is approximately 40% of production volume.
+- Drift detection is based on output score distribution, not on model internals. This may miss some forms of semantic drift.
+- No automated retraining pipeline exists. All retraining is manual and initiated by the ML team.
+
+---
+
+Contact: #ml-platform Slack | priya@quickhire.io
