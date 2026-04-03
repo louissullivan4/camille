@@ -1,4 +1,4 @@
-GREENSCORE AI — DATA PROTECTION IMPACT ASSESSMENT
+GREENSCORE AI - DATA PROTECTION IMPACT ASSESSMENT
 ESG Scoring System (GS-MDL-001 and Downstream ESG Score Pipeline)
 Document ID: GS-DPIA-001-v2.1
 Version: 2.1
@@ -6,7 +6,7 @@ Data Protection Officer: [name on file]
 Prepared by: AI Governance Team in collaboration with Data Protection Officer
 Last Reviewed: 2026-02-28
 Next Review: 2027-02-28 (or earlier if processing activities materially change)
-Classification: Internal — Confidential — Legal Privilege May Apply
+Classification: Internal - Confidential - Legal Privilege May Apply
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 1. PURPOSE AND CONTEXT
@@ -26,7 +26,7 @@ This DPIA does not cover the Portfolio Optimizer (GS-MDL-002) or Risk Predictor 
 2. DATA FLOWS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-2.1 Input Data — Corporate Disclosure Documents
+2.1 Input Data - Corporate Disclosure Documents
 
 The primary inputs to the ESG Scoring System are corporate disclosure documents. These are predominantly documents about corporate entities (organizational data) rather than about individuals. However, these documents frequently reference identified individuals, including:
 - Named corporate executives (CEO, CFO, board directors) referenced in governance sections
@@ -40,11 +40,11 @@ Categories of personal data that may be incidentally processed:
 - Salary and compensation data for named senior individuals (disclosed in annual reports)
 - Demographic information (gender, nationality) disclosed voluntarily in ESG reports
 
-Legal basis for processing: GDPR Article 6(1)(f) — Legitimate interests. GreenScore AI's legitimate interest: providing ESG investment research and scoring services to institutional clients. A Legitimate Interests Assessment (LIA) is documented in GS-LIA-ESG-001 and concluded that this interest is not overridden by data subjects' interests given: (a) the data subjects are public figures in their professional capacity; (b) the information processed is already publicly disclosed; (c) the processing does not involve special category data; and (d) appropriate safeguards are in place.
+Legal basis for processing: GDPR Article 6(1)(f) - Legitimate interests. GreenScore AI's legitimate interest: providing ESG investment research and scoring services to institutional clients. A Legitimate Interests Assessment (LIA) is documented in GS-LIA-ESG-001 and concluded that this interest is not overridden by data subjects' interests given: (a) the data subjects are public figures in their professional capacity; (b) the information processed is already publicly disclosed; (c) the processing does not involve special category data; and (d) appropriate safeguards are in place.
 
 Special Category Data: The ESG Scoring System does not intentionally process special category data (GDPR Article 9). Demographic information (e.g., board gender diversity statistics) is processed at an aggregate level in the context of corporate governance assessment, not at the level of identified individuals. Any incidental appearance of special category data is flagged by the data quality pipeline for human review.
 
-2.2 Third-Party Processing — Azure OpenAI
+2.2 Third-Party Processing - Azure OpenAI
 
 GS-MDL-001 is implemented via Azure OpenAI Service (Microsoft). When document text containing personal data is submitted for classification, that text is transmitted to Microsoft Azure datacenters for processing. This constitutes a data processor relationship.
 
@@ -105,13 +105,13 @@ Deletion is automated via scheduled jobs in the data lake and database managemen
 
 GreenScore AI processes personal data of EU data subjects and delivers ESG reports to EU-based institutional clients. The following transfer mechanisms are in place:
 
-Transfer 1 — GreenScore AI (UK) → Azure OpenAI (Microsoft EU Region):
+Transfer 1 - GreenScore AI (UK) → Azure OpenAI (Microsoft EU Region):
 Data is processed in Microsoft's EU-West Azure region (Ireland/Netherlands). GreenScore AI's Azure tenancy is configured to restrict processing to EU regions. No transfer outside the EU/EEA occurs for this pathway. Transfer mechanism: not required (data remains within EEA).
 
-Transfer 2 — GreenScore AI (UK, post-Brexit) → EU Clients:
+Transfer 2 - GreenScore AI (UK, post-Brexit) → EU Clients:
 The UK is not subject to an EU adequacy decision for all purposes. However, GreenScore AI's contractual data sharing with EU institutional clients is governed by Standard Contractual Clauses (SCCs) per EU Commission Decision 2021/914 (Module 1: Controller-to-Controller). SCCs are incorporated into the Master Service Agreement signed with each EU client. Transfer Impact Assessment (TIA) has been conducted and concluded that UK law does not present disproportionate risk to EU data subjects given the nature of the data (primarily organizational, not sensitive).
 
-Transfer 3 — GreenScore AI → MSCI / Bloomberg / Refinitiv (licensed data providers):
+Transfer 3 - GreenScore AI → MSCI / Bloomberg / Refinitiv (licensed data providers):
 These relationships involve GreenScore AI receiving data from third parties (not transferring EU personal data out). Data Processing Agreements with each provider are maintained by the Legal team.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -148,5 +148,5 @@ I have reviewed this DPIA and confirm that:
 (d) Cross-border transfer mechanisms are compliant;
 (e) Residual risks are LOW and do not require prior consultation with the supervisory authority under GDPR Article 36.
 
-Data Protection Officer Sign-off: [DPO signature on file] — 2026-02-28
+Data Protection Officer Sign-off: [DPO signature on file] - 2026-02-28
 Next DPIA review triggered by: Material change to processing activities, new cross-border transfer mechanism, or annual review date (2027-02-28), whichever is earlier.

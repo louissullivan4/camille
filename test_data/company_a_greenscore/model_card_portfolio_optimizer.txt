@@ -1,10 +1,10 @@
-GREENSCORE AI — MODEL CARD
+GREENSCORE AI - MODEL CARD
 Portfolio Optimizer (GS-MDL-002)
 Version: 1.8
 Document ID: GS-MC-002-v1.8
 Owner: Quant Engineering Lead / Head of Investment Strategy
 Last Updated: 2026-03-15
-Classification: Internal — Confidential
+Classification: Internal - Confidential
 Review Cycle: Quarterly or upon model update
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -15,9 +15,9 @@ The Portfolio Optimizer generates portfolio allocation recommendations for human
 
 The system is a hybrid of two components:
 
-Component 1 — Return Forecasting Model: An XGBoost gradient boosted regressor that generates 12-month forward return estimates and volatility estimates for each asset class and major equity sub-segment. The model is trained on 15 years of MSCI World index returns, Bloomberg factor data (value, momentum, quality, low-volatility factors), and ESG sub-scores from GS-MDL-001. The forecasting model outputs expected return distributions, not point estimates, using a Monte Carlo simulation layer (10,000 iterations) to capture tail risk.
+Component 1 - Return Forecasting Model: An XGBoost gradient boosted regressor that generates 12-month forward return estimates and volatility estimates for each asset class and major equity sub-segment. The model is trained on 15 years of MSCI World index returns, Bloomberg factor data (value, momentum, quality, low-volatility factors), and ESG sub-scores from GS-MDL-001. The forecasting model outputs expected return distributions, not point estimates, using a Monte Carlo simulation layer (10,000 iterations) to capture tail risk.
 
-Component 2 — Constrained Optimization Solver: A convex optimization engine built on CVXPY that takes the return distribution outputs from Component 1 and solves for the mean-variance efficient portfolio subject to client-specific hard constraints. These constraints include: minimum ESG score floor (configurable per client mandate), sector concentration limits (no single GICS sector > 25% unless overridden), regulatory asset-class restrictions (e.g., MiFID II category restrictions), and maximum tracking error relative to a client-specified benchmark.
+Component 2 - Constrained Optimization Solver: A convex optimization engine built on CVXPY that takes the return distribution outputs from Component 1 and solves for the mean-variance efficient portfolio subject to client-specific hard constraints. These constraints include: minimum ESG score floor (configurable per client mandate), sector concentration limits (no single GICS sector > 25% unless overridden), regulatory asset-class restrictions (e.g., MiFID II category restrictions), and maximum tracking error relative to a client-specified benchmark.
 
 The system outputs a recommended allocation as a percentage weight vector, a set of proposed trades to transition from current to target allocation, and an interactive explanation panel for the advisor review interface (see Section 6 on Explainability).
 
@@ -28,9 +28,9 @@ The model does NOT execute trades. It does NOT communicate directly with clients
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Primary Users:
-- Investment Advisors (internal) — sole recipients of model recommendations; all outputs reviewed before client delivery
-- Portfolio Managers (internal) — use recommendations as one input among several
-- AI Governance Team (internal) — monitoring and audit access
+- Investment Advisors (internal) - sole recipients of model recommendations; all outputs reviewed before client delivery
+- Portfolio Managers (internal) - use recommendations as one input among several
+- AI Governance Team (internal) - monitoring and audit access
 
 Intended Use Cases:
 - Generation of initial portfolio recommendations at client onboarding
@@ -64,7 +64,7 @@ Optimization Component:
 Real-world advisor acceptance rate: 78% of recommendations accepted with no modification; 17% accepted with minor modification; 5% rejected. Rejection reasons are logged and reviewed quarterly.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-4. EXPLAINABILITY APPROACH — SHAP VALUES
+4. EXPLAINABILITY APPROACH - SHAP VALUES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Explainability is a core design requirement for this model, given that advisors must be able to understand and justify recommendations to clients. The following explainability mechanisms are implemented:
@@ -88,14 +88,14 @@ Portfolio optimization models can exhibit bias in the form of systematic underwe
 
 Geographic Allocation Bias (emerging vs. developed markets):
 - Compared model recommendations for equivalent-risk client profiles differing only in mandate geographic scope
-- No systematic underallocation to EM relative to risk-adjusted benchmarks identified — PASS
+- No systematic underallocation to EM relative to risk-adjusted benchmarks identified - PASS
 
 ESG Score Dependency Chain:
 - Because GS-MDL-002 ingests ESG scores from GS-MDL-001, any geographic bias in the upstream classifier can propagate. The AI Governance Team tracks this dependency explicitly. Q1 2026 finding: marginal South/Southeast Asia classification quality in GS-MDL-001 translates to a < 0.4% systematic ESG score underestimation for affected issuers. The quant team has implemented a geographic calibration adjustment as a compensating control.
 
 Client Demographic Bias:
 - Model does not receive or process client demographic data. All recommendations are generated solely on financial and ESG inputs.
-- Reviewed advisor override patterns segmented by client AUM band (proxy for client sophistication): no systematic pattern of advisors overriding recommendations differently based on client size — PASS
+- Reviewed advisor override patterns segmented by client AUM band (proxy for client sophistication): no systematic pattern of advisors overriding recommendations differently based on client size - PASS
 
 Overall Bias Audit Result: PASSED. One dependency-chain finding is actively mitigated with a compensating control.
 
@@ -141,6 +141,6 @@ No AI incidents have been recorded for this model since deployment (2024-02-01).
 10. CONTACT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Technical Owner: Quant Engineering Lead — quant-lead@greenscore.ai
-Business Owner: Head of Investment Strategy — investment-strategy@greenscore.ai
-AI Governance Contact: AI Governance Team — ai-governance@greenscore.ai
+Technical Owner: Quant Engineering Lead - quant-lead@greenscore.ai
+Business Owner: Head of Investment Strategy - investment-strategy@greenscore.ai
+AI Governance Contact: AI Governance Team - ai-governance@greenscore.ai

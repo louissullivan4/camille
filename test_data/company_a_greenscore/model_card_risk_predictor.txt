@@ -1,10 +1,10 @@
-GREENSCORE AI — MODEL CARD
+GREENSCORE AI - MODEL CARD
 Investment Risk Predictor (GS-MDL-003)
 Version: 2.1
 Document ID: GS-MC-003-v2.1
 Owner: ML Engineering Lead / Chief Risk Officer
 Last Updated: 2026-03-15
-Classification: Internal — Confidential
+Classification: Internal - Confidential
 Review Cycle: Quarterly or upon model update
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -13,11 +13,11 @@ Review Cycle: Quarterly or upon model update
 
 The Investment Risk Predictor classifies investment proposals and existing client portfolios into three ordinal risk tiers: LOW, MEDIUM, and HIGH. These classifications serve three primary functions within GreenScore AI's operations:
 
-Function 1 — Client Suitability Matching: Risk tier classifications are compared against client risk appetite assessments (collected at onboarding and refreshed annually) to determine whether an investment proposal is appropriate for a given client. A HIGH-tier investment proposed to a LOW-appetite client triggers a mandatory suitability review.
+Function 1 - Client Suitability Matching: Risk tier classifications are compared against client risk appetite assessments (collected at onboarding and refreshed annually) to determine whether an investment proposal is appropriate for a given client. A HIGH-tier investment proposed to a LOW-appetite client triggers a mandatory suitability review.
 
-Function 2 — MiFID II Suitability Disclosure: Risk tier outputs contribute to the suitability assessment required under MiFID II Article 25 for investment advice. The model's output is one input into the compliance team's suitability determination, which also considers client knowledge, experience, and financial situation.
+Function 2 - MiFID II Suitability Disclosure: Risk tier outputs contribute to the suitability assessment required under MiFID II Article 25 for investment advice. The model's output is one input into the compliance team's suitability determination, which also considers client knowledge, experience, and financial situation.
 
-Function 3 — Internal Risk Monitoring: Aggregate risk tier distributions across the client portfolio book are reported to the Chief Risk Officer and the Board AI Ethics Committee on a monthly basis. Significant shifts in distribution (e.g., a sudden increase in HIGH-tier classifications) trigger a risk review.
+Function 3 - Internal Risk Monitoring: Aggregate risk tier distributions across the client portfolio book are reported to the Chief Risk Officer and the Board AI Ethics Committee on a monthly basis. Significant shifts in distribution (e.g., a sudden increase in HIGH-tier classifications) trigger a risk review.
 
 The model is a LightGBM gradient boosted classifier with 47 engineered features derived from portfolio composition, market data, and ESG characteristics. The model outputs a probability distribution across the three classes, with the predicted class being the argmax. Probability scores are displayed alongside the predicted tier in all human review interfaces to support informed advisor judgment.
 
@@ -61,8 +61,8 @@ Calibration:
   Reliability diagram reviewed quarterly; no systematic overconfidence detected
 
 Confusion Matrix Summary:
-  MEDIUM classified as LOW: 1.8% of MEDIUM cases — monitored closely as these could result in under-review
-  HIGH classified as MEDIUM: 0.9% of HIGH cases — the most consequential error type; SHAP review and mandatory human oversight provide compensating control
+  MEDIUM classified as LOW: 1.8% of MEDIUM cases - monitored closely as these could result in under-review
+  HIGH classified as MEDIUM: 0.9% of HIGH cases - the most consequential error type; SHAP review and mandatory human oversight provide compensating control
   No LOW cases have been misclassified as HIGH (false high-risk) in test evaluation
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -102,7 +102,7 @@ Override Authority:
 SHAP Waterfall Charts:
 For every classification, SHAP values are computed using the TreeExplainer for LightGBM. The analyst review interface displays a waterfall chart showing the contribution of each feature to the predicted risk tier, starting from the base rate and adding or subtracting feature contributions to arrive at the final prediction. For HIGH classifications, the top-10 contributing features and their values are also printed in a structured summary table alongside the chart.
 
-Example output for a HIGH classification: "Portfolio classified as HIGH risk (probability: 0.91). Primary drivers: Realized 90-day volatility (22.4%; contributes +0.18 to HIGH probability), Sub-investment-grade exposure (31%; contributes +0.14), Low ESG controversy score (contributes +0.09), Concentrated sector exposure — Energy GICS sector at 28% (contributes +0.08)."
+Example output for a HIGH classification: "Portfolio classified as HIGH risk (probability: 0.91). Primary drivers: Realized 90-day volatility (22.4%; contributes +0.18 to HIGH probability), Sub-investment-grade exposure (31%; contributes +0.14), Low ESG controversy score (contributes +0.09), Concentrated sector exposure - Energy GICS sector at 28% (contributes +0.08)."
 
 Counterfactual Explanations:
 For HIGH-tier classifications subject to Senior Analyst review, the system also generates a counterfactual explanation: "This portfolio would be classified MEDIUM risk if sub-investment-grade bond exposure were reduced to below 18%." This helps advisors and clients understand actionable paths to a different risk outcome.
@@ -115,7 +115,7 @@ Q1 2026 Bias Audit (GS-AUDIT-BIAS-2026-Q1) tested the following dimensions for G
 
 Geographic Portfolio Composition Bias:
 - Portfolios with equivalent risk factor profiles but differing in geographic exposure (emerging vs. developed market equities) were compared
-- No systematic difference in risk tier assignment attributable to geographic label (as opposed to underlying risk factors such as volatility and liquidity) — PASS
+- No systematic difference in risk tier assignment attributable to geographic label (as opposed to underlying risk factors such as volatility and liquidity) - PASS
 
 ESG Score Influence Audit:
 - Tested whether portfolios with similar financial risk profiles but differing ESG scores received systematically different risk tier classifications
@@ -161,7 +161,7 @@ As of Q4 2025, GreenScore AI has adopted a precautionary high-risk compliance po
 11. CONTACT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Technical Owner: ML Engineering Lead — ml-lead@greenscore.ai
-Business Owner: Chief Risk Officer — cro@greenscore.ai
-AI Governance Contact: AI Governance Team — ai-governance@greenscore.ai
-Compliance Contact: Compliance Officer — compliance@greenscore.ai
+Technical Owner: ML Engineering Lead - ml-lead@greenscore.ai
+Business Owner: Chief Risk Officer - cro@greenscore.ai
+AI Governance Contact: AI Governance Team - ai-governance@greenscore.ai
+Compliance Contact: Compliance Officer - compliance@greenscore.ai

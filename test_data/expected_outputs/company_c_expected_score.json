@@ -1,6 +1,6 @@
 {
   "organization": "AutoClaim Pro",
-  "industry": "Insurtech — AI-powered claims auto-adjudication",
+  "industry": "Insurtech - AI-powered claims auto-adjudication",
   "employee_count": 150,
   "ai_systems_count": 5,
   "expected_overall_score": { "min": 8, "max": 28 },
@@ -21,7 +21,7 @@
     "human_oversight": {
       "min": 0,
       "max": 10,
-      "rationale": "Claims under $10K auto-denied with no human review. AI ethics statement claims 'AI to help people not replace human judgment' — directly contradicted by auto-denial engine.",
+      "rationale": "Claims under $10K auto-denied with no human review. AI ethics statement claims 'AI to help people not replace human judgment' - directly contradicted by auto-denial engine.",
       "key_flags": [
         "auto_denial_for_claims_under_10k_no_human_review",
         "no_hitl_policy_documented",
@@ -103,14 +103,14 @@
     "litigation": [
       {
         "type": "class_action",
-        "description": "Wrongful denial class action — alleges systematic underpayment of claims under $10K via automated denial engine",
+        "description": "Wrongful denial class action - alleges systematic underpayment of claims under $10K via automated denial engine",
         "filed": "2024-12",
         "status": "active",
         "severity": "critical"
       },
       {
         "type": "individual_claim",
-        "description": "Bad faith claim — individual claimant denied valid medical claim via automated system",
+        "description": "Bad faith claim - individual claimant denied valid medical claim via automated system",
         "filed": "2025-02",
         "status": "active",
         "severity": "high"
@@ -128,17 +128,17 @@
   },
   "expected_critical_flags": [
     "Auto-denial engine denies claims under $10K with ZERO human review",
-    "2 active lawsuits — class action (wrongful denial) + individual bad faith",
-    "Colorado AG inquiry into AI claims decision-making — active March 2025",
+    "2 active lawsuits - class action (wrongful denial) + individual bad faith",
+    "Colorado AG inquiry into AI claims decision-making - active March 2025",
     "No bias testing documentation for any of 5 AI models",
     "No incident response plan despite active litigation",
     "No DPIA despite processing medical/health data",
-    "AI ethics statement directly contradicts operational practice (claims 'AI to help people not replace human judgment' — auto-denial engine does exactly that)",
+    "AI ethics statement directly contradicts operational practice (claims 'AI to help people not replace human judgment' - auto-denial engine does exactly that)",
     "Three different foundation models with no vendor risk assessment"
   ],
   "expected_amber_flags": [
     "Generic privacy policy with no AI-specific disclosures",
-    "No formal model inventory — cannot determine full AI system scope"
+    "No formal model inventory - cannot determine full AI system scope"
   ],
   "recommended_underwriting_decision": "DECLINE or EXCLUDE auto-adjudication liability",
   "recommended_coverage_conditions": [
@@ -149,5 +149,5 @@
     "Require minimum 90-day governance remediation before any coverage: model inventory, bias testing, HITL for all claim decisions, IR plan, DPIA",
     "Sublimit auto-adjudication to $0 (full exclusion) until human review implemented"
   ],
-  "validation_notes": "AutoClaim should score CRITICAL (0-24) on almost all dimensions. The most important extractions: (1) detecting auto-denial engine operating without HITL, (2) detecting active litigation, (3) detecting Colorado AG inquiry, (4) detecting DPIA gap for health data, (5) detecting the contradiction between ethics statement and actual practice. The external_signals layer is critical for this company — without it, the score might be just HIGH; with litigation data, it's CRITICAL."
+  "validation_notes": "AutoClaim should score CRITICAL (0-24) on almost all dimensions. The most important extractions: (1) detecting auto-denial engine operating without HITL, (2) detecting active litigation, (3) detecting Colorado AG inquiry, (4) detecting DPIA gap for health data, (5) detecting the contradiction between ethics statement and actual practice. The external_signals layer is critical for this company - without it, the score might be just HIGH; with litigation data, it's CRITICAL."
 }

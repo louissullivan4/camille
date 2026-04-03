@@ -1,4 +1,4 @@
-QUICKHIRE INC — INTERNAL MEMO
+QUICKHIRE INC - INTERNAL MEMO
 To: Recruiting Team, Hiring Managers
 From: Marcus Webb, VP of Engineering / Talent Operations
 Date: June 12, 2023
@@ -44,7 +44,7 @@ PRACTICAL NOTES
 
 - If a hiring manager has a strong reason to believe the AI may have screened out a good candidate (e.g., they were referred internally), they can request access to the not-advancing queue from the recruiting team.
 - Questions about the AI system can be directed to Priya on the ML team.
-- The default threshold (0.45) can be adjusted for specific requisitions — reach out to the ML team if you believe a req needs a different setting.
+- The default threshold (0.45) can be adjusted for specific requisitions - reach out to the ML team if you believe a req needs a different setting.
 
 ---
 

@@ -1,5 +1,5 @@
 QUICKHIRE INC
-RESUME SCREENER AI — INITIAL BIAS AUDIT REPORT
+RESUME SCREENER AI - INITIAL BIAS AUDIT REPORT
 Date: March 28, 2023
 Conducted by: Priya Nambiar (Senior ML Engineer), Dev Kapoor (Data Analyst)
 Classification: Internal Use Only
@@ -58,9 +58,9 @@ Interpretation: The impact ratio for female candidates falls above the 0.80 thre
 4.2 Race / Ethnicity
 
 Selection rates (highest-selected group: White, 47.1%):
-- Asian: 43.2% — Impact ratio: 0.92
-- Hispanic or Latino: 40.1% — Impact ratio: 0.85
-- Black or African American: 38.3% — Impact ratio: 0.81
+- Asian: 43.2% - Impact ratio: 0.92
+- Hispanic or Latino: 40.1% - Impact ratio: 0.85
+- Black or African American: 38.3% - Impact ratio: 0.81
 
 Interpretation: Impact ratios for all racial and ethnic groups assessed fall above the 0.80 threshold. Results are within acceptable range.
 
@@ -68,9 +68,9 @@ Interpretation: Impact ratios for all racial and ethnic groups assessed fall abo
 
   Group                    | Selection Rate | Impact Ratio | Pass/Fail
   -------------------------|----------------|--------------|----------
-  Male (reference)         | 48.3%          | 1.00         | —
+  Male (reference)         | 48.3%          | 1.00         | -
   Female                   | 39.6%          | 0.82         | PASS
-  White (reference)        | 47.1%          | 1.00         | —
+  White (reference)        | 47.1%          | 1.00         | -
   Asian                    | 43.2%          | 0.92         | PASS
   Hispanic or Latino       | 40.1%          | 0.85         | PASS
   Black or African American| 38.3%          | 0.81         | PASS
@@ -103,15 +103,15 @@ Interpretation: Impact ratios for all racial and ethnic groups assessed fall abo
 
 Approved for production deployment.
 
-Priya Nambiar — Senior ML Engineer
-Dev Kapoor — Data Analyst
-Marcus Webb — VP of Engineering
+Priya Nambiar - Senior ML Engineer
+Dev Kapoor - Data Analyst
+Marcus Webb - VP of Engineering
 
 Date: March 28, 2023
 
 ---
 
-APPENDIX A — Notes
+APPENDIX A - Notes
 
 This audit was conducted in advance of the QuickHire Resume Screener launch. All analysis used internal tooling (Python, pandas, scipy). Raw audit data is stored in the ml-team/bias-audit-2023 S3 bucket.
 

@@ -1,18 +1,18 @@
-GREENSCORE AI — QUARTERLY BIAS AUDIT REPORT
+GREENSCORE AI - QUARTERLY BIAS AUDIT REPORT
 Q1 2026 (January 1 – March 31, 2026)
 Document ID: GS-AUDIT-BIAS-2026-Q1
 Prepared by: AI Governance Team
 Reviewed by: Chief Risk Officer, Head of ESG Research, Head of Investment Strategy
 Approved by: Head of AI Governance
 Date of Issue: 2026-03-28
-Classification: Internal — Confidential
+Classification: Internal - Confidential
 NIST AI RMF Alignment: MEASURE 2.11 (Fairness and Bias)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 1. EXECUTIVE SUMMARY
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-GreenScore AI conducted its quarterly bias audit covering all three production AI models for Q1 2026. All three models passed the primary bias threshold (the 80% rule / four-fifths rule) across all tested protected and sensitive classes. Two marginal findings were identified — one for GS-MDL-001 (geographic performance differential in South/Southeast Asia) and one for GS-MDL-003 (ESG-score-correlated differential classification) — and are documented in full below. Neither finding constitutes a bias failure; both were validated as either within tolerance or as appropriate model behavior. Remediation and monitoring actions are in place.
+GreenScore AI conducted its quarterly bias audit covering all three production AI models for Q1 2026. All three models passed the primary bias threshold (the 80% rule / four-fifths rule) across all tested protected and sensitive classes. Two marginal findings were identified - one for GS-MDL-001 (geographic performance differential in South/Southeast Asia) and one for GS-MDL-003 (ESG-score-correlated differential classification) - and are documented in full below. Neither finding constitutes a bias failure; both were validated as either within tolerance or as appropriate model behavior. Remediation and monitoring actions are in place.
 
 Overall Audit Verdict: PASSED (all models)
 Next Audit: Q2 2026 (target completion: 2026-06-27)
@@ -56,7 +56,7 @@ The 80% rule threshold used in this audit: for any outcome measure (model accura
 - GS-MDL-003: 3,200-item labeled evaluation set; 1,800 live classifications from Q1 2026 (anonymized); 180-item counterfactual probing set
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-3. RESULTS — GS-MDL-001: ESG TEXT CLASSIFIER
+3. RESULTS - GS-MDL-001: ESG TEXT CLASSIFIER
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 3.1 Gender Bias (Counterfactual Probing)
@@ -88,11 +88,11 @@ Test design: Evaluation set stratified by issuer domicile into five geographic r
 Results:
 | Region                      | F1 Score | Impact Ratio | Result       |
 |-----------------------------|----------|--------------|--------------|
-| North America / W. Europe   | 0.893    | 1.000 (ref)  | —            |
+| North America / W. Europe   | 0.893    | 1.000 (ref)  | -            |
 | Eastern Europe / Lat. Am.   | 0.878    | 0.983        | PASS         |
 | Middle East / Africa        | 0.851    | 0.953        | PASS         |
 | South / Southeast Asia      | 0.829    | 0.928        | PASS (marginal) |
-| Non-English (translated)    | Not evaluated — OUT OF SCOPE; see GS-MDL-001 limitations |
+| Non-English (translated)    | Not evaluated - OUT OF SCOPE; see GS-MDL-001 limitations |
 
 South/Southeast Asia finding is marginal (impact ratio 0.928, above the 0.80 fail threshold and above the 0.75 critical threshold, but below the team's internal target of 0.95). This region is flagged for enhanced monitoring.
 
@@ -103,14 +103,14 @@ Overall Geographic Bias Result: PASS (marginal finding tracked).
 3.4 Sector Bias
 
 Results:
-  Extractive industries: F1 0.921, impact ratio 1.031 (slightly above reference — no concern)
-  Financial services: F1 0.867, impact ratio 0.971 — PASS
-  Small-cap issuers: F1 0.843, impact ratio 0.944 — PASS
+  Extractive industries: F1 0.921, impact ratio 1.031 (slightly above reference - no concern)
+  Financial services: F1 0.867, impact ratio 0.971 - PASS
+  Small-cap issuers: F1 0.843, impact ratio 0.944 - PASS
 
 Remediation: Analyst guidance note issued recommending enhanced review for small-cap issuer classifications. No model change required.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-4. RESULTS — GS-MDL-002: PORTFOLIO OPTIMIZER
+4. RESULTS - GS-MDL-002: PORTFOLIO OPTIMIZER
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 4.1 Geographic Allocation Bias
@@ -120,7 +120,7 @@ Test design: 1,400 advisor recommendation records analyzed. Portfolios grouped b
 Results:
   Developed markets only: Mean expected return uplift vs. neutral: +1.42%
   Emerging markets included: Mean expected return uplift vs. neutral: +1.38%
-  Impact ratio: 0.972 — PASS
+  Impact ratio: 0.972 - PASS
 
 No systematic underallocation to EM relative to risk-adjusted benchmarks detected.
 
@@ -141,17 +141,17 @@ Result: PASS with compensating control in place.
 Client demographic data is not a model input. Advisor override pattern analysis (segmented by client AUM band) showed no systematic pattern (Chi-squared test p = 0.34). PASS.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-5. RESULTS — GS-MDL-003: INVESTMENT RISK PREDICTOR
+5. RESULTS - GS-MDL-003: INVESTMENT RISK PREDICTOR
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 5.1 Gender Bias
-Not applicable — model does not receive client demographic inputs. PASS (N/A).
+Not applicable - model does not receive client demographic inputs. PASS (N/A).
 
 5.2 Race / Ethnicity
-Not applicable — model does not receive client demographic inputs. PASS (N/A).
+Not applicable - model does not receive client demographic inputs. PASS (N/A).
 
 5.3 Age Bias
-Not applicable — model does not receive client demographic inputs. PASS (N/A).
+Not applicable - model does not receive client demographic inputs. PASS (N/A).
 
 5.4 Geographic Portfolio Composition Bias
 
@@ -160,7 +160,7 @@ Test design: 180 counterfactual pairs of portfolios with equivalent financial ri
 Results:
   Rate of HIGH classification for developed-market-equivalent portfolios: 18.2%
   Rate of HIGH classification for emerging-market-equivalent portfolios: 19.1%
-  Impact ratio: 0.952 — PASS
+  Impact ratio: 0.952 - PASS
 
 The small differential (< 1 percentage point) reflects genuine financial risk differences not fully captured by the matched factor profiles (e.g., residual currency and political risk components in EM). Validated as appropriate by Chief Risk Officer.
 
@@ -171,12 +171,12 @@ Test design: Compared HIGH-tier classification rates for portfolios with high ES
 Results:
   HIGH classification rate, high ESG score portfolios: 14.8%
   HIGH classification rate, low ESG score portfolios: 15.7%
-  Impact ratio (high ESG / low ESG on HIGH rate): 0.943 — PASS
+  Impact ratio (high ESG / low ESG on HIGH rate): 0.943 - PASS
 
 Note: Low ESG score portfolios are classified as HIGH risk at a marginally higher rate. The AI Governance Team investigated whether this reflects bias or legitimate model behavior. Conclusion: The correlation between low ESG scores and higher financial risk is well-established in academic literature (corporate governance failures, controversy events, climate transition risk). The SHAP analysis confirms that ESG-related features are contributing appropriately (i.e., in directions consistent with economic theory and historical data). Chief Risk Officer validation recorded in audit working papers (GS-AUDIT-BIAS-2026-Q1-WP). Classified as appropriate model behavior, not bias.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-6. SUMMARY TABLE — ALL MODELS
+6. SUMMARY TABLE - ALL MODELS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 | Model       | Test Dimension             | Impact Ratio | Threshold | Result         |
@@ -204,16 +204,16 @@ Note: Low ESG score portfolios are classified as HIGH risk at a marginally highe
 8. NIST AI RMF MEASURE 2.11 ALIGNMENT STATEMENT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-This audit was conducted in alignment with NIST AI RMF MEASURE Function, specifically sub-category MEASURE 2.11: "Fairness and bias — the extent to which AI system outputs, decisions, or recommendations are free from unfair bias across groups or demographic categories." The audit employed multiple complementary methods (disparate impact analysis, counterfactual probing, subgroup performance stratification) consistent with MEASURE 2.11's guidance on using diverse quantitative and qualitative evaluation approaches. Findings, impact ratios, and remediation actions are documented in this report and in the supporting working papers (GS-AUDIT-BIAS-2026-Q1-WP). This documentation satisfies the MEASURE function's requirement for evidence-based, repeatable fairness evaluation with documented outcomes.
+This audit was conducted in alignment with NIST AI RMF MEASURE Function, specifically sub-category MEASURE 2.11: "Fairness and bias - the extent to which AI system outputs, decisions, or recommendations are free from unfair bias across groups or demographic categories." The audit employed multiple complementary methods (disparate impact analysis, counterfactual probing, subgroup performance stratification) consistent with MEASURE 2.11's guidance on using diverse quantitative and qualitative evaluation approaches. Findings, impact ratios, and remediation actions are documented in this report and in the supporting working papers (GS-AUDIT-BIAS-2026-Q1-WP). This documentation satisfies the MEASURE function's requirement for evidence-based, repeatable fairness evaluation with documented outcomes.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 9. SIGN-OFF AND NEXT STEPS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Approved by Head of AI Governance: [signed] — 2026-03-28
-Reviewed by Chief Risk Officer: [signed] — 2026-03-27
-Reviewed by Head of ESG Research: [signed] — 2026-03-26
-Reviewed by Head of Investment Strategy: [signed] — 2026-03-26
+Approved by Head of AI Governance: [signed] - 2026-03-28
+Reviewed by Chief Risk Officer: [signed] - 2026-03-27
+Reviewed by Head of ESG Research: [signed] - 2026-03-26
+Reviewed by Head of Investment Strategy: [signed] - 2026-03-26
 
 Next Audit: Q2 2026
 Target Completion Date: 2026-06-27

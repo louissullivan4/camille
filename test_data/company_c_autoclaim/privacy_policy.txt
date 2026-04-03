@@ -56,7 +56,7 @@ We may share your personal information with:
 
 We do not sell your personal information to third parties for their direct marketing purposes.
 
-5. GDPR — Rights of EU/EEA Data Subjects
+5. GDPR - Rights of EU/EEA Data Subjects
 
 If you are located in the European Union or European Economic Area, you may have the following rights under the General Data Protection Regulation (GDPR):
 
@@ -70,7 +70,7 @@ If you are located in the European Union or European Economic Area, you may have
 
 To exercise any of these rights, please contact us at privacy@autoclaimpo.com. We will respond to your request within 30 days. Please note that some rights may be limited by applicable law or our legitimate business interests.
 
-6. CCPA — Rights of California Residents
+6. CCPA - Rights of California Residents
 
 If you are a California resident, the California Consumer Privacy Act (CCPA), as amended by the California Privacy Rights Act (CPRA), provides you with specific rights regarding your personal information:
 

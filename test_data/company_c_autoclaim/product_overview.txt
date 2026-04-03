@@ -1,8 +1,8 @@
-AutoClaim Pro — Product Overview
+AutoClaim Pro - Product Overview
 
 Revolutionizing Insurance Claims with the Power of AI
 
-AutoClaim Pro is the industry's leading AI-powered claims management platform, purpose-built to help insurers move faster, reduce costs, and deliver exceptional customer experiences. Trusted by carriers across the country, AutoClaim Pro brings cutting-edge automation to every stage of the claims lifecycle — from first notice of loss to final settlement.
+AutoClaim Pro is the industry's leading AI-powered claims management platform, purpose-built to help insurers move faster, reduce costs, and deliver exceptional customer experiences. Trusted by carriers across the country, AutoClaim Pro brings cutting-edge automation to every stage of the claims lifecycle - from first notice of loss to final settlement.
 
 85% Reduction in Claims Processing Time
 
@@ -14,7 +14,7 @@ Insurance fraud costs the industry over $80 billion annually. AutoClaim Pro's AI
 
 AI-Powered Accuracy, Every Time
 
-AutoClaim Pro's intelligent automation handles routine claims instantly, freeing adjusters for complex cases that require human expertise and judgment. Our platform delivers consistent, data-driven outcomes by applying the same rigorous evaluation criteria to every claim — eliminating variability, reducing errors, and ensuring that similar claims are treated similarly.
+AutoClaim Pro's intelligent automation handles routine claims instantly, freeing adjusters for complex cases that require human expertise and judgment. Our platform delivers consistent, data-driven outcomes by applying the same rigorous evaluation criteria to every claim - eliminating variability, reducing errors, and ensuring that similar claims are treated similarly.
 
 Comprehensive Damage Estimation
 
@@ -22,15 +22,15 @@ AutoClaim Pro's damage estimation module leverages computer vision and machine l
 
 Seamless Claimant Experience
 
-From first contact to resolution, AutoClaim Pro's AI-powered customer engagement tools keep claimants informed and supported throughout their journey. Our intelligent chatbot provides 24/7 answers to common questions, status updates, and guided document submission — reducing inbound call volume and improving Net Promoter Scores across the board.
+From first contact to resolution, AutoClaim Pro's AI-powered customer engagement tools keep claimants informed and supported throughout their journey. Our intelligent chatbot provides 24/7 answers to common questions, status updates, and guided document submission - reducing inbound call volume and improving Net Promoter Scores across the board.
 
 Scalable, Configurable, and Integration-Ready
 
-AutoClaim Pro is built on a modern cloud-native architecture that scales with your business. Whether you're processing 500 claims per month or 500,000, AutoClaim Pro delivers consistent performance and reliability. Out-of-the-box integrations with leading core systems, payment processors, and data providers mean you're up and running quickly — with minimal IT lift.
+AutoClaim Pro is built on a modern cloud-native architecture that scales with your business. Whether you're processing 500 claims per month or 500,000, AutoClaim Pro delivers consistent performance and reliability. Out-of-the-box integrations with leading core systems, payment processors, and data providers mean you're up and running quickly - with minimal IT lift.
 
 Proven Results Across the Industry
 
-Our clients report measurable improvements across every key performance indicator: faster cycle times, lower loss adjustment expenses, higher customer satisfaction, and improved combined ratios. AutoClaim Pro doesn't just promise results — we deliver them.
+Our clients report measurable improvements across every key performance indicator: faster cycle times, lower loss adjustment expenses, higher customer satisfaction, and improved combined ratios. AutoClaim Pro doesn't just promise results - we deliver them.
 
 Key Platform Capabilities:
 
@@ -45,7 +45,7 @@ Key Platform Capabilities:
 
 Ready to Transform Your Claims Operation?
 
-Join the growing number of insurers who have made AutoClaim Pro the backbone of their claims operation. Our team of implementation specialists will guide you from onboarding to go-live — and beyond.
+Join the growing number of insurers who have made AutoClaim Pro the backbone of their claims operation. Our team of implementation specialists will guide you from onboarding to go-live - and beyond.
 
 Contact us today for a personalized demo and see for yourself why AutoClaim Pro is the platform that modern insurers trust.
 

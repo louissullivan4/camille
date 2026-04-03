@@ -1,4 +1,4 @@
-MODEL CARD — Resume Screener AI
+MODEL CARD - Resume Screener AI
 QuickHire Inc | Internal Document
 Last Updated: October 15, 2024
 Author: Priya Nambiar, Senior ML Engineer

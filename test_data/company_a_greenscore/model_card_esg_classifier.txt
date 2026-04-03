@@ -1,17 +1,17 @@
-GREENSCORE AI — MODEL CARD
+GREENSCORE AI - MODEL CARD
 ESG Text Classifier (GS-MDL-001)
 Version: 2.4
 Document ID: GS-MC-001-v2.4
 Owner: ML Engineering Lead / Head of ESG Research
 Last Updated: 2026-03-15
-Classification: Internal — Confidential
+Classification: Internal - Confidential
 Review Cycle: Quarterly or upon model update
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 1. MODEL PURPOSE AND DESCRIPTION
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-The ESG Text Classifier receives unstructured text from corporate sustainability disclosures — including annual reports, CDP questionnaire responses, SEC 10-K and 10-Q filings, proxy statements, and standalone ESG or sustainability reports — and assigns one or more classification labels from the following taxonomy:
+The ESG Text Classifier receives unstructured text from corporate sustainability disclosures - including annual reports, CDP questionnaire responses, SEC 10-K and 10-Q filings, proxy statements, and standalone ESG or sustainability reports - and assigns one or more classification labels from the following taxonomy:
 
 Primary categories: Environmental (E), Social (S), Governance (G), Not ESG Relevant
 Sub-categories (Environmental): Climate Risk, Energy Use, Water Management, Biodiversity, Waste and Circularity, Supply Chain Emissions
@@ -29,9 +29,9 @@ Approximately 14,000 documents are processed monthly in batch mode. A smaller re
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Primary Users:
-- ESG Research Analysts (internal) — review and validate model outputs before publication
-- Portfolio Managers (internal) — consume ESG scores derived from model outputs
-- Institutional Clients (external) — receive ESG scores in client-facing reports; do not interact with model directly
+- ESG Research Analysts (internal) - review and validate model outputs before publication
+- Portfolio Managers (internal) - consume ESG scores derived from model outputs
+- Institutional Clients (external) - receive ESG scores in client-facing reports; do not interact with model directly
 
 Intended Use Cases:
 - Batch classification of corporate disclosures for ESG scoring
@@ -84,21 +84,21 @@ Bias testing was conducted as part of the Q1 2026 Bias Audit (GS-AUDIT-BIAS-2026
 
 Geographic Origin of Issuer:
 - North America / Western Europe (reference group): F1 0.893
-- Eastern Europe / Latin America: F1 0.878; impact ratio 0.984 — PASS
-- Middle East / Africa: F1 0.851; impact ratio 0.953 — PASS
-- South / Southeast Asia: F1 0.829; impact ratio 0.928 — PASS (marginal; flagged for monitoring)
-- Disclosure language (non-English, translated): not currently validated — OUT OF SCOPE
+- Eastern Europe / Latin America: F1 0.878; impact ratio 0.984 - PASS
+- Middle East / Africa: F1 0.851; impact ratio 0.953 - PASS
+- South / Southeast Asia: F1 0.829; impact ratio 0.928 - PASS (marginal; flagged for monitoring)
+- Disclosure language (non-English, translated): not currently validated - OUT OF SCOPE
 
 Sector Bias (potential source of differential performance):
-- Extractive industries (mining, oil and gas): Environmental F1 0.921 — no bias concern
-- Financial services issuers (disclosures are shorter, more formulaic): Overall F1 0.867 — within tolerance
-- Small-cap issuers (disclosure quality lower): Overall F1 0.843 — flagged; guidance issued to analysts
+- Extractive industries (mining, oil and gas): Environmental F1 0.921 - no bias concern
+- Financial services issuers (disclosures are shorter, more formulaic): Overall F1 0.867 - within tolerance
+- Small-cap issuers (disclosure quality lower): Overall F1 0.843 - flagged; guidance issued to analysts
 
 Gender-Coded Language (executive reference test):
-- Counterfactual probing with gender-swapped executive names showed no statistically significant classification difference (p > 0.12 across all categories) — PASS
+- Counterfactual probing with gender-swapped executive names showed no statistically significant classification difference (p > 0.12 across all categories) - PASS
 
 Race / Ethnicity:
-- Not directly applicable to corporate issuer classification. Counterfactual probing of company name and country of incorporation showed no systematic bias in category assignment — PASS
+- Not directly applicable to corporate issuer classification. Counterfactual probing of company name and country of incorporation showed no systematic bias in category assignment - PASS
 
 Overall Bias Audit Result: PASSED. One marginal finding (South/Southeast Asia geography) is being tracked in the model improvement roadmap.
 
@@ -158,9 +158,9 @@ No AI incidents have been recorded for this model since deployment (2023-08-14).
 10. CONTACT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Technical Owner: ML Engineering Lead — ml-lead@greenscore.ai
-Business Owner: Head of ESG Research — esg-research@greenscore.ai
-AI Governance Contact: AI Governance Team — ai-governance@greenscore.ai
+Technical Owner: ML Engineering Lead - ml-lead@greenscore.ai
+Business Owner: Head of ESG Research - esg-research@greenscore.ai
+AI Governance Contact: AI Governance Team - ai-governance@greenscore.ai
 Data Protection Officer: dpo@greenscore.ai
 
 For questions about this model card or to report a concern, contact the AI Governance Team. To report an AI incident, follow the procedure in GS-POL-IR-001 (AI Incident Response Plan).

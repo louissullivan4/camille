@@ -4,7 +4,7 @@ Meta developed and released the Llama 2 family of large language models (LLMs), 
 
 **Model Developers** Meta
 
-**Variations** Llama 2 comes in a range of parameter sizes — 7B, 13B, and 70B — as well as pretrained and fine-tuned variations.
+**Variations** Llama 2 comes in a range of parameter sizes - 7B, 13B, and 70B - as well as pretrained and fine-tuned variations.
 
 **Input** Models input text only.
 

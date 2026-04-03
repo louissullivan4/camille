@@ -1,4 +1,4 @@
-GREENSCORE AI — HUMAN-IN-THE-LOOP (HITL) POLICY
+GREENSCORE AI - HUMAN-IN-THE-LOOP (HITL) POLICY
 Document ID: GS-POL-HITL-001
 Version: 2.3
 Owner: Head of AI Governance / Chief Risk Officer
@@ -6,7 +6,7 @@ Approved by: Board AI Ethics Committee
 Effective Date: 2025-09-01
 Last Reviewed: 2026-02-15
 Next Review: 2026-08-15
-Classification: Internal — Confidential
+Classification: Internal - Confidential
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 1. PURPOSE AND SCOPE
@@ -25,7 +25,7 @@ This policy supersedes GS-POL-HITL-001 v2.2 (effective 2025-03-01).
 2. DECISIONS REQUIRING MANDATORY HUMAN REVIEW
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-The following AI-generated outputs require mandatory human review before any downstream action, client communication, or regulatory use. "Mandatory" means the action cannot proceed — technically or procedurally — until a human has reviewed and recorded a decision.
+The following AI-generated outputs require mandatory human review before any downstream action, client communication, or regulatory use. "Mandatory" means the action cannot proceed - technically or procedurally - until a human has reviewed and recorded a decision.
 
 2.1 HIGH Risk Tier Classifications (GS-MDL-003)
 
@@ -83,16 +83,16 @@ SLA timers start from the moment the item enters the review queue. All SLA breac
 
 The escalation path for AI-related human review concerns follows the chain below. Escalation at each level must be completed before the next level is engaged, except in cases where the initial reviewer believes the matter is critical (see P1/P2 definitions in the Incident Response Plan GS-POL-IR-001).
 
-Level 1 — Analyst:
+Level 1 - Analyst:
 The first-line reviewer for ESG classifications, MEDIUM-tier risk outputs, and portfolio recommendations not triggering the > 5% threshold. Analysts have full authority to accept, modify, or reject any AI output within their review domain. Analysts should escalate to Level 2 when: (a) they are uncertain about the correct classification, (b) the output appears systematically incorrect (potential model failure), or (c) a client has disputed the output.
 
-Level 2 — Senior Analyst:
+Level 2 - Senior Analyst:
 The mandatory reviewer for HIGH-tier risk classifications. Senior Analysts also receive escalations from Level 1. Senior Analysts should escalate to Level 3 when: (a) the output has regulatory implications that require compliance interpretation, (b) the override or rejection of an AI output would set a significant precedent, or (c) the item is time-sensitive and cannot be resolved within the SLA without compliance guidance.
 
-Level 3 — Compliance Officer:
+Level 3 - Compliance Officer:
 Handles regulatory interpretation, time-sensitive SLA breach notifications, and any AI output that will be used in a formal regulatory submission. The Compliance Officer has authority to halt the use of any AI model output pending further review. The Compliance Officer should notify the Head of AI Governance of any escalation that reaches Level 3.
 
-Level 4 — Head of AI Governance (and AI Ethics Committee if required):
+Level 4 - Head of AI Governance (and AI Ethics Committee if required):
 Handles matters involving potential model failures, systematic bias findings, regulatory notifications, or decisions affecting model deployment status. Any Level 4 escalation is treated as a potential AI incident under GS-POL-IR-001.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -1,6 +1,6 @@
 {
   "organization": "GreenScore AI",
-  "industry": "Fintech — ESG scoring and portfolio analytics",
+  "industry": "Fintech - ESG scoring and portfolio analytics",
   "employee_count": 200,
   "ai_systems_count": 3,
   "expected_overall_score": { "min": 78, "max": 90 },
@@ -101,7 +101,7 @@
     "third_party_risk": {
       "min": 60,
       "max": 80,
-      "rationale": "Uses Azure OpenAI (GPT-4) — some vendor risk management but not deeply documented",
+      "rationale": "Uses Azure OpenAI (GPT-4) - some vendor risk management but not deeply documented",
       "key_positive_signals": [
         "third_party_foundation_model_identified_in_inventory",
         "azure_enterprise_agreement_implies_contractual_protections"
@@ -120,7 +120,7 @@
     "AI-specific incident response plan with P1-P4 classification",
     "HITL for all high-risk classifications with 24-hour SLA",
     "DPIA completed for ESG scoring system",
-    "NIST AI RMF self-assessment completed — rated MATURE"
+    "NIST AI RMF self-assessment completed - rated MATURE"
   ],
   "expected_amber_flags": [
     "Third-party foundation model (GPT-4) creates some supply chain dependency",

@@ -1,6 +1,6 @@
 {
   "organization": "QuickHire Inc",
-  "industry": "HR Tech — AI-powered resume screening and candidate matching",
+  "industry": "HR Tech - AI-powered resume screening and candidate matching",
   "employee_count": 85,
   "ai_systems_count": 3,
   "expected_overall_score": { "min": 38, "max": 62 },
@@ -102,15 +102,15 @@
     }
   },
   "expected_critical_flags": [
-    "Bias audit is 3 years old — no follow-up since initial launch",
+    "Bias audit is 3 years old - no follow-up since initial launch",
     "No incident response plan for AI failures",
     "NYC Local Law 144 applies but zero compliance documentation exists",
     "Active EEOC complaint (Jan 2025) not addressed in any governance document",
     "ChatGPT integration processes candidate data with no governance wrapper",
-    "HITL policy covers only VP+ roles — 70%+ of applicants screened out without human review"
+    "HITL policy covers only VP+ roles - 70%+ of applicants screened out without human review"
   ],
   "expected_amber_flags": [
-    "Model card last updated October 2024 — 18 months stale",
+    "Model card last updated October 2024 - 18 months stale",
     "Bias audit impact ratios borderline (0.81–0.82, just above 80% rule threshold)",
     "No formal model inventory",
     "Data retention policy is generic, not AI-specific"

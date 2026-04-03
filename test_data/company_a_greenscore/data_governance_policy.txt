@@ -1,4 +1,4 @@
-GREENSCORE AI — DATA GOVERNANCE POLICY
+GREENSCORE AI - DATA GOVERNANCE POLICY
 Document ID: GS-POL-DG-001
 Version: 2.0
 Owner: Chief Data Officer / Head of AI Governance
@@ -6,13 +6,13 @@ Approved by: Chief Risk Officer, General Counsel, Board Audit Committee
 Effective Date: 2025-07-01
 Last Reviewed: 2026-01-20
 Next Review: 2027-01-20
-Classification: Internal — Confidential
+Classification: Internal - Confidential
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 1. PURPOSE AND SCOPE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-This policy establishes GreenScore AI's data governance framework, covering the classification, sourcing, lineage tracking, retention, access control, and protection of all data assets — with particular attention to data used in AI model training, validation, and operation.
+This policy establishes GreenScore AI's data governance framework, covering the classification, sourcing, lineage tracking, retention, access control, and protection of all data assets - with particular attention to data used in AI model training, validation, and operation.
 
 This policy applies to:
 - All employees, contractors, and third-party processors handling GreenScore AI data
@@ -138,10 +138,10 @@ All third-party processors that handle personal data on behalf of GreenScore AI 
 - Breach notification within 48 hours of the processor becoming aware
 
 Current third-party processors with executed DPAs:
-- Microsoft Azure (Azure OpenAI, AWS S3 competitor) — DPA executed; annual security review
-- Amazon Web Services (data lake and RDS hosting) — AWS DPA executed; SOC 2 Type II certification reviewed annually
-- MSCI Inc. (licensed data; no personal data shared) — data license agreement; no DPA required
-- Bloomberg L.P. (licensed data; no personal data shared) — data license agreement; no DPA required
+- Microsoft Azure (Azure OpenAI, AWS S3 competitor) - DPA executed; annual security review
+- Amazon Web Services (data lake and RDS hosting) - AWS DPA executed; SOC 2 Type II certification reviewed annually
+- MSCI Inc. (licensed data; no personal data shared) - data license agreement; no DPA required
+- Bloomberg L.P. (licensed data; no personal data shared) - data license agreement; no DPA required
 
 The DPO maintains the register of data processing agreements. Any new third-party processor must be registered with and approved by the DPO before data sharing commences.
 
