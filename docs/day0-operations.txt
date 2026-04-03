@@ -1,0 +1,13 @@
+Spend the next 3–4 days on Phase 0 research. Here's the realistic priority order:
+
+Day 1: Download and read the Lockton Re/Armilla report from carriermanagement.com. It's the single most important document because it describes exactly how AI risk should be underwritten at the model level. Take notes on what they assess. Then download the NIST AI RMF 1.0 PDF — skim Parts 1 and 2, focus on the GOVERN and MEASURE functions. These two documents define your scoring taxonomy.
+
+Day 2: Download 3 real model cards (Anthropic's Claude card, xAI's Grok 4 card from data.x.ai, and one from HuggingFace). Then search "NYC Local Law 144 bias audit 2024 filetype:pdf" and download 2 real published bias audits. Put them all in test_data/real_documents/. Read each one and note what structured data you'd want to extract.
+
+Day 3: Use Claude (right here in this chat or a new one) to generate your three fictional company document sets — GreenScore (low risk), QuickHire (medium risk), AutoClaim (high risk). Use the prompts from the Phase 0 doc. Save them as PDFs in your test_data folders. Create the expected_outputs JSON files with score ranges and critical flags.
+
+Day 4: This is the most important day. Sit down with QuickHire's 4 documents and manually do the assessment. Read each doc. Score each governance dimension by hand on a 0–100 scale. Write down every flag you'd raise. Write down what's missing. Document every judgment call. This becomes the spec for your extraction prompts and scoring rules. Save this as docs/manual_walkthrough_quickhire.md in your repo.
+
+Day 5: NOW open Claude Code and start Phase 1 from the Technical Architecture doc. You'll be 10x more effective because you've read real governance documents, you know what the extraction output should look like, and you have test data ready to validate against.
+
+The temptation is to skip straight to coding. Resist it. Those 4 days of research will save you 4 weeks of building the wrong thing. The manual walkthrough on Day 4 is the single highest-leverage activity in the entire project — it's your design spec, your test oracle, and your demo script all in one.
