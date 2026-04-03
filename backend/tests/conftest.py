@@ -1,14 +1,7 @@
-import asyncio
 import os
-import sys
 from collections.abc import AsyncGenerator
 
 import pytest_asyncio
-
-# asyncpg is incompatible with Windows ProactorEventLoop (Python 3.8+ default on Windows).
-# SelectorEventLoop handles asyncpg teardown correctly.
-if sys.platform == "win32":
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool

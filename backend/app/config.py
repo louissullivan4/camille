@@ -10,11 +10,8 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     LOG_LEVEL: str = "INFO"
     CORS_ORIGINS: list[str] = ["http://localhost:5173", "http://localhost:3000"]
-
-    # Claude model selection - override per environment (e.g. use haiku in dev to cut cost)
-    LLM_EXTRACTION_MODEL: str = "claude-sonnet-4-6"   # high-volume; runs once per dimension per doc
-    LLM_CLASSIFICATION_MODEL: str = "claude-opus-4-6"  # doc classification + routing
-    LLM_REPORT_MODEL: str = "claude-opus-4-6"          # executive summary narrative
-
+    LLM_EXTRACTION_MODEL: str = "claude-sonnet-4-6"
+    LLM_CLASSIFICATION_MODEL: str = "claude-opus-4-6"
+    LLM_REPORT_MODEL: str = "claude-opus-4-6"
 
 settings = Settings()
