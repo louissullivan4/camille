@@ -1,0 +1,132 @@
+{
+  "organization": "GreenScore AI",
+  "industry": "Fintech — ESG scoring and portfolio analytics",
+  "employee_count": 200,
+  "ai_systems_count": 3,
+  "expected_overall_score": { "min": 78, "max": 90 },
+  "expected_risk_tier": "low",
+  "expected_dimension_scores": {
+    "model_inventory": {
+      "min": 85,
+      "max": 100,
+      "rationale": "Complete, NIST-aligned inventory covering all 3 models with full metadata",
+      "key_positive_signals": [
+        "all_models_inventoried",
+        "risk_classification_documented",
+        "eu_ai_act_classification_included",
+        "review_dates_current"
+      ],
+      "key_flags": []
+    },
+    "human_oversight": {
+      "min": 80,
+      "max": 95,
+      "rationale": "HITL policy covers all consequential decisions; escalation path defined; override authority clear",
+      "key_positive_signals": [
+        "hitl_policy_exists",
+        "all_high_risk_classifications_require_human_review",
+        "escalation_path_documented",
+        "override_authority_defined",
+        "24_hour_review_sla"
+      ],
+      "key_flags": []
+    },
+    "bias_fairness": {
+      "min": 85,
+      "max": 100,
+      "rationale": "Quarterly bias audits; multiple protected classes; clear impact ratios; remediation documented",
+      "key_positive_signals": [
+        "quarterly_audit_cadence",
+        "multiple_protected_classes_tested",
+        "impact_ratios_documented",
+        "remediation_tracked",
+        "nist_measure_2_11_aligned"
+      ],
+      "key_flags": []
+    },
+    "data_governance": {
+      "min": 75,
+      "max": 95,
+      "rationale": "DPIA completed; data lineage tracked; retention schedules defined; SCCs for EU transfers",
+      "key_positive_signals": [
+        "dpia_exists",
+        "data_provenance_documented",
+        "retention_policy_specific",
+        "cross_border_transfer_mechanisms",
+        "third_party_processor_agreements"
+      ],
+      "key_flags": [
+        "third_party_foundation_model_data_flows_need_monitoring"
+      ]
+    },
+    "incident_response": {
+      "min": 80,
+      "max": 95,
+      "rationale": "AI-specific IR plan with P1-P4 classification; notification timelines; RCA process",
+      "key_positive_signals": [
+        "ai_specific_ir_plan_exists",
+        "incident_classification_defined",
+        "regulator_notification_procedure",
+        "post_incident_rca_required",
+        "rollback_procedures_documented"
+      ],
+      "key_flags": []
+    },
+    "monitoring_drift": {
+      "min": 70,
+      "max": 90,
+      "rationale": "NIST RMF self-assessment covers monitoring; model cards describe monitoring approach",
+      "key_positive_signals": [
+        "performance_monitoring_described",
+        "retraining_triggers_defined",
+        "nist_measure_3_aligned"
+      ],
+      "key_flags": [
+        "drift_detection_methodology_could_be_more_specific"
+      ]
+    },
+    "regulatory_compliance": {
+      "min": 75,
+      "max": 95,
+      "rationale": "NIST RMF self-assessment; EU AI Act classification in inventory; awareness of state laws",
+      "key_positive_signals": [
+        "nist_rmf_self_assessment_completed",
+        "eu_ai_act_classification_documented",
+        "overall_maturity_assessed_as_mature"
+      ],
+      "key_flags": [
+        "eu_ai_act_conformity_assessment_not_yet_complete_pending_effective_date"
+      ]
+    },
+    "third_party_risk": {
+      "min": 60,
+      "max": 80,
+      "rationale": "Uses Azure OpenAI (GPT-4) — some vendor risk management but not deeply documented",
+      "key_positive_signals": [
+        "third_party_foundation_model_identified_in_inventory",
+        "azure_enterprise_agreement_implies_contractual_protections"
+      ],
+      "key_flags": [
+        "no_explicit_vendor_ai_risk_assessment_document",
+        "supply_chain_depth_not_assessed"
+      ]
+    }
+  },
+  "expected_positive_signals": [
+    "Complete model inventory with EU AI Act classification",
+    "Quarterly bias audits across all 3 models",
+    "Dedicated AI governance team of 4",
+    "Board-level AI ethics committee",
+    "AI-specific incident response plan with P1-P4 classification",
+    "HITL for all high-risk classifications with 24-hour SLA",
+    "DPIA completed for ESG scoring system",
+    "NIST AI RMF self-assessment completed — rated MATURE"
+  ],
+  "expected_amber_flags": [
+    "Third-party foundation model (GPT-4) creates some supply chain dependency",
+    "EU AI Act conformity assessment not yet formally completed",
+    "Drift detection methodology could be more operationally specific"
+  ],
+  "expected_critical_flags": [],
+  "validation_notes": "GreenScore should score well above 75 on most dimensions. The main drag is third_party_risk (lacks formal vendor assessment doc) and monitoring_drift (monitoring described but not operationally detailed). Overall should be comfortably LOW tier."
+}

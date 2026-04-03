@@ -1,0 +1,166 @@
+GREENSCORE AI — MODEL CARD
+ESG Text Classifier (GS-MDL-001)
+Version: 2.4
+Document ID: GS-MC-001-v2.4
+Owner: ML Engineering Lead / Head of ESG Research
+Last Updated: 2026-03-15
+Classification: Internal — Confidential
+Review Cycle: Quarterly or upon model update
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. MODEL PURPOSE AND DESCRIPTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The ESG Text Classifier receives unstructured text from corporate sustainability disclosures — including annual reports, CDP questionnaire responses, SEC 10-K and 10-Q filings, proxy statements, and standalone ESG or sustainability reports — and assigns one or more classification labels from the following taxonomy:
+
+Primary categories: Environmental (E), Social (S), Governance (G), Not ESG Relevant
+Sub-categories (Environmental): Climate Risk, Energy Use, Water Management, Biodiversity, Waste and Circularity, Supply Chain Emissions
+Sub-categories (Social): Labor Practices, Diversity and Inclusion, Community Impact, Human Rights, Customer Privacy
+Sub-categories (Governance): Board Composition, Executive Compensation, Audit and Controls, Transparency and Disclosure, Shareholder Rights
+
+For each classified passage, the model also returns: (a) a confidence score between 0.0 and 1.0, (b) a short rationale string (1–2 sentences) explaining the primary classification, and (c) a relevance weight used downstream in ESG score aggregation.
+
+The model is implemented as a fine-tuned call to GPT-4 Turbo via Azure OpenAI Service, wrapped in a GreenScore AI proprietary prompt engineering layer. The prompt layer enforces output format, applies domain-specific classification rubrics derived from GRI Standards and SASB frameworks, and includes few-shot examples drawn from the GreenScore human-labeled dataset. A deterministic post-processing layer normalizes outputs, enforces category hierarchy, and escalates low-confidence items (below 0.72 threshold) for analyst review.
+
+Approximately 14,000 documents are processed monthly in batch mode. A smaller real-time pathway handles urgent client requests with a target latency of under 30 seconds per document.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. INTENDED USERS AND USE CASES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Primary Users:
+- ESG Research Analysts (internal) — review and validate model outputs before publication
+- Portfolio Managers (internal) — consume ESG scores derived from model outputs
+- Institutional Clients (external) — receive ESG scores in client-facing reports; do not interact with model directly
+
+Intended Use Cases:
+- Batch classification of corporate disclosures for ESG scoring
+- Identification of disclosure gaps (topics present/absent in company reporting)
+- Trend analysis across reporting periods for the same issuer
+- Input generation for the Portfolio Optimizer (GS-MDL-002)
+
+Out-of-Scope Uses:
+- Direct publication without analyst review
+- Classification of personally identifiable information about individuals
+- Legal or compliance determination (model outputs are informational, not legal conclusions)
+- Use on audio or image content (text-only model)
+- Application to languages other than English without explicit validation (see Section 5)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. PERFORMANCE METRICS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Evaluation was conducted on a held-out test set of 2,100 passages, labeled by three independent ESG analysts with inter-annotator agreement (Cohen's Kappa = 0.81, interpreted as strong agreement). The test set was stratified to ensure geographic and sector representation.
+
+Overall Performance (multi-label, macro-averaged):
+  Precision:               0.887
+  Recall:                  0.871
+  F1 Score:                0.879
+  AUC-ROC:                 0.934
+
+Per-Category F1 Scores:
+  Environmental (E):       0.901
+  Social (S):              0.864
+  Governance (G):          0.882
+  Not ESG Relevant:        0.871
+
+Sub-category F1 (selected):
+  Climate Risk:            0.923
+  Labor Practices:         0.848
+  Board Composition:       0.895
+  Human Rights:            0.811  ← below team target of 0.85; under review
+  Biodiversity:            0.839  ← monitored; limited training data
+
+Performance Thresholds and Triggers:
+- Alert threshold: macro F1 drops below 0.85 on monthly shadow evaluation set
+- Escalation threshold: macro F1 drops below 0.80 (triggers model review gate)
+- Confidence score calibration checked monthly against analyst override rates
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. BIAS TESTING RESULTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Bias testing was conducted as part of the Q1 2026 Bias Audit (GS-AUDIT-BIAS-2026-Q1). The following protected and sensitive attributes were tested via disparate impact analysis and counterfactual probing:
+
+Geographic Origin of Issuer:
+- North America / Western Europe (reference group): F1 0.893
+- Eastern Europe / Latin America: F1 0.878; impact ratio 0.984 — PASS
+- Middle East / Africa: F1 0.851; impact ratio 0.953 — PASS
+- South / Southeast Asia: F1 0.829; impact ratio 0.928 — PASS (marginal; flagged for monitoring)
+- Disclosure language (non-English, translated): not currently validated — OUT OF SCOPE
+
+Sector Bias (potential source of differential performance):
+- Extractive industries (mining, oil and gas): Environmental F1 0.921 — no bias concern
+- Financial services issuers (disclosures are shorter, more formulaic): Overall F1 0.867 — within tolerance
+- Small-cap issuers (disclosure quality lower): Overall F1 0.843 — flagged; guidance issued to analysts
+
+Gender-Coded Language (executive reference test):
+- Counterfactual probing with gender-swapped executive names showed no statistically significant classification difference (p > 0.12 across all categories) — PASS
+
+Race / Ethnicity:
+- Not directly applicable to corporate issuer classification. Counterfactual probing of company name and country of incorporation showed no systematic bias in category assignment — PASS
+
+Overall Bias Audit Result: PASSED. One marginal finding (South/Southeast Asia geography) is being tracked in the model improvement roadmap.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. KNOWN LIMITATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. English-Only Validation: The model has only been formally validated on English-language documents. French, German, and Spanish documents are in scope for a multilingual evaluation planned for Q3 2026. Until then, non-English documents are translated via a third-party API before classification, and outputs are flagged for enhanced analyst review.
+
+2. Emerging Market Disclosure Quality: Companies in developing markets often produce shorter, less structured disclosures, leading to lower recall for Social and Governance sub-categories. Clients receiving scores for these issuers are notified of this limitation in the data quality appendix of their reports.
+
+3. Foundation Model Dependency: The model relies on GPT-4 Turbo via Azure. Changes to the underlying foundation model (version updates, deprecation) can affect performance without notice. GreenScore AI maintains a shadow evaluation pipeline that re-runs benchmark tests within 48 hours of any Azure OpenAI service version change.
+
+4. Prompt Sensitivity: Minor changes to prompt structure can affect output consistency. The prompt layer is version-controlled (Git) and changes require AI Governance Team approval.
+
+5. Sub-category Limitations: Human Rights and Biodiversity sub-categories have F1 scores below the team's target of 0.85. Outputs in these categories carry a mandatory analyst review flag regardless of confidence score.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. HUMAN OVERSIGHT MECHANISMS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- Low-confidence escalation: All outputs with confidence score < 0.72 are routed to the ESG analyst review queue within 4 hours of processing
+- Sub-category flags: Human Rights and Biodiversity outputs always enter review queue regardless of confidence
+- Analyst override: Any analyst may override a classification with a documented reason; overrides are logged and used in model retraining cycles
+- Quality sampling: ESG Research Lead reviews a random 5% sample of accepted (non-escalated) outputs monthly to detect confidence calibration drift
+- EU disclosure compliance: All client-facing reports include the AI transparency disclosure required under EU AI Act Article 52
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. MONITORING APPROACH
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Operational monitoring occurs at three levels:
+
+Real-time: API error rates, latency (p50, p95, p99), and malformed output rates are tracked via Azure Monitor. Alerts fire to on-call ML engineer if error rate exceeds 2% over any 15-minute window.
+
+Weekly: Shadow evaluation against a static labeled benchmark of 500 passages. Performance metrics are posted to the AI Governance Team dashboard. Any metric outside tolerance triggers a review ticket.
+
+Monthly: Full data drift analysis comparing current month's input distribution (document length, vocabulary, sector mix, geographic mix) against the training distribution using Population Stability Index (PSI). PSI > 0.2 triggers a retraining evaluation gate.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. VERSION HISTORY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+v1.0 (2023-08-14): Initial deployment. GPT-3.5 Turbo backbone. 12 primary categories, no sub-categories. F1 0.831.
+v2.0 (2024-03-01): Upgraded to GPT-4 Turbo backbone. Added sub-category taxonomy. F1 improved to 0.861.
+v2.2 (2024-09-12): Added confidence scoring and analyst escalation pipeline. Prompt layer refactored.
+v2.3 (2025-04-20): Added 1,200 examples to human-labeled training set. F1 improved to 0.872. Geographic bias testing introduced.
+v2.4 (2025-11-08): Human Rights and Biodiversity sub-categories added. Mandatory review flags implemented. F1 0.879. Current production version.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. INCIDENT HISTORY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+No AI incidents have been recorded for this model since deployment (2023-08-14). One near-miss event was logged in November 2024: an Azure OpenAI service outage caused a 6-hour batch processing delay. This was handled under the standard IT incident process and did not affect client outputs. The event prompted the addition of a queue-backed retry mechanism and is documented in GS-IR-2024-003.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+10. CONTACT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Technical Owner: ML Engineering Lead — ml-lead@greenscore.ai
+Business Owner: Head of ESG Research — esg-research@greenscore.ai
+AI Governance Contact: AI Governance Team — ai-governance@greenscore.ai
+Data Protection Officer: dpo@greenscore.ai
+
+For questions about this model card or to report a concern, contact the AI Governance Team. To report an AI incident, follow the procedure in GS-POL-IR-001 (AI Incident Response Plan).

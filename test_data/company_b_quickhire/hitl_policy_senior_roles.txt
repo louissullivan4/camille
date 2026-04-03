@@ -1,0 +1,61 @@
+QUICKHIRE INC — INTERNAL MEMO
+To: Recruiting Team, Hiring Managers
+From: Marcus Webb, VP of Engineering / Talent Operations
+Date: June 12, 2023
+Re: Human Review Requirements for AI-Assisted Candidate Screening
+
+---
+
+BACKGROUND
+
+As most of you know, we rolled out the resume screening AI in March. It's been running smoothly and has significantly reduced the time our recruiters spend on first-pass resume review. This memo documents how human review fits into the process, specifically where it is and isn't required.
+
+---
+
+HOW THE SYSTEM WORKS (QUICK RECAP)
+
+When a new req is opened, the AI scores all incoming resumes against the job description and produces a ranked list. Resumes below the default threshold (currently 0.45) are filtered out and do not appear in the recruiter dashboard. Resumes above the threshold appear ranked by score, highest first.
+
+On average, the AI advances roughly 30% of applicants to the recruiter review stage. The remaining ~70% are moved to the "not advancing" queue automatically.
+
+---
+
+HUMAN-IN-THE-LOOP REQUIREMENTS
+
+After discussion with the recruiting leads and legal, we've established the following requirements for human review:
+
+SENIOR-LEVEL POSITIONS (VP AND ABOVE):
+
+For any role at the VP level or above, a human recruiter must review the AI's ranked list before any candidates are contacted. This means:
+- The recruiter reviews the full list of candidates the AI has advanced.
+- The recruiter also has access to the "not advancing" queue and can manually advance candidates from it if they believe the AI has missed someone.
+- The recruiter's judgment takes precedence over the AI score.
+- All VP+ requisitions must be reviewed by a Senior Recruiter or above.
+
+NON-SENIOR POSITIONS (BELOW VP):
+
+For all other roles, the AI system's ranked candidate list is provided to hiring managers who make final selection decisions. Hiring managers should review the advanced candidates and proceed with outreach based on their judgment.
+
+The AI-filtered queue (candidates below threshold) is available to hiring managers on request but is not part of the standard workflow. Hiring managers are not required to review it.
+
+---
+
+PRACTICAL NOTES
+
+- If a hiring manager has a strong reason to believe the AI may have screened out a good candidate (e.g., they were referred internally), they can request access to the not-advancing queue from the recruiting team.
+- Questions about the AI system can be directed to Priya on the ML team.
+- The default threshold (0.45) can be adjusted for specific requisitions — reach out to the ML team if you believe a req needs a different setting.
+
+---
+
+RATIONALE
+
+We've chosen to focus mandatory human review on senior roles because those decisions carry higher organizational impact and benefit most from senior recruiter judgment. For high-volume, entry-to-mid-level roles, the time savings from the AI pipeline are significant and we don't have the recruiter capacity to do full manual reviews on every req.
+
+---
+
+This memo supersedes any prior informal guidance on AI-assisted screening. Please direct any questions to marcus@quickhire.io or to the #recruiting Slack channel.
+
+Marcus Webb
+VP of Engineering
+QuickHire Inc

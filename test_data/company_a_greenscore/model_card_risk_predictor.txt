@@ -1,0 +1,167 @@
+GREENSCORE AI — MODEL CARD
+Investment Risk Predictor (GS-MDL-003)
+Version: 2.1
+Document ID: GS-MC-003-v2.1
+Owner: ML Engineering Lead / Chief Risk Officer
+Last Updated: 2026-03-15
+Classification: Internal — Confidential
+Review Cycle: Quarterly or upon model update
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. MODEL PURPOSE AND DESCRIPTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The Investment Risk Predictor classifies investment proposals and existing client portfolios into three ordinal risk tiers: LOW, MEDIUM, and HIGH. These classifications serve three primary functions within GreenScore AI's operations:
+
+Function 1 — Client Suitability Matching: Risk tier classifications are compared against client risk appetite assessments (collected at onboarding and refreshed annually) to determine whether an investment proposal is appropriate for a given client. A HIGH-tier investment proposed to a LOW-appetite client triggers a mandatory suitability review.
+
+Function 2 — MiFID II Suitability Disclosure: Risk tier outputs contribute to the suitability assessment required under MiFID II Article 25 for investment advice. The model's output is one input into the compliance team's suitability determination, which also considers client knowledge, experience, and financial situation.
+
+Function 3 — Internal Risk Monitoring: Aggregate risk tier distributions across the client portfolio book are reported to the Chief Risk Officer and the Board AI Ethics Committee on a monthly basis. Significant shifts in distribution (e.g., a sudden increase in HIGH-tier classifications) trigger a risk review.
+
+The model is a LightGBM gradient boosted classifier with 47 engineered features derived from portfolio composition, market data, and ESG characteristics. The model outputs a probability distribution across the three classes, with the predicted class being the argmax. Probability scores are displayed alongside the predicted tier in all human review interfaces to support informed advisor judgment.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. INPUT FEATURES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Feature categories and counts:
+- Portfolio volatility metrics (realized, implied): 8 features
+- Duration and interest rate sensitivity: 5 features
+- Concentration metrics (Herfindahl-Hirschman Index across sectors, geographies): 4 features
+- Liquidity metrics (days-to-liquidate, bid-ask spread proxies): 6 features
+- Credit quality (weighted average credit rating, sub-investment-grade exposure %): 5 features
+- ESG risk metrics (ESG score from GS-MDL-001, controversy score, climate value-at-risk): 7 features
+- Macroeconomic context (VIX level, yield curve slope, credit spread index): 6 features
+- Leverage and derivatives exposure: 4 features
+- Benchmark relative metrics (tracking error, beta): 2 features
+
+Total: 47 features. No features derived from client demographic data (age, gender, ethnicity, wealth band) are included in model inputs; these are handled separately in the suitability framework.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. PERFORMANCE METRICS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Evaluation was conducted on a held-out test set of 3,200 portfolio assessments drawn from the 2020–2024 period. Ground truth labels were established by a panel of three senior risk analysts using the pre-existing rule-based risk classification framework (now replaced by this model), providing a stable and defensible benchmark.
+
+Overall Classification Performance:
+  Macro-averaged Precision:          0.912
+  Macro-averaged Recall:             0.904
+  Macro-averaged F1:                 0.908
+  Weighted F1 (class-balanced):      0.921
+  Cohen's Kappa vs. analyst panel:   0.887 (near-perfect agreement)
+
+Per-Class Performance:
+  LOW risk tier:    Precision 0.941, Recall 0.933, F1 0.937
+  MEDIUM risk tier: Precision 0.889, Recall 0.878, F1 0.883
+  HIGH risk tier:   Precision 0.906, Recall 0.901, F1 0.903
+
+Calibration:
+  Expected Calibration Error (ECE):  0.038 (well-calibrated; ECE < 0.05 is team target)
+  Reliability diagram reviewed quarterly; no systematic overconfidence detected
+
+Confusion Matrix Summary:
+  MEDIUM classified as LOW: 1.8% of MEDIUM cases — monitored closely as these could result in under-review
+  HIGH classified as MEDIUM: 0.9% of HIGH cases — the most consequential error type; SHAP review and mandatory human oversight provide compensating control
+  No LOW cases have been misclassified as HIGH (false high-risk) in test evaluation
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. HUMAN OVERSIGHT MECHANISMS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Human oversight for this model is the strictest among all three GreenScore AI systems, reflecting the model's role in regulatory suitability determinations and its precautionary high-risk status under EU AI Act Annex III analysis.
+
+HIGH-Tier Classifications (Mandatory Senior Analyst Review):
+- All HIGH-tier classifications are placed in a dedicated review queue immediately upon generation
+- The classification, probability scores, and SHAP waterfall chart (top-10 feature contributions) are presented to a Senior Analyst via the Risk Review Portal
+- The Senior Analyst must either confirm the HIGH classification (with a written rationale note of minimum 30 words), downgrade it with a documented justification, or escalate to the Compliance Officer
+- No HIGH-tier classification may be communicated to a client or used in a MiFID II suitability determination until Senior Analyst sign-off is recorded in the audit log
+- SLA: Sign-off must occur within 24 hours of classification generation
+- If the 24-hour SLA is breached, the Compliance Officer is automatically notified
+
+MEDIUM-Tier Classifications (Analyst Review):
+- All MEDIUM-tier classifications are routed to an analyst review queue with a 48-hour SLA
+- Analysts review the classification and probability score; SHAP chart is available on demand
+- MEDIUM classifications may proceed to downstream use without analyst sign-off if no flag is raised within the SLA window (passive acceptance)
+- Any analyst concern triggers escalation to Senior Analyst
+
+LOW-Tier Classifications:
+- Processed automatically after a 10-minute hold period during which the model's confidence score is validated
+- If confidence for LOW classification is below 0.85, the classification is promoted to MEDIUM review queue
+- LOW classifications with confidence >= 0.85 proceed without human review
+
+Override Authority:
+- Any analyst may override any classification with a documented reason
+- Overrides are logged in the immutable audit trail
+- All overrides are reviewed monthly by the Chief Risk Officer for systematic patterns
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. EXPLAINABILITY APPROACH
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SHAP Waterfall Charts:
+For every classification, SHAP values are computed using the TreeExplainer for LightGBM. The analyst review interface displays a waterfall chart showing the contribution of each feature to the predicted risk tier, starting from the base rate and adding or subtracting feature contributions to arrive at the final prediction. For HIGH classifications, the top-10 contributing features and their values are also printed in a structured summary table alongside the chart.
+
+Example output for a HIGH classification: "Portfolio classified as HIGH risk (probability: 0.91). Primary drivers: Realized 90-day volatility (22.4%; contributes +0.18 to HIGH probability), Sub-investment-grade exposure (31%; contributes +0.14), Low ESG controversy score (contributes +0.09), Concentrated sector exposure — Energy GICS sector at 28% (contributes +0.08)."
+
+Counterfactual Explanations:
+For HIGH-tier classifications subject to Senior Analyst review, the system also generates a counterfactual explanation: "This portfolio would be classified MEDIUM risk if sub-investment-grade bond exposure were reduced to below 18%." This helps advisors and clients understand actionable paths to a different risk outcome.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. BIAS TESTING RESULTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Q1 2026 Bias Audit (GS-AUDIT-BIAS-2026-Q1) tested the following dimensions for GS-MDL-003:
+
+Geographic Portfolio Composition Bias:
+- Portfolios with equivalent risk factor profiles but differing in geographic exposure (emerging vs. developed market equities) were compared
+- No systematic difference in risk tier assignment attributable to geographic label (as opposed to underlying risk factors such as volatility and liquidity) — PASS
+
+ESG Score Influence Audit:
+- Tested whether portfolios with similar financial risk profiles but differing ESG scores received systematically different risk tier classifications
+- Finding: Portfolios with low ESG scores did receive marginally higher risk tier assignments (impact ratio 0.94 for HIGH classification rate among low-ESG-score portfolios vs. high-ESG-score portfolios). This reflects genuine model learning (low ESG scores correlate with higher controversy risk and governance failures in training data) rather than bias. Validated as appropriate by Chief Risk Officer. Documented for transparency.
+
+Client Demographic Data: Not used as model input. No bias testing required on this dimension.
+
+Overall Bias Audit Result: PASSED. ESG-score-related differential finding is documented and validated as appropriate model behavior.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. KNOWN LIMITATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Novel Risk Regimes: The model was trained on historical data through 2024. Portfolios exposed to novel risk types not well-represented in training data (e.g., exposure to newly created asset classes, AI-company concentration risk) may be under-classified. Senior analysts are trained to flag anomalous portfolio compositions for human-led risk assessment.
+
+2. ESG Data Dependency: Climate value-at-risk and controversy scores (inputs from GS-MDL-001) carry the limitations of the upstream classifier. This dependency is explicitly disclosed.
+
+3. Ordinal Classification Boundary Sensitivity: The MEDIUM/HIGH boundary is the most consequential classification threshold. Cases near this boundary (model probability for HIGH between 0.45 and 0.60) are flagged as "borderline" and automatically routed to the MEDIUM review process regardless of predicted class.
+
+4. Static Threshold Calibration: The classification thresholds were calibrated against the 2020–2024 period. Annual recalibration is scheduled; the next recalibration is due Q2 2026.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. VERSION HISTORY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+v1.0 (2023-11-20): Initial deployment. Random forest classifier, 32 features. F1 0.878.
+v2.0 (2024-08-10): Rebuilt on LightGBM with 47 features. ESG risk features added. F1 improved to 0.901. SHAP integration.
+v2.1 (2025-07-22): Counterfactual explanation generator added. Borderline-case routing implemented. Calibration improved (ECE 0.038). Current production version.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. INCIDENT HISTORY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+No AI incidents have been recorded for this model since deployment (2023-11-20). The mandatory Senior Analyst review gate for all HIGH classifications is specifically designed to prevent client-facing errors from reaching the incident threshold.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+10. REGULATORY CLASSIFICATION NOTE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+As of Q4 2025, GreenScore AI has adopted a precautionary high-risk compliance posture for this model under EU AI Act Annex III. The model may fall under Annex III point 5(b) ("AI systems intended to be used for the purpose of assessing and classifying natural persons in the context of creditworthiness assessment or credit scoring") or adjacent categories depending on European AI Office guidance. GreenScore AI's General Counsel is monitoring regulatory developments and expects a formal determination by Q3 2026. In the interim, all Annex III Article 9 requirements (risk management system), Article 10 requirements (data governance), and Article 14 requirements (human oversight) are being met as if the model were formally classified as high-risk.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+11. CONTACT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Technical Owner: ML Engineering Lead — ml-lead@greenscore.ai
+Business Owner: Chief Risk Officer — cro@greenscore.ai
+AI Governance Contact: AI Governance Team — ai-governance@greenscore.ai
+Compliance Contact: Compliance Officer — compliance@greenscore.ai

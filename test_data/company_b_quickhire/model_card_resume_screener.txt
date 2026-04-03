@@ -1,0 +1,103 @@
+MODEL CARD — Resume Screener AI
+QuickHire Inc | Internal Document
+Last Updated: October 15, 2024
+Author: Priya Nambiar, Senior ML Engineer
+Status: Production
+
+---
+
+OVERVIEW
+
+The Resume Screener AI is a machine learning model deployed in QuickHire Inc's candidate processing pipeline. The model ingests raw resume text and structured fields (education, job titles, years of experience, skills keywords) and outputs a relevance score between 0 and 1 for a given job requisition. Resumes scoring below a configurable threshold are moved to a "not advancing" queue; those above the threshold are passed to the recruiter dashboard for review.
+
+The model has been in production since March 2023 and is currently used across all open requisitions on the QuickHire platform.
+
+---
+
+MODEL DETAILS
+
+Model type: Gradient-boosted classifier (XGBoost) with a fine-tuned sentence embedding layer (SBERT) for resume-to-job-description semantic similarity scoring.
+
+Input features:
+- Resume text (full document, parsed to plain text via Textract)
+- Structured fields: years of experience, highest degree, skills list, prior job titles
+- Job description text (vectorized at requisition creation time)
+
+Output: Float score [0.0, 1.0] representing predicted candidate-job fit. Threshold for advancement is configurable per requisition (default: 0.45).
+
+Training data: Historical resume and hiring outcome data sourced from QuickHire platform customers (2019–2022). Dataset included approximately 120,000 resume-outcome pairs. Outcomes were defined as "hired" vs. "not hired" based on customer hiring manager decisions.
+
+Framework: Python 3.10, scikit-learn 1.1, XGBoost 1.7, sentence-transformers 2.2
+Serving infrastructure: AWS SageMaker endpoint, us-east-1
+Model version in production: v2.3.1
+
+---
+
+PERFORMANCE METRICS
+
+Evaluation was conducted on a held-out internal test set (15% split, stratified by industry vertical).
+
+Precision: 0.82
+Recall: 0.79
+F1 Score: 0.80
+AUC-ROC: 0.87
+
+These metrics reflect overall model performance on the held-out test set as of the last evaluation cycle. Performance is considered satisfactory for production use.
+
+Note: Threshold tuning was performed to balance precision and recall for the default requisition type. Individual customer configurations may vary.
+
+---
+
+INTENDED USE
+
+Primary use case: First-pass screening of resumes to rank and filter candidates for open positions posted on the QuickHire platform.
+
+Intended users: HR professionals, recruiters, and hiring managers using the QuickHire SaaS platform.
+
+Out-of-scope uses: The model is not intended for use as the sole decision-maker in a hiring process. Final hiring decisions are made by human recruiters and hiring managers who review the ranked candidate lists produced by the system.
+
+---
+
+BIAS AND FAIRNESS ASSESSMENT
+
+Initial validation completed at launch (March 2023). Disparate impact analysis was conducted using an internal test set. Results were within acceptable parameters at the time of evaluation.
+
+The model was reviewed for potential bias prior to production deployment. The training data was reviewed for obvious labeling issues. No systematic issues were identified during initial review.
+
+Known considerations: The model learns from historical hiring outcomes, which may reflect prior human hiring biases present in training data. The team is aware of this limitation and it was factored into the initial review.
+
+---
+
+LIMITATIONS
+
+- Model may not perform optimally for all resume formats. Highly stylized PDFs or image-based resumes may not parse correctly, which can affect scoring.
+- The model was trained primarily on resumes from industries well-represented in the QuickHire customer base (tech, finance, professional services). Performance on resumes from other industries has not been formally evaluated.
+- The model scores resumes relative to a job description. The quality of the job description text affects scoring accuracy.
+- Model performance has not been re-evaluated since the initial launch validation.
+
+---
+
+HUMAN OVERSIGHT
+
+Final hiring decisions are made by human recruiters and hiring managers. The AI system produces a ranked and filtered list of candidates, which is then reviewed by the hiring team before any outreach or advancement decisions are made.
+
+For senior-level roles (VP and above), additional human review steps are in place per the HITL policy.
+
+---
+
+MONITORING AND MAINTENANCE
+
+The model endpoint is monitored for availability and latency via CloudWatch. Alerts are configured for error rates exceeding 1% of requests.
+
+Periodic review of model performance is planned. No formal retraining schedule has been established. Retraining requests are submitted via the ML team backlog.
+
+---
+
+CONTACT
+
+Model owner: Priya Nambiar (priya@quickhire.io)
+Platform team Slack: #ml-platform
+
+---
+
+This document reflects the model state as of October 2024. Configuration or behavior may have changed since this version was published.

@@ -1,0 +1,170 @@
+GREENSCORE AI — DATA GOVERNANCE POLICY
+Document ID: GS-POL-DG-001
+Version: 2.0
+Owner: Chief Data Officer / Head of AI Governance
+Approved by: Chief Risk Officer, General Counsel, Board Audit Committee
+Effective Date: 2025-07-01
+Last Reviewed: 2026-01-20
+Next Review: 2027-01-20
+Classification: Internal — Confidential
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. PURPOSE AND SCOPE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This policy establishes GreenScore AI's data governance framework, covering the classification, sourcing, lineage tracking, retention, access control, and protection of all data assets — with particular attention to data used in AI model training, validation, and operation.
+
+This policy applies to:
+- All employees, contractors, and third-party processors handling GreenScore AI data
+- All data used in the training, testing, monitoring, or operation of AI models (GS-MDL-001, GS-MDL-002, GS-MDL-003)
+- All GreenScore AI systems that store, process, or transmit data
+- Third-party data processors and sub-processors engaged by GreenScore AI
+
+This policy gives effect to GDPR Articles 5 (data principles), 24 (controller responsibilities), 25 (data protection by design), 28 (processor agreements), and 32 (security of processing); EU AI Act Articles 10 (data governance for high-risk AI), 13 (transparency); and NIST AI RMF GOVERN 1.7 (data governance policies).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. DATA CLASSIFICATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+All GreenScore AI data assets are classified into one of four tiers:
+
+PUBLIC: Data that is intentionally made available to the general public and carries no restriction on further distribution. Examples: published ESG research reports (with appropriate disclosures), publicly released model cards, press releases, company website content.
+
+INTERNAL: Data that is intended for use within GreenScore AI but would not cause significant harm if inadvertently disclosed. Examples: internal process documents, non-sensitive operational metrics, meeting minutes, training materials. Requires authentication to access but no additional controls.
+
+CONFIDENTIAL: Data that, if disclosed to unauthorized parties, could harm GreenScore AI's competitive position, client relationships, or regulatory standing. Examples: client identities and portfolio holdings, proprietary ESG scoring methodologies, model performance dashboards, AI model weights and artifacts, bias audit working papers. Requires role-based access controls, encryption in transit and at rest, and audit logging of access.
+
+RESTRICTED: The highest sensitivity tier. Data whose unauthorized disclosure could result in regulatory sanctions, client financial harm, or significant legal liability. Examples: special category personal data (GDPR Art. 9), authentication credentials and cryptographic keys, regulatory correspondence and legal advice, incident post-mortem reports for P1 incidents. Requires all CONFIDENTIAL controls plus explicit authorization for each access, prohibition on removal from controlled environments, and mandatory DPO/Legal review before any sharing.
+
+Data owners are responsible for classifying data assets in their domain. The Data Governance Team audits classification accuracy annually.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. TRAINING DATA PROVENANCE REQUIREMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+All data used for training, fine-tuning, or evaluating AI models must meet the following provenance requirements before use. The ML Engineering Lead is responsible for ensuring compliance for each model training run.
+
+3.1 Consent and Licensing
+
+- Third-party data must be used only under a valid, current license or data sharing agreement. License terms must be reviewed by Legal before any new data source is used for model training.
+- Personal data used for model training must have an appropriate legal basis under GDPR. Where consent is the legal basis, valid consent must be obtained and documented before training.
+- Internal client data may be used for model training only if: (a) clients have been notified (in the privacy notice or separately), (b) data is anonymized or pseudonymized to the maximum extent possible, and (c) the DPO has reviewed and approved the use.
+- The current status of all training data sources:
+
+| Data Source                       | Type           | License / Basis          | Reviewed by Legal | Expiry       |
+|-----------------------------------|----------------|--------------------------|-------------------|--------------|
+| MSCI ESG Reports                  | Third-party    | Commercial license       | Yes (2025-06)     | 2027-06      |
+| Bloomberg Factor Data             | Third-party    | Commercial license       | Yes (2025-06)     | 2026-12      |
+| Refinitiv Market Data             | Third-party    | Commercial license       | Yes (2025-03)     | 2026-12      |
+| SEC 10-K Filings                  | Public domain  | No license required      | Confirmed         | N/A          |
+| CDP Disclosures                   | Public domain  | CDP open data terms      | Yes (2024-11)     | N/A          |
+| GreenScore Human-Labeled Dataset  | Internal       | GDPR Art. 6(1)(f)        | DPO approved      | N/A          |
+| Anonymized Client Portfolio Data  | Internal       | GDPR Art. 6(1)(f) + LIA  | DPO approved      | Annual review|
+
+3.2 Synthetic Data Policy
+
+GreenScore AI may use synthetic data for model development and testing purposes subject to the following conditions:
+- Synthetic data generation methodology must be documented before use
+- Synthetic data derived from real personal data must be subjected to a re-identification risk assessment; assessment threshold is a re-identification probability below 5% for any individual record
+- Synthetic data used for bias testing must be reviewed by the AI Governance Team for representational bias in the synthetic generation process itself
+- Synthetic data may not substitute for real-world validation data in production model approval; it may supplement but not replace real validation sets
+
+3.3 Prohibited Training Data
+
+The following data may NOT be used for model training without explicit written approval from the Chief Risk Officer, DPO, and General Counsel:
+- Scraped web data that may contain unlicensed copyrighted material
+- Data obtained from data brokers without verified provenance chains
+- Social media data involving individuals who have not consented to commercial AI training use
+- Data that has been identified as containing systematic errors, biases, or fabrications without adequate remediation
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. DATA LINEAGE TRACKING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+GreenScore AI maintains end-to-end data lineage for all data used in AI systems, enabling the company to trace any model output back to its source data, the model version that produced it, and the human review decisions applied to it.
+
+Lineage is captured at three levels:
+
+Dataset Level: Each training dataset is registered in the Data Asset Registry (GS-SYS-DAR-001) with a unique dataset ID, version, provenance information, creation date, and a hash of the dataset content. Any update to a training dataset creates a new version entry.
+
+Pipeline Level: All data transformation steps (preprocessing, feature engineering, aggregation, anonymization) are defined in version-controlled code (Git) with the commit hash recorded in the training run log alongside each dataset version.
+
+Model Output Level: Each model output record in the AI Output Audit Log includes the model ID, model version, input data source reference, and timestamp, enabling full reconstruction of the data-to-output chain for any individual output.
+
+The lineage system is designed to satisfy EU AI Act Article 10's data governance requirements for high-risk AI systems, including the requirement to document data provenance and enable the identification of potential biases in training data.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. RETENTION SCHEDULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+| Data Category                              | Retention Period | Deletion Method              | Trigger                        |
+|--------------------------------------------|------------------|------------------------------|--------------------------------|
+| Raw source documents (corporate filings)   | 2 years          | Automated scheduled deletion | 2 years from acquisition       |
+| Training dataset versions                  | Life of model +2 | Secure deletion with log     | Model decommission + 2 years   |
+| Model weights and artifacts                | Life of model +2 | Secure deletion with log     | Model decommission + 2 years   |
+| Model outputs (classification/scores)      | 5 years          | Automated scheduled deletion | 5 years from generation        |
+| Client reports                             | 7 years          | Secure archival then deletion| 7 years from delivery          |
+| HITL audit log                             | 7 years          | Archived; not deleted        | 7 years from record creation   |
+| AI incident records                        | 7 years          | Archived; not deleted        | 7 years from incident closure  |
+| DPIA records                               | Life of processing +3 | Archived               | Processing cessation + 3 years |
+| Bias audit working papers                  | 7 years          | Archived                     | 7 years from audit date        |
+
+Retention schedule exceptions require written approval from the DPO (for personal data) and/or the Head of AI Governance (for AI artifacts).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. ACCESS CONTROLS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Access to data assets is governed by the principle of least privilege: employees are granted the minimum access required to perform their role.
+
+- CONFIDENTIAL and RESTRICTED data: Role-based access controls managed in GreenScore AI's identity and access management (IAM) system (Okta). Access requests require line manager and data owner approval. Access is reviewed quarterly; unused access is revoked automatically after 90 days of inactivity.
+- Model weights and training datasets: Accessible only to ML Engineering team members and AI Governance Team. No client-facing or business operations roles have access.
+- Production database access: Restricted to ML Engineering Lead and designated engineers. Changes to production data require a two-person review (four-eyes principle).
+- Audit logs: Read-only access for AI Governance Team, Compliance, Internal Audit, and DPO. No modification access for any role.
+
+Multi-factor authentication (MFA) is mandatory for all systems containing CONFIDENTIAL or RESTRICTED data. Privileged access (production infrastructure) uses hardware MFA tokens.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. THIRD-PARTY DATA PROCESSOR AGREEMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+All third-party processors that handle personal data on behalf of GreenScore AI must execute a Data Processing Agreement (DPA) before processing commences. DPAs must include:
+- Clear description of processing activities and purposes
+- Processor's security obligations (GDPR Article 32 standard)
+- Sub-processor notification and approval requirements
+- Data subject rights assistance obligations
+- Audit cooperation and evidence of compliance rights
+- Return or deletion of data upon contract termination
+- Breach notification within 48 hours of the processor becoming aware
+
+Current third-party processors with executed DPAs:
+- Microsoft Azure (Azure OpenAI, AWS S3 competitor) — DPA executed; annual security review
+- Amazon Web Services (data lake and RDS hosting) — AWS DPA executed; SOC 2 Type II certification reviewed annually
+- MSCI Inc. (licensed data; no personal data shared) — data license agreement; no DPA required
+- Bloomberg L.P. (licensed data; no personal data shared) — data license agreement; no DPA required
+
+The DPO maintains the register of data processing agreements. Any new third-party processor must be registered with and approved by the DPO before data sharing commences.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. BREACH NOTIFICATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Personal data breaches are reported per GreenScore AI's Data Breach Response Procedure (GS-POL-BREACH-001), which implements GDPR Articles 33 and 34:
+- Internal notification: Any employee who discovers or suspects a data breach must notify the DPO within 2 hours
+- Supervisory authority notification: Within 72 hours of becoming aware of a breach that poses a risk to individuals' rights and freedoms (GDPR Article 33)
+- Individual notification: Without undue delay if the breach is likely to result in high risk to individuals (GDPR Article 34)
+
+AI-related data breaches (e.g., unauthorized access to training datasets, model outputs, or client reports) are also reported under the AI Incident Response Plan (GS-POL-IR-001) in parallel with the GDPR breach procedure. The DPO and Head of AI Governance coordinate to ensure both processes run concurrently and consistently.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. RELATED DOCUMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- DPIA: ESG Scoring System (GS-DPIA-001)
+- AI Model Inventory (GS-INV-2026-001)
+- AI Incident Response Plan (GS-POL-IR-001)
+- HITL Policy (GS-POL-HITL-001)
+- Data Breach Response Procedure (GS-POL-BREACH-001)
+- NIST AI RMF Self-Assessment (GS-NIST-RMF-2026)
+
+Document approved by: Chief Data Officer, Chief Risk Officer, General Counsel, Board Audit Committee

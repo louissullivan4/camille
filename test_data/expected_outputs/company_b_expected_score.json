@@ -1,0 +1,132 @@
+{
+  "organization": "QuickHire Inc",
+  "industry": "HR Tech — AI-powered resume screening and candidate matching",
+  "employee_count": 85,
+  "ai_systems_count": 3,
+  "expected_overall_score": { "min": 38, "max": 62 },
+  "expected_risk_tier": "medium",
+  "expected_dimension_scores": {
+    "model_inventory": {
+      "min": 10,
+      "max": 25,
+      "rationale": "No formal model inventory submitted. Model card exists but is 18 months stale. ChatGPT integration undocumented.",
+      "key_flags": [
+        "no_formal_model_inventory",
+        "model_card_18_months_outdated",
+        "chatgpt_integration_not_documented_in_any_governance_doc",
+        "risk_classification_absent"
+      ]
+    },
+    "human_oversight": {
+      "min": 30,
+      "max": 50,
+      "rationale": "HITL exists but only for VP+ roles. Model eliminates ~70% of applicants with no human review for non-senior roles.",
+      "key_flags": [
+        "hitl_covers_senior_roles_only",
+        "no_hitl_for_sub_vp_screening_decisions",
+        "no_escalation_path_documented",
+        "no_override_mechanism",
+        "no_review_sla",
+        "no_audit_trail_requirements"
+      ]
+    },
+    "bias_fairness": {
+      "min": 15,
+      "max": 35,
+      "rationale": "Only one bias audit at launch (March 2023), now 3 years old. No follow-up. Impact ratios borderline (0.81-0.82). Active EEOC complaint.",
+      "key_flags": [
+        "bias_audit_3_years_stale",
+        "no_ongoing_bias_testing",
+        "borderline_impact_ratios_0_81_0_82",
+        "self_assessed_audit_no_third_party",
+        "no_nyc_ll144_compliance_documentation",
+        "active_eeoc_complaint_not_addressed_in_docs"
+      ]
+    },
+    "data_governance": {
+      "min": 25,
+      "max": 45,
+      "rationale": "Basic data retention policy exists but is generic, not AI-specific. No consent mechanism for training data use.",
+      "key_flags": [
+        "no_ai_specific_data_governance",
+        "no_training_data_consent_mechanism",
+        "no_candidate_right_to_explanation",
+        "no_cross_border_transfer_policy",
+        "90_day_ai_output_retention_may_be_insufficient_for_audit_trail"
+      ]
+    },
+    "incident_response": {
+      "min": 0,
+      "max": 10,
+      "rationale": "No AI incident response plan exists. This is a critical gap given active EEOC complaint.",
+      "key_flags": [
+        "no_ai_incident_response_plan",
+        "no_incident_classification_for_ai_failures",
+        "no_regulator_notification_procedure",
+        "no_rollback_procedure"
+      ]
+    },
+    "monitoring_drift": {
+      "min": 10,
+      "max": 30,
+      "rationale": "No monitoring documentation submitted. Model card (stale) references post-launch performance tracking but no current status.",
+      "key_flags": [
+        "no_monitoring_documentation",
+        "no_drift_detection_methodology",
+        "no_retraining_triggers_defined",
+        "no_alerting_mechanism_documented"
+      ]
+    },
+    "regulatory_compliance": {
+      "min": 20,
+      "max": 40,
+      "rationale": "NYC LL144 clearly applies (AEDT used for employment decisions in NYC) but no compliance documentation. Active EEOC complaint signals regulatory exposure.",
+      "key_flags": [
+        "nyc_ll144_applies_no_compliance_docs",
+        "no_annual_bias_audit_as_required_by_ll144",
+        "no_employee_notice_requirement_documented",
+        "active_eeoc_complaint_jan_2025",
+        "chatgpt_integration_creates_unknown_regulatory_exposure"
+      ]
+    },
+    "third_party_risk": {
+      "min": 5,
+      "max": 20,
+      "rationale": "ChatGPT API used for interview scheduling with no governance wrapper, vendor assessment, or contractual AI-specific protections documented.",
+      "key_flags": [
+        "chatgpt_api_no_governance_wrapper",
+        "no_vendor_risk_assessment",
+        "no_contractual_ai_protections_documented",
+        "unknown_openai_data_handling_for_candidate_communications"
+      ]
+    }
+  },
+  "expected_critical_flags": [
+    "Bias audit is 3 years old — no follow-up since initial launch",
+    "No incident response plan for AI failures",
+    "NYC Local Law 144 applies but zero compliance documentation exists",
+    "Active EEOC complaint (Jan 2025) not addressed in any governance document",
+    "ChatGPT integration processes candidate data with no governance wrapper",
+    "HITL policy covers only VP+ roles — 70%+ of applicants screened out without human review"
+  ],
+  "expected_amber_flags": [
+    "Model card last updated October 2024 — 18 months stale",
+    "Bias audit impact ratios borderline (0.81–0.82, just above 80% rule threshold)",
+    "No formal model inventory",
+    "Data retention policy is generic, not AI-specific"
+  ],
+  "expected_green_flags": [
+    "HITL policy exists (even if partial)",
+    "Data retention policy exists (even if generic)",
+    "Model card exists (even if stale)"
+  ],
+  "recommended_coverage_conditions": [
+    "Require updated bias audit (third-party independent) within 60 days as condition of binding",
+    "Require NYC LL144 annual bias audit compliance immediately",
+    "Require AI incident response plan within 30 days",
+    "Require governance wrapper documentation for ChatGPT integration",
+    "Require HITL extension to all roles, not just VP+, or sublimit for non-senior screening decisions",
+    "Exclude EEOC complaint filed Jan 2025 from retroactive coverage"
+  ],
+  "validation_notes": "This is the primary demo persona. The scoring should land solidly in MEDIUM tier. The most important correct extractions: (1) detecting no IR plan, (2) detecting stale bias audit with specific age, (3) detecting LL144 non-compliance, (4) detecting HITL partial coverage, (5) detecting ChatGPT integration without governance. If all 5 are correctly flagged as critical, extraction is working correctly."
+}

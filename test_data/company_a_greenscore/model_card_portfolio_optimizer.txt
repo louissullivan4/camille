@@ -1,0 +1,146 @@
+GREENSCORE AI — MODEL CARD
+Portfolio Optimizer (GS-MDL-002)
+Version: 1.8
+Document ID: GS-MC-002-v1.8
+Owner: Quant Engineering Lead / Head of Investment Strategy
+Last Updated: 2026-03-15
+Classification: Internal — Confidential
+Review Cycle: Quarterly or upon model update
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. MODEL PURPOSE AND DESCRIPTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The Portfolio Optimizer generates portfolio allocation recommendations for human investment advisors. Given a client's current portfolio holdings, risk profile, investment objectives, ESG score constraints, and applicable regulatory restrictions, the system produces a recommended target allocation across asset classes (equities, fixed income, alternatives, cash) and, within equities, across sectors and geographies.
+
+The system is a hybrid of two components:
+
+Component 1 — Return Forecasting Model: An XGBoost gradient boosted regressor that generates 12-month forward return estimates and volatility estimates for each asset class and major equity sub-segment. The model is trained on 15 years of MSCI World index returns, Bloomberg factor data (value, momentum, quality, low-volatility factors), and ESG sub-scores from GS-MDL-001. The forecasting model outputs expected return distributions, not point estimates, using a Monte Carlo simulation layer (10,000 iterations) to capture tail risk.
+
+Component 2 — Constrained Optimization Solver: A convex optimization engine built on CVXPY that takes the return distribution outputs from Component 1 and solves for the mean-variance efficient portfolio subject to client-specific hard constraints. These constraints include: minimum ESG score floor (configurable per client mandate), sector concentration limits (no single GICS sector > 25% unless overridden), regulatory asset-class restrictions (e.g., MiFID II category restrictions), and maximum tracking error relative to a client-specified benchmark.
+
+The system outputs a recommended allocation as a percentage weight vector, a set of proposed trades to transition from current to target allocation, and an interactive explanation panel for the advisor review interface (see Section 6 on Explainability).
+
+The model does NOT execute trades. It does NOT communicate directly with clients. All recommendations pass through a human advisor review step before any action is taken.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. INTENDED USERS AND USE CASES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Primary Users:
+- Investment Advisors (internal) — sole recipients of model recommendations; all outputs reviewed before client delivery
+- Portfolio Managers (internal) — use recommendations as one input among several
+- AI Governance Team (internal) — monitoring and audit access
+
+Intended Use Cases:
+- Generation of initial portfolio recommendations at client onboarding
+- Quarterly portfolio rebalancing proposals
+- Scenario analysis: "What would this portfolio look like if we applied a net-zero carbon constraint?"
+- ESG constraint optimization: finding the efficient frontier given an ESG score floor
+
+Out-of-Scope Uses:
+- Autonomous trade execution (explicitly prohibited; no execution API integration exists)
+- High-frequency or intraday trading recommendations (model is designed for quarterly rebalancing horizons)
+- Cryptocurrency or digital asset allocation (not in training data; outputs not validated for this asset class)
+- Individual security selection below the asset-class/sector level (model operates at segment level, not single stock)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. PERFORMANCE METRICS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Performance is evaluated via walk-forward back-testing across three historical periods: 2015–2018 (bull market), 2018–2020 (volatility including COVID drawdown), and 2020–2024 (recovery and rate cycle). Metrics are reported on a simulated portfolio assuming model recommendations were followed exactly (representing an upper bound on real-world performance given human override).
+
+Return Forecasting Component:
+  Mean Absolute Error (12-month return forecast):   4.2% annualized
+  Directional Accuracy (sign of return correct):    67.3%
+  Sharpe Ratio improvement vs. static 60/40:        +0.18 (back-test)
+  Maximum Drawdown (model portfolio, 2018–2020):    -18.4% vs. benchmark -22.1%
+
+Optimization Component:
+  Constraint satisfaction rate:                     99.97% (3 violations in 8,400 runs; all due to illiquid asset class edge cases; resolved in v1.7)
+  ESG constraint satisfaction rate:                 100%
+  Trade efficiency (minimizing turnover for equivalent expected return): 91% of optimal
+
+Real-world advisor acceptance rate: 78% of recommendations accepted with no modification; 17% accepted with minor modification; 5% rejected. Rejection reasons are logged and reviewed quarterly.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. EXPLAINABILITY APPROACH — SHAP VALUES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Explainability is a core design requirement for this model, given that advisors must be able to understand and justify recommendations to clients. The following explainability mechanisms are implemented:
+
+SHAP (SHapley Additive exPlanations) Values:
+For each return forecast generated by Component 1, the advisor review interface displays a SHAP waterfall chart showing the contribution of each input feature to the forecast for a given asset segment. The top-10 contributing features are shown. Typical high-influence features include: trailing 12-month momentum factor, current ESG composite score trend, yield spread relative to historical range, and geographic economic cycle indicator.
+
+SHAP is computed using the TreeExplainer implementation from the shap Python library (v0.44.1), which provides exact Shapley values for tree-based models with negligible computational overhead. SHAP values are cached alongside each recommendation for audit trail purposes.
+
+Plain-Language Rationale:
+In addition to SHAP charts, a rule-based natural language generator produces a 3–5 sentence plain-language summary for each recommended allocation change. For example: "Increasing allocation to European investment-grade fixed income from 12% to 17% is driven primarily by favorable yield spread versus historical average (+1.8 standard deviations) and improvement in issuer-level ESG governance scores over the past two quarters. This change reduces overall portfolio carbon intensity by an estimated 8%."
+
+Constraint Transparency:
+For any constraint that was binding (i.e., the optimizer was forced away from the unconstrained optimum), the interface flags the constraint and quantifies the estimated return cost of maintaining it (e.g., "ESG floor constraint costs an estimated 0.3% expected annual return vs. unconstrained portfolio").
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. BIAS TESTING RESULTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Portfolio optimization models can exhibit bias in the form of systematic underweighting of certain geographies or sectors correlated with protected characteristics. Q1 2026 bias testing examined the following dimensions:
+
+Geographic Allocation Bias (emerging vs. developed markets):
+- Compared model recommendations for equivalent-risk client profiles differing only in mandate geographic scope
+- No systematic underallocation to EM relative to risk-adjusted benchmarks identified — PASS
+
+ESG Score Dependency Chain:
+- Because GS-MDL-002 ingests ESG scores from GS-MDL-001, any geographic bias in the upstream classifier can propagate. The AI Governance Team tracks this dependency explicitly. Q1 2026 finding: marginal South/Southeast Asia classification quality in GS-MDL-001 translates to a < 0.4% systematic ESG score underestimation for affected issuers. The quant team has implemented a geographic calibration adjustment as a compensating control.
+
+Client Demographic Bias:
+- Model does not receive or process client demographic data. All recommendations are generated solely on financial and ESG inputs.
+- Reviewed advisor override patterns segmented by client AUM band (proxy for client sophistication): no systematic pattern of advisors overriding recommendations differently based on client size — PASS
+
+Overall Bias Audit Result: PASSED. One dependency-chain finding is actively mitigated with a compensating control.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. KNOWN LIMITATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Regime Change Sensitivity: The return forecasting model was trained on a 15-year period that includes significant monetary policy regime changes. Rapid regime changes (e.g., sudden interest rate pivots) can temporarily degrade forecast accuracy. The Monte Carlo simulation layer partially accounts for this but does not eliminate the risk. Advisors are trained to apply greater discretion during monetary policy transition periods.
+
+2. ESG Data Quality Dependency: Model performance is partly dependent on the quality of ESG scores from GS-MDL-001. For issuers with limited disclosure quality, the ESG constraint optimization may be solving against imprecise inputs.
+
+3. Illiquid Asset Classes: The optimization solver assumes sufficient liquidity for all recommended trades. For client portfolios with significant allocations to illiquid alternatives (private equity, real assets), the solver may produce recommendations that are not immediately actionable. Advisors are required to apply a liquidity overlay manually.
+
+4. Back-test Limitations: Historical back-test performance does not guarantee future results. The Sharpe ratio improvement metric is derived from simulated portfolios and may not replicate in live trading due to transaction costs, market impact, and timing differences.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. HUMAN OVERSIGHT MECHANISMS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- All recommendations reviewed by a licensed investment advisor before client delivery (no exceptions)
+- Recommendations involving asset class allocation changes > 5% require documented advisor decision per HITL Policy (GS-POL-HITL-001)
+- Advisors can reject or modify any recommendation; override reason must be logged
+- SHAP explanation must be displayed and acknowledged before an advisor can accept a recommendation
+- Advisor acceptance/rejection patterns reviewed monthly by Head of Investment Strategy to identify systematic model weaknesses
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. VERSION HISTORY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+v1.0 (2024-02-01): Initial deployment. XGBoost forecasting + CVXPY optimizer. ESG constraint support.
+v1.4 (2024-07-15): Added Monte Carlo simulation layer (10,000 iterations). Tail risk quantification.
+v1.6 (2025-01-20): SHAP integration added to advisor review interface.
+v1.7 (2025-06-30): Fixed illiquid asset class constraint violation edge cases. Minor forecasting improvements.
+v1.8 (2025-11-15): Plain-language rationale generator added. Geographic calibration adjustment for EM ESG scores. Current production version.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. INCIDENT HISTORY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+No AI incidents have been recorded for this model since deployment (2024-02-01). The constraint satisfaction failures identified in v1.6 (3 instances) were classified as software bugs rather than AI incidents; they were remediated in v1.7 and are documented in GS-BUG-2025-041.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+10. CONTACT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Technical Owner: Quant Engineering Lead — quant-lead@greenscore.ai
+Business Owner: Head of Investment Strategy — investment-strategy@greenscore.ai
+AI Governance Contact: AI Governance Team — ai-governance@greenscore.ai

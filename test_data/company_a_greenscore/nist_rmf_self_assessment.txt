@@ -1,0 +1,237 @@
+GREENSCORE AI — NIST AI RISK MANAGEMENT FRAMEWORK SELF-ASSESSMENT
+Document ID: GS-NIST-RMF-2026
+Version: 1.2
+Framework Reference: NIST AI RMF 1.0 (January 2023)
+Owner: Head of AI Governance
+Reviewed by: Chief Risk Officer, General Counsel, Board AI Ethics Committee
+Date of Assessment: 2026-03-15
+Classification: Internal — Confidential
+Overall Assessment: MATURE
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INTRODUCTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This self-assessment evaluates GreenScore AI's AI risk management practices against the NIST Artificial Intelligence Risk Management Framework (AI RMF 1.0), published by the National Institute of Standards and Technology in January 2023. The AI RMF organizes AI risk management activities into four core functions: GOVERN, MAP, MEASURE, and MANAGE.
+
+Each sub-category below is scored on a maturity scale of 1 to 5:
+  1 — Initial: Ad hoc; no documented process
+  2 — Developing: Process exists but inconsistently applied; limited documentation
+  3 — Defined: Documented and consistently applied; not yet formally reviewed or audited
+  4 — Managed: Documented, consistently applied, reviewed/audited; metrics collected
+  5 — Optimizing: Continuously improved; benchmarked; industry-leading practice
+
+Coverage is assessed across all three production AI models: GS-MDL-001 (ESG Text Classifier), GS-MDL-002 (Portfolio Optimizer), and GS-MDL-003 (Investment Risk Predictor).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FUNCTION 1: GOVERN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The GOVERN function establishes the organizational structures, policies, processes, and culture necessary for effective AI risk management.
+
+GOVERN 1.1 — AI risk management is treated as an organizational priority
+Maturity Score: 5
+
+Evidence: GreenScore AI has a dedicated AI Governance Team of four full-time professionals, established Q2 2024. The Board of Directors has an AI Ethics Committee with a formal charter and quarterly reporting cadence. The Head of AI Governance is a standing member of the senior leadership team. AI risk is included in the company's Enterprise Risk Register and reviewed at Board level semi-annually. GreenScore AI dedicates approximately 3% of its annual technology budget to AI governance activities, above the fintech industry median.
+
+GOVERN 1.2 — AI risk management roles, responsibilities, and authorities are defined
+Maturity Score: 5
+
+Evidence: Role definitions are documented in the AI Governance Charter (GS-GOV-CHARTER-001). Each AI model has a named Business Owner and Technical Owner (see model cards and inventory). The AI Governance Team, Compliance Officer, Chief Risk Officer, DPO, and General Counsel all have defined and distinct roles in the AI risk management framework. HITL review responsibilities are defined at the individual role level in GS-POL-HITL-001.
+
+GOVERN 1.3 — Organizational teams are committed to AI risk management policies and processes
+Maturity Score: 4
+
+Evidence: All employees with AI-related roles complete mandatory annual AI literacy training. HITL policy completion is tracked in the HR LMS. Policy adherence is monitored via AI Output Audit Log analysis. One area for improvement: AI governance topics are not yet integrated into performance review frameworks for non-technical staff (planned for 2026 review cycle). Score would increase to 5 upon completion.
+
+GOVERN 1.4 — Organizational teams are committed to AI risk management across the supply chain
+Maturity Score: 4
+
+Evidence: Third-party processor agreements (including Azure OpenAI DPA) include AI-specific provisions. License compliance for training data is reviewed annually by Legal. However, GreenScore AI does not currently conduct formal AI risk assessments of all technology vendors (only primary AI-specific processors). Expanding vendor AI risk assessment is on the 2026 roadmap.
+
+GOVERN 1.5 — Organizational risk tolerance for AI is established and communicated
+Maturity Score: 5
+
+Evidence: AI risk appetite is documented in the Enterprise Risk Register with explicit thresholds (e.g., tolerance for model accuracy below defined F1 thresholds, tolerance for SLA breach rates, tolerance for unreviewed HIGH-tier classifications). These thresholds are communicated to model owners and are reflected in model monitoring alert configurations. The Board AI Ethics Committee approves the risk appetite annually.
+
+GOVERN 1.6 — AI policies and practices are publicly accessible
+Maturity Score: 3
+
+Evidence: GreenScore AI's AI transparency disclosure (EU AI Act Art. 52 compliant) is included in all client-facing ESG reports. A summary AI governance statement is published on the company website. Full internal governance documents (this assessment, model cards, bias audits) are not public. Assessment team evaluated whether to publish model cards: decision was to maintain CONFIDENTIAL classification due to competitive sensitivity of model performance details, with a commitment to publish an external AI transparency summary by Q3 2026.
+
+GOVERN 2.1 — AI policies, processes, and practices are documented and current
+Maturity Score: 5
+
+Evidence: All AI governance documents are version-controlled, have named owners, scheduled review dates, and are stored in GreenScore AI's document management system (Confluence). Document currency is tracked by the AI Governance Team. This self-assessment is completed annually.
+
+GOVERN 2.2 — AI governance policies are aligned with broader organizational risk management
+Maturity Score: 4
+
+Evidence: AI risk is integrated into the Enterprise Risk Register. AI-related incidents follow the IT incident escalation path with AI-specific additions. One alignment gap: AI model decommissioning procedures are not yet fully integrated with procurement and vendor management processes. Remediation planned for Q2 2026.
+
+GOVERN 4.1 — Ethics committee or advisory body is established
+Maturity Score: 5
+
+Evidence: GreenScore AI's Board AI Ethics Committee was established in Q2 2024. It meets quarterly, has a formal charter and defined membership (two independent board directors, the CEO, CRO, General Counsel, and Head of AI Governance), and produces written minutes. The committee reviews all P1 AI incidents, approves the annual AI risk appetite, and has authority to direct changes in AI model deployment decisions.
+
+GOVERN Function Summary:
+Average maturity across assessed sub-categories: 4.56
+Areas of strength: Board governance, role definition, documented policies, risk appetite
+Areas for improvement: Vendor AI risk assessment extension; public AI governance transparency; performance review integration
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FUNCTION 2: MAP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The MAP function establishes the context for AI risk identification by understanding how AI systems are used, who is affected, and what risks are relevant.
+
+MAP 1.1 — AI system context is established
+Maturity Score: 5
+
+Evidence: Each AI model has a documented model card (GS-MC-001, -002, -003) that describes purpose, intended users, out-of-scope uses, performance context, and known limitations. The AI Model Inventory (GS-INV-2026-001) provides organization-level context across all three systems. Model cards are reviewed quarterly and updated upon any significant model change.
+
+MAP 1.5 — Organizational risk priorities are aligned with AI system deployment context
+Maturity Score: 4
+
+Evidence: The company's primary risk concerns (client financial harm, regulatory non-compliance, reputational damage) are reflected in the risk classification scheme for AI models and the HITL policy's review trigger hierarchy. GS-MDL-003's precautionary high-risk posture reflects organizational risk priority for the highest-stakes model. One improvement area: the formal risk appetite framework does not yet include AI-specific quantitative thresholds for all risk categories.
+
+MAP 2.1 — AI system impacts to individuals and groups are identified and documented
+Maturity Score: 5
+
+Evidence: Model cards for all three systems include explicit identification of who is affected by model outputs (clients receiving ESG scores, clients whose portfolios are optimized, clients whose investments are risk-classified) and the potential harms (financial loss, reputational harm, access restrictions). The DPIA (GS-DPIA-001) conducts a formal impact analysis for personal data processing. Bias audits specifically assess disparate impact on protected groups.
+
+MAP 2.2 — Scientific findings are considered in AI deployment decisions
+Maturity Score: 4
+
+Evidence: The ML Engineering team reviews academic literature for model design decisions (e.g., the decision to use SHAP for explainability is grounded in peer-reviewed literature). However, there is no formal literature review gate in the model development lifecycle. A structured literature review requirement is under consideration for inclusion in the v3 Model Lifecycle Standard.
+
+MAP 3.5 — Stakeholder feedback is incorporated
+Maturity Score: 4
+
+Evidence: Investment advisor override patterns (from the HITL audit log) are analyzed monthly and fed back into model improvement priorities. ESG analyst feedback is incorporated into retraining data via the override and review pipeline. Client queries about ESG scores are tracked and aggregated quarterly. Formal client advisory sessions on AI governance are not yet conducted; planned pilot for Q3 2026.
+
+MAP Function Summary:
+Average maturity across assessed sub-categories: 4.40
+Areas of strength: System context documentation, impact identification, DPIA integration
+Areas for improvement: Formal literature review gates; quantitative AI risk appetite thresholds
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FUNCTION 3: MEASURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The MEASURE function evaluates, analyzes, and tracks AI risks using both quantitative and qualitative methods.
+
+MEASURE 1.1 — AI testing is conducted before deployment
+Maturity Score: 5
+
+Evidence: All models undergo a structured evaluation process before deployment approval. Evaluation includes: held-out test set performance (precision, recall, F1), calibration testing, bias testing, adversarial input testing, and human expert review of sample outputs. Deployment approval requires sign-off from the ML Engineering Lead, the relevant Business Owner, and the Head of AI Governance. Test results are documented in model cards.
+
+MEASURE 2.2 — AI system performance metrics are established and monitored
+Maturity Score: 5
+
+Evidence: Production monitoring is in place for all three models with defined metrics, alert thresholds, and escalation procedures. GS-MDL-001: weekly F1 shadow evaluation, monthly data drift (PSI). GS-MDL-002: real-time drift monitoring, weekly back-test comparison, monthly advisor acceptance rate review. GS-MDL-003: daily classification distribution monitoring, monthly calibration checks. Metrics are reported on a shared AI Governance Team dashboard reviewed weekly.
+
+MEASURE 2.5 — AI system risks are assessed and evaluated
+Maturity Score: 4
+
+Evidence: Risk assessment is performed for each model at deployment (documented in model cards) and updated quarterly. Risks include technical risks (model degradation, adversarial inputs, dependency failures), operational risks (HITL SLA breaches, data quality issues), and regulatory risks (EU AI Act classification changes, GDPR). A formal quantitative risk scoring model for AI systems is not yet in place; risk assessment relies on qualitative and semi-quantitative methods. Quantitative AI risk scoring is on the 2026 roadmap.
+
+MEASURE 2.6 — AI system risks are tracked over time
+Maturity Score: 5
+
+Evidence: Model performance metrics are tracked over time in the AI Governance Team dashboard with trend visualization. Bias audit results are compared quarter-over-quarter to identify emerging trends. The AI Incident Register tracks incident rates and classifies them for trend analysis. Monitoring alert history is retained for 2 years.
+
+MEASURE 2.11 — Fairness and bias are evaluated
+Maturity Score: 5
+
+Evidence: Quarterly bias audits are conducted for all three models using disparate impact analysis, counterfactual probing, and subgroup performance stratification (see GS-AUDIT-BIAS-2026-Q1). Protected classes tested include gender, race/ethnicity, geography, and age (where applicable). Results are documented with impact ratios and pass/fail determinations against the 80% rule. Remediation tracking is maintained. This represents alignment with NIST AI RMF MEASURE 2.11 as explicitly documented in bias audit reports.
+
+MEASURE 2.12 — Explainability is addressed
+Maturity Score: 5
+
+Evidence: All three models have documented explainability approaches. GS-MDL-001: per-classification confidence scores and rationale strings. GS-MDL-002: SHAP value waterfall charts plus plain-language rationale generator; constraint transparency display. GS-MDL-003: SHAP waterfall charts for all classifications; counterfactual explanations for HIGH-tier outputs. Explainability outputs are presented to human reviewers before any override or acceptance decision is logged.
+
+MEASURE 4.1 — Organizational risk tolerances are considered in AI measurement
+Maturity Score: 4
+
+Evidence: Model monitoring alert thresholds (F1 floor, override rate ceiling, SLA breach rate) are derived from the organizational risk appetite. HITL SLA breaches are reported to the AI Ethics Committee monthly, ensuring metrics are connected to board-level risk oversight. One gap: not all risk tolerance thresholds have been formally linked to a quantitative impact model (e.g., "F1 below 0.85 is unacceptable because it is estimated to cause X client impacts per month").
+
+MEASURE Function Summary:
+Average maturity across assessed sub-categories: 4.71
+Areas of strength: Testing rigor, production monitoring, fairness/bias evaluation, explainability
+Areas for improvement: Quantitative risk scoring model; formal risk tolerance impact modeling
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FUNCTION 4: MANAGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The MANAGE function implements plans for AI risk treatment and response, including incident response and continuous improvement.
+
+MANAGE 1.1 — Responses to AI risks are planned
+Maturity Score: 5
+
+Evidence: The AI Incident Response Plan (GS-POL-IR-001) defines P1–P4 incident classifications, notification procedures, response team roles, rollback procedures, and RCA requirements. Risk response options (accept, mitigate, transfer, avoid) are considered in model risk assessments. The HITL policy (GS-POL-HITL-001) implements risk mitigation for the primary consequential decision types.
+
+MANAGE 2.2 — Incident response procedures are effective
+Maturity Score: 4
+
+Evidence: Incident response procedures are documented and have been table-top tested once (Q4 2025). No real P1 or P2 AI incidents have occurred, so real-world effectiveness cannot be fully evidenced. The table-top exercise identified two improvements (improved rollback automation, clearer escalation path for out-of-hours incidents), both implemented in IRP v1.4. Score is limited to 4 due to lack of real-world test.
+
+MANAGE 2.4 — AI incident response addresses AI-specific considerations
+Maturity Score: 5
+
+Evidence: The IRP explicitly addresses AI-specific incident types (model degradation, systematic bias, dependency failures, adversarial attacks), AI-specific notification requirements (EU AI Act Art. 73), AI-specific rollback procedures (model version rollback with regression testing), and AI-specific RCA processes (detecting root causes in training data, model architecture, or monitoring gaps). The plan references and integrates with NIST AI RMF MANAGE 2.4 guidance.
+
+MANAGE 3.1 — AI risks are prioritized for treatment
+Maturity Score: 4
+
+Evidence: Model risk classifications (LOW/MEDIUM/HIGH) drive the HITL review requirements and monitoring intensity. The precautionary high-risk posture for GS-MDL-003 reflects explicit risk prioritization. Improvement area: a formal AI risk register that tracks all identified risks by model with treatment plans, owners, and deadlines is under development (target: Q2 2026).
+
+MANAGE 4.1 — AI system decommissioning plans are in place
+Maturity Score: 3
+
+Evidence: A decommissioning section exists in the Model Lifecycle Standard (GS-STD-ML-001) covering: data retention on decommission, model artifact archival, client notification requirements, and regulatory notification considerations. However, decommissioning procedures have not been exercised, and integration with procurement/vendor management is incomplete. This is the lowest-scoring sub-category in the assessment.
+
+MANAGE 4.2 — Human oversight is implemented and effective
+Maturity Score: 5
+
+Evidence: The HITL policy (GS-POL-HITL-001) defines comprehensive human oversight requirements for all three models. The AI Output Audit Log provides an immutable record of all review actions. Monthly analysis of override rates and SLA compliance rates provides evidence of ongoing effectiveness. The AI Governance Team reviews HITL metrics weekly and reports to the AI Ethics Committee monthly.
+
+MANAGE Function Summary:
+Average maturity across assessed sub-categories: 4.33
+Areas of strength: Incident response planning, HITL effectiveness, AI-specific incident considerations
+Areas for improvement: Formal AI risk register; decommissioning procedure maturity
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OVERALL ASSESSMENT SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+| Function | Average Maturity Score | Assessment          |
+|----------|------------------------|---------------------|
+| GOVERN   | 4.56                   | Mature              |
+| MAP      | 4.40                   | Mature              |
+| MEASURE  | 4.71                   | Mature — Optimizing |
+| MANAGE   | 4.33                   | Managed — Mature    |
+| OVERALL  | 4.50                   | MATURE              |
+
+GreenScore AI demonstrates mature AI risk management practices across all four NIST AI RMF functions. The company has established robust governance structures (dedicated AI Governance Team, Board AI Ethics Committee), comprehensive documentation (model cards, model inventory, bias audits, HITL policy, incident response plan), and effective operational controls (production monitoring, quarterly bias audits, human-in-the-loop review gates with audit trails).
+
+Key Strengths:
+- Board-level AI ethics governance with quarterly reporting cadence
+- Rigorous quarterly bias auditing aligned with NIST AI RMF MEASURE 2.11
+- Comprehensive HITL controls with SLA enforcement and immutable audit trails
+- Strong explainability implementation (SHAP + counterfactuals + plain-language rationale)
+- Zero AI incident history maintained since earliest model deployment (August 2023)
+- Proactive precautionary compliance posture for GS-MDL-003 under EU AI Act
+
+Priority Improvement Areas for 2026:
+1. Develop and deploy formal quantitative AI risk scoring model (MEASURE)
+2. Complete AI risk register with per-model treatment plans (MANAGE)
+3. Publish external AI governance transparency summary (GOVERN)
+4. Exercise decommissioning procedure with a mock decommission drill (MANAGE)
+5. Expand vendor AI risk assessment to cover all technology suppliers (GOVERN)
+6. Integrate AI governance metrics into employee performance review framework (GOVERN)
+
+Next Self-Assessment: March 2027
+Approved by: Head of AI Governance — 2026-03-15
+Presented to Board AI Ethics Committee: 2026-04-01

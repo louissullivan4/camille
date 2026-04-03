@@ -1,0 +1,164 @@
+GREENSCORE AI — HUMAN-IN-THE-LOOP (HITL) POLICY
+Document ID: GS-POL-HITL-001
+Version: 2.3
+Owner: Head of AI Governance / Chief Risk Officer
+Approved by: Board AI Ethics Committee
+Effective Date: 2025-09-01
+Last Reviewed: 2026-02-15
+Next Review: 2026-08-15
+Classification: Internal — Confidential
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. PURPOSE AND SCOPE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This policy establishes GreenScore AI's requirements for human oversight of AI-generated outputs. It applies to all AI systems listed in the AI Model Inventory (GS-INV-2026-001), to all employees who interact with AI system outputs in a professional capacity, and to any third-party contractors accessing GreenScore AI systems that produce AI outputs.
+
+The purpose of human-in-the-loop (HITL) controls is to ensure that:
+(a) Consequential AI-generated decisions or recommendations are reviewed by a qualified human before they affect clients, regulatory filings, or financial positions;
+(b) Humans retain meaningful control over AI outputs and are not unduly deferential to AI recommendations;
+(c) GreenScore AI meets its obligations under EU AI Act Article 14 (human oversight), MiFID II Article 25 (suitability), and NIST AI RMF GOVERN 1.3 and MANAGE 4.2 (human oversight policies and procedures).
+
+This policy supersedes GS-POL-HITL-001 v2.2 (effective 2025-03-01).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. DECISIONS REQUIRING MANDATORY HUMAN REVIEW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The following AI-generated outputs require mandatory human review before any downstream action, client communication, or regulatory use. "Mandatory" means the action cannot proceed — technically or procedurally — until a human has reviewed and recorded a decision.
+
+2.1 HIGH Risk Tier Classifications (GS-MDL-003)
+
+ALL investment risk classifications resulting in a HIGH tier require Senior Analyst sign-off before:
+- The classification is communicated to the client or referenced in client-facing documents
+- The classification is used in a MiFID II suitability determination
+- The classification triggers any client account restriction or investment proposal rejection
+
+This requirement applies without exception. There are no volume exemptions, time-of-day exemptions, or override bypass mechanisms for HIGH-tier classifications.
+
+2.2 Portfolio Allocation Changes Exceeding 5% (GS-MDL-002)
+
+Any Portfolio Optimizer recommendation that involves a change in asset class allocation greater than 5 percentage points (e.g., increasing Equities from 60% to 66% or reducing Fixed Income from 30% to 24%) requires a documented decision by the reviewing advisor before the recommendation is actioned.
+
+For these cases, the advisor must:
+- Acknowledge the SHAP explanation displayed in the review interface
+- Record a written decision note (minimum 20 words) explaining why the recommendation is being accepted, modified, or rejected
+- Confirm that the proposed change is consistent with the client's current suitability profile
+
+Note: The 5% threshold applies to asset class level changes. Sub-asset-class changes (e.g., shifting within equities from North American to European exposure) below 5% aggregate do not require a formal written decision note, but all recommendations remain subject to standard advisor review.
+
+2.3 Client-Facing ESG Ratings (GS-MDL-001)
+
+Any ESG rating or classification derived from GS-MDL-001 that appears in a client-facing report, presentation, or digital dashboard requires analyst review before publication or delivery. "Analyst review" in this context means:
+- An ESG Research Analyst has accessed the classification record in the review queue
+- The analyst has either (a) accepted the classification (passive or active confirmation), (b) modified it with a documented reason, or (c) escalated it per Section 4
+
+Low-confidence outputs (model confidence < 0.72) and outputs in the Human Rights and Biodiversity sub-categories must receive active confirmation (explicit click-through acceptance) rather than passive acceptance by timeout.
+
+2.4 Other Mandatory Review Triggers
+
+In addition to the above, human review is required whenever:
+- A model output is flagged by the automated monitoring system (performance alert or data drift alert)
+- An analyst or advisor identifies a model output that appears inconsistent with their knowledge or judgment (ad hoc escalation; see Section 4)
+- A client formally queries or disputes a model-generated output
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. REVIEW SERVICE LEVEL AGREEMENTS (SLAs)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+| Output Type                           | Reviewer                | SLA            | Breach Action                             |
+|---------------------------------------|-------------------------|----------------|-------------------------------------------|
+| HIGH-tier risk classification         | Senior Analyst          | 24 hours       | Auto-notify Compliance Officer            |
+| MEDIUM-tier risk classification       | Analyst                 | 48 hours       | Auto-notify Senior Analyst                |
+| Portfolio change > 5% allocation      | Investment Advisor      | Before action  | System blocks action until review logged  |
+| Client-facing ESG rating              | ESG Research Analyst    | Before publish | System blocks publication until reviewed  |
+| Low-confidence ESG output             | ESG Research Analyst    | 4 hours        | Auto-escalate to ESG Research Lead        |
+| Flagged monitoring alert              | Assigned Analyst        | 8 hours        | Auto-escalate to AI Governance Team       |
+
+SLA timers start from the moment the item enters the review queue. All SLA breaches are logged and reported in the monthly AI Governance Dashboard presented to the AI Ethics Committee.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. ESCALATION PATH
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The escalation path for AI-related human review concerns follows the chain below. Escalation at each level must be completed before the next level is engaged, except in cases where the initial reviewer believes the matter is critical (see P1/P2 definitions in the Incident Response Plan GS-POL-IR-001).
+
+Level 1 — Analyst:
+The first-line reviewer for ESG classifications, MEDIUM-tier risk outputs, and portfolio recommendations not triggering the > 5% threshold. Analysts have full authority to accept, modify, or reject any AI output within their review domain. Analysts should escalate to Level 2 when: (a) they are uncertain about the correct classification, (b) the output appears systematically incorrect (potential model failure), or (c) a client has disputed the output.
+
+Level 2 — Senior Analyst:
+The mandatory reviewer for HIGH-tier risk classifications. Senior Analysts also receive escalations from Level 1. Senior Analysts should escalate to Level 3 when: (a) the output has regulatory implications that require compliance interpretation, (b) the override or rejection of an AI output would set a significant precedent, or (c) the item is time-sensitive and cannot be resolved within the SLA without compliance guidance.
+
+Level 3 — Compliance Officer:
+Handles regulatory interpretation, time-sensitive SLA breach notifications, and any AI output that will be used in a formal regulatory submission. The Compliance Officer has authority to halt the use of any AI model output pending further review. The Compliance Officer should notify the Head of AI Governance of any escalation that reaches Level 3.
+
+Level 4 — Head of AI Governance (and AI Ethics Committee if required):
+Handles matters involving potential model failures, systematic bias findings, regulatory notifications, or decisions affecting model deployment status. Any Level 4 escalation is treated as a potential AI incident under GS-POL-IR-001.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. OVERRIDE AUTHORITY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Any analyst, Senior Analyst, Investment Advisor, or Compliance Officer may override any AI-generated output. There are no restrictions on who may override; there are only requirements on how overrides must be documented.
+
+Override Documentation Requirements:
+- The overriding employee must record the override in the AI Output Audit Log within 2 hours of the decision
+- The record must include: (a) the model output being overridden, (b) the alternative value or decision applied, and (c) a written reason for the override (minimum 30 words)
+- Override reasons must be professional and substantive (e.g., "Client disclosed material change in risk appetite at phone call on [date] not yet reflected in system" or "Model output inconsistent with significant private market information known to the advisory team")
+- "I disagreed with the model" without further explanation is not an acceptable override reason; if an analyst consistently disagrees with a model without specific reasoning, this should be escalated as a potential model quality concern
+
+Override Pattern Review:
+- The AI Governance Team reviews all override records monthly
+- High override rates for a specific model, output type, or analyst are flagged for investigation
+- Override data is fed into model retraining pipelines (with appropriate quality weighting) as a source of human expert signal
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. AUDIT TRAIL REQUIREMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+All HITL review actions are recorded in the immutable AI Output Audit Log (GS-SYS-AUDITLOG-001). This log records:
+- Model ID, version, and output timestamp
+- Input reference (document ID, portfolio ID, or client matter ID)
+- Model output (classification, recommendation, or score)
+- Review queue entry timestamp
+- Reviewer identity (employee ID) and role
+- Review decision (accepted / modified / rejected / escalated)
+- Review completion timestamp
+- Any override or modification, with reason text
+- Any escalation events and their outcomes
+
+The audit log is append-only. Records may not be modified or deleted. Retention period: 7 years (aligns with MiFID II Article 25 record-keeping requirements and GDPR Article 5(1)(e) storage limitation principle).
+
+Access to the audit log is restricted to: the AI Governance Team, Compliance Team, Internal Audit, and the Data Protection Officer. Regulatory access is provided on request in accordance with applicable law.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. TRAINING AND COMPETENCY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+All employees who conduct HITL reviews must complete:
+- GreenScore AI AI Literacy Training (annual; 2 hours)
+- Model-specific training for each model whose outputs they review (at onboarding and upon any major model version update)
+- HITL Policy training (at policy updates; this document)
+
+Training completion is tracked in the HR Learning Management System. Employees who are not current on required training may not conduct HITL reviews without supervision from a trained colleague.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. POLICY EXCEPTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+No exceptions are permitted for mandatory review categories defined in Section 2.1 (HIGH risk classification review) and Section 2.2 (>5% allocation change documentation). These controls are hardcoded in system design.
+
+Temporary exceptions to SLA timings (Section 3) may be granted by the Compliance Officer in the event of significant operational disruption (e.g., system outage, key personnel unavailability). Any such exception must be documented and reported at the next AI Ethics Committee meeting.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. RELATED DOCUMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- AI Model Inventory: GS-INV-2026-001
+- AI Incident Response Plan: GS-POL-IR-001
+- Bias Audit Standard: GS-STD-BIAS-001
+- NIST AI RMF Self-Assessment: GS-NIST-RMF-2026
+- Data Governance Policy: GS-POL-DG-001
+- MiFID II Suitability Policy: GS-POL-COMP-MIFID-001
+
+Document approved by: Head of AI Governance, Chief Risk Officer, Board AI Ethics Committee

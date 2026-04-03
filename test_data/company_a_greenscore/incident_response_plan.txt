@@ -1,0 +1,171 @@
+GREENSCORE AI — AI INCIDENT RESPONSE PLAN
+Document ID: GS-POL-IR-001
+Version: 1.4
+Owner: Head of AI Governance / Chief Risk Officer
+Approved by: Board AI Ethics Committee, General Counsel
+Effective Date: 2025-10-01
+Last Reviewed: 2026-02-01
+Next Review: 2026-10-01
+Classification: Internal — Confidential
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. PURPOSE AND SCOPE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This document establishes GreenScore AI's procedures for identifying, classifying, responding to, and learning from incidents involving AI systems. It applies to all AI systems listed in the AI Model Inventory (GS-INV-2026-001) and supplements — but does not replace — GreenScore AI's general IT Incident Response Policy (GS-POL-IT-INC-001).
+
+An AI incident is any event involving an AI system that: (a) produces incorrect, unexpected, biased, or harmful outputs that affect clients, counterparties, or regulatory compliance; (b) results in a materially incorrect decision or recommendation being acted upon; (c) involves a potential safety, fairness, or rights violation related to AI behavior; or (d) requires regulatory notification.
+
+This policy gives effect to GreenScore AI's obligations under EU AI Act Article 73 (serious incident reporting for high-risk AI systems) and aligns with NIST AI RMF MANAGE 2.4 (incident response for AI systems).
+
+Note on EU AI Act Article 73: GS-MDL-003 (Investment Risk Predictor) is under precautionary assessment as potentially high-risk under Annex III. Until formal determination is made, GreenScore AI applies Article 73 reporting obligations to GS-MDL-003 as if it were formally classified as high-risk. Article 73 requires providers of high-risk AI systems to notify the relevant national market surveillance authority of any "serious incident" (defined as incidents leading to death, serious harm to health, significant violation of fundamental rights, or serious disruption to public safety or infrastructure) within the timeframes specified in this plan.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. INCIDENT CLASSIFICATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+AI incidents are classified into four priority levels at the point of detection. Classification determines the response timeline, notification requirements, and team composition.
+
+P1 — CRITICAL
+Definition: An AI system has produced outputs that have been acted upon and have caused, or are highly likely to cause, material harm to one or more clients (financial loss > €10,000 per affected client, or any violation of fundamental rights); or a systematic AI failure affecting > 20% of AI-processed outputs over any 24-hour period; or any event that may constitute a "serious incident" under EU AI Act Article 73.
+
+Examples: Risk Predictor systematically misclassifies HIGH-risk portfolios as LOW for a 12-hour period and incorrect suitability determinations were delivered to clients; ESG classifier produces outputs with a systematic bias that was delivered in client reports for multiple clients.
+
+Response timeline: Internal notification within 1 hour; regulatory notification within 72 hours (EU AI Act Art. 73; also consider GDPR Art. 33 if personal data is involved); client notification within 24 hours if harm has occurred or is likely.
+
+P2 — HIGH
+Definition: An AI system has produced incorrect or biased outputs that were caught by human review before client delivery, but the volume or nature of errors indicates a potential systematic model failure; or an output was delivered to a client that, while not immediately harmful, may erode trust or require correction.
+
+Examples: Senior Analyst review queue shows a 40% override rate for HIGH-tier classifications over a two-week period (potential model degradation); a client notices and queries an ESG score that appears to contradict a major publicly disclosed corporate action.
+
+Response timeline: Internal notification within 4 hours; no automatic regulatory notification (assess on facts); client notification within 48 hours if output correction is needed.
+
+P3 — MEDIUM
+Definition: A model performance degradation is detected that does not indicate systematic failure but requires investigation; or a HITL SLA breach occurs that did not result in client harm; or a data quality issue in model inputs is discovered that could affect future outputs.
+
+Examples: Monthly shadow evaluation shows F1 score for ESG classifier dropped from 0.879 to 0.853 (below alert threshold of 0.85); a batch processing failure delays ESG scoring reports by 12 hours.
+
+Response timeline: Internal notification within 24 hours to Head of AI Governance and relevant model owner; investigation complete within 5 business days; no client or regulatory notification required unless investigation reveals P2/P1 elements.
+
+P4 — LOW
+Definition: A minor anomaly, near-miss, or isolated model output error that did not affect any client outcome and is self-contained. Includes software bugs, configuration errors, and one-off edge case failures.
+
+Examples: A single document produces a malformed output JSON that is rejected by the post-processing pipeline; a batch run fails due to API rate limiting and retries successfully.
+
+Response timeline: Logged in the AI Incident Register within 48 hours; no formal notification required; reviewed at next AI Governance Team weekly standup.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. NOTIFICATION PROCEDURES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+3.1 Internal Notifications
+
+| Priority | Initial Notify (who)                                        | Method              | Timeline |
+|----------|-------------------------------------------------------------|---------------------|----------|
+| P1       | Head of AI Governance, CRO, CEO, General Counsel            | Phone + email       | 1 hour   |
+| P2       | Head of AI Governance, CRO, relevant model business owner   | Email + Slack alert | 4 hours  |
+| P3       | Head of AI Governance, relevant model business owner        | Email               | 24 hours |
+| P4       | AI Governance Team                                          | Incident log entry  | 48 hours |
+
+The Head of AI Governance is the primary internal incident coordinator for all P1 and P2 incidents and may delegate coordination to the AI Governance Team Deputy for P3/P4.
+
+3.2 Regulatory Notification
+
+P1 Incidents involving GS-MDL-003 (high-risk posture): Notify the relevant national market surveillance authority per EU AI Act Article 73 within 72 hours of becoming aware of the serious incident. For EU clients, the relevant authority is the national authority of the member state where the incident occurred (primary contacts maintained by General Counsel). The notification must include: nature of the incident, affected AI system, preliminary assessment of root cause, and initial containment actions taken.
+
+GDPR: If the incident involves a personal data breach as defined under GDPR Article 4(12), the Data Protection Officer must also file a notification with the relevant supervisory authority within 72 hours per GDPR Article 33. The DPO coordinates this separately but in parallel.
+
+FCA (UK): GreenScore AI is authorized under FCA. Material operational incidents affecting regulatory compliance must be notified to the FCA under SUP 15.3 (individual guidance). The Compliance Officer determines whether an AI incident meets this threshold.
+
+3.3 Client Notification
+
+For P1 incidents where client harm has occurred or is probable: clients must be notified within 24 hours. The notification is prepared by the Compliance Officer in coordination with the relevant business owner, approved by the Head of AI Governance, and delivered by the client's relationship manager.
+
+The notification must: (a) describe the nature of the AI error in plain language, (b) identify which outputs are affected, (c) describe the action GreenScore AI is taking to remediate, and (d) provide a contact for client questions.
+
+For P2 incidents requiring output correction: clients are notified within 48 hours if corrected outputs differ materially from the originals. Notification threshold: corrected ESG score differs by > 5 points; corrected risk tier differs from original.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. RESPONSE TEAM ROLES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+| Role                          | P1 Responsibilities                                                              |
+|-------------------------------|----------------------------------------------------------------------------------|
+| Head of AI Governance         | Incident coordinator; declares priority level; leads RCA process                 |
+| ML Engineering Lead           | Technical investigation; model diagnostics; rollback execution if needed         |
+| Chief Risk Officer            | Client impact assessment; regulatory notification decision; risk disclosure       |
+| General Counsel               | Legal exposure assessment; regulatory communication oversight                    |
+| Compliance Officer            | Regulatory notification drafting; FCA, EU AI Act, GDPR notification coordination |
+| Data Protection Officer       | GDPR assessment and notification if personal data is affected                    |
+| Relevant Business Owner       | Client communication coordination; subject matter expertise                      |
+| Head of ESG Research          | For GS-MDL-001 incidents: ESG domain assessment                                  |
+| Head of Investment Strategy   | For GS-MDL-002 incidents: investment impact assessment                           |
+
+For P2 and below, the full response team is not required. The Head of AI Governance determines team composition for each incident.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. ROLLBACK PROCEDURES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Each AI model maintains a rollback capability to the immediately preceding production version. Rollback is the primary containment action for P1 model failures.
+
+Rollback Decision Authority:
+- ML Engineering Lead may initiate rollback for P3/P4 incidents on their own authority with notification to the Head of AI Governance
+- P1/P2 rollbacks require authorization from the Head of AI Governance (or, in their absence, the Chief Risk Officer)
+
+Rollback Procedure:
+1. ML Engineering Lead confirms that the previous version artifacts are available and functional in staging environment (< 30 minutes)
+2. Affected model is switched to the previous version in the inference environment (< 15 minutes for GS-MDL-001 and GS-MDL-002; < 30 minutes for GS-MDL-003)
+3. Post-rollback validation: run automated regression test suite; confirm outputs align with expected behavior on a standard test batch (< 2 hours)
+4. Monitoring team confirms operational normality before incident is reclassified from "active" to "contained"
+5. All rollback actions are recorded in the incident log
+
+Batch Output Remediation:
+If a P1/P2 incident has resulted in incorrect batch outputs being delivered to client-facing systems, the ML Engineering team must: (a) identify all affected outputs by timestamp range and model version, (b) re-run affected inputs against the corrected or rolled-back model, (c) update downstream data stores and client-facing dashboards, and (d) document all changes in the incident log.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. POST-INCIDENT REVIEW — ROOT CAUSE ANALYSIS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For all P1 and P2 incidents, a formal Root Cause Analysis (RCA) must be completed within 5 business days of incident containment. For P3 incidents, a simplified RCA is completed within 10 business days. P4 incidents are reviewed at the next weekly AI Governance standup.
+
+RCA Structure (P1/P2):
+1. Incident Timeline: Chronological reconstruction of events from first anomaly detection to containment
+2. Root Cause Identification: Using the "5 Whys" method or Fishbone analysis; distinguish root cause from contributing factors
+3. Impact Assessment: Number of affected clients, affected outputs, financial impact, regulatory risk
+4. Containment Actions Taken: What was done to stop the incident from spreading
+5. Remediation Plan: Specific actions, owners, and deadlines to prevent recurrence
+6. Detection Gap Analysis: Why was this not caught earlier by monitoring or HITL controls? What monitoring or policy changes are required?
+7. Lessons Learned: What cross-model or cross-process lessons apply?
+
+RCA reports for P1 incidents are reviewed and approved by the Head of AI Governance, Chief Risk Officer, and General Counsel. They are presented to the Board AI Ethics Committee at the next scheduled meeting. RCA reports are retained for 7 years.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. TRAINING REFRESH CADENCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- Annual: All employees with HITL review responsibilities complete AI Incident Awareness training (30 minutes; updated to reflect any incidents from the prior year)
+- After any P1 incident: The response team completes a debrief within 10 business days, including a tabletop review of the incident against this plan
+- After any policy update: Affected employees complete policy familiarization acknowledgment within 30 days
+- New hires: AI incident response orientation completed within 30 days of joining; role-specific training within 60 days
+
+The AI Governance Team coordinates all training scheduling in collaboration with HR.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. INCIDENT REGISTER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+All incidents P4 and above are logged in the AI Incident Register (GS-SYS-INC-REG-001). As of 2026-03-31, the register contains zero AI incidents. This register is reviewed quarterly by the AI Ethics Committee and annually by Internal Audit.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. RELATED DOCUMENTS AND REFERENCES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- EU AI Act Article 73 (Serious Incident Reporting for High-Risk AI Systems)
+- NIST AI RMF MANAGE 2.4 (Response to AI incidents)
+- GDPR Article 33 (Data Breach Notification to Supervisory Authority)
+- GS-POL-IT-INC-001 (General IT Incident Response Policy)
+- GS-POL-HITL-001 (Human-in-the-Loop Policy)
+- GS-INV-2026-001 (AI Model Inventory)
+
+Document approved by: Head of AI Governance, Chief Risk Officer, General Counsel, Board AI Ethics Committee

@@ -1,0 +1,118 @@
+QUICKHIRE INC
+RESUME SCREENER AI — INITIAL BIAS AUDIT REPORT
+Date: March 28, 2023
+Conducted by: Priya Nambiar (Senior ML Engineer), Dev Kapoor (Data Analyst)
+Classification: Internal Use Only
+
+---
+
+1. PURPOSE
+
+This document records the results of the bias audit conducted on the QuickHire Resume Screener AI prior to production launch. The audit was performed to assess whether the model produces systematically different outcomes for candidate groups defined by protected characteristics, and to confirm that the model is appropriate for deployment.
+
+---
+
+2. SCOPE
+
+Model under review: Resume Screener AI v1.0 (pre-production)
+Audit type: Disparate impact analysis (self-assessed)
+Test dataset: 500 resumes sampled from the QuickHire internal candidate database. Resumes were labeled with demographic attributes (gender, race/ethnicity) where available via name inference and self-reported data in legacy records. Labels were not available for all records; analysis was conducted on the subset with available demographic data.
+Evaluators: Internal ML and data team (no external auditor engaged)
+
+---
+
+3. METHODOLOGY
+
+The audit applied the four-fifths (80%) rule, also referred to as the disparate impact rule, as the primary evaluation criterion. This is a standard methodology derived from EEOC Uniform Guidelines on Employee Selection Procedures (1978).
+
+The impact ratio for each demographic group was calculated as:
+
+    Impact Ratio = (Selection rate for group) / (Selection rate for highest-selected group)
+
+An impact ratio below 0.80 is considered evidence of adverse impact. Ratios at or above 0.80 are considered within the acceptable range for this methodology.
+
+Selection was defined as the model scoring a resume above the default advancement threshold (0.45).
+
+Demographic categories assessed:
+- Gender (binary classification available in dataset: Male / Female)
+- Race/Ethnicity (categories: White, Black or African American, Hispanic or Latino, Asian)
+
+Note: Non-binary gender identities and multiracial identities were not represented in the legacy data used for this audit. This is a known data limitation.
+
+Sample sizes per subgroup varied. Subgroups with fewer than 30 records were excluded from analysis per standard statistical practice. The race/ethnicity analysis is based on inferred demographic labels and self-reported data from a subset of the 500-resume test set.
+
+---
+
+4. RESULTS
+
+4.1 Gender
+
+Selection rates:
+- Male candidates: 48.3%
+- Female candidates: 39.6%
+
+Impact ratio (Female / Male): 0.82
+
+Interpretation: The impact ratio for female candidates falls above the 0.80 threshold. Results are within acceptable range under the four-fifths rule.
+
+4.2 Race / Ethnicity
+
+Selection rates (highest-selected group: White, 47.1%):
+- Asian: 43.2% — Impact ratio: 0.92
+- Hispanic or Latino: 40.1% — Impact ratio: 0.85
+- Black or African American: 38.3% — Impact ratio: 0.81
+
+Interpretation: Impact ratios for all racial and ethnic groups assessed fall above the 0.80 threshold. Results are within acceptable range.
+
+4.3 Summary Table
+
+  Group                    | Selection Rate | Impact Ratio | Pass/Fail
+  -------------------------|----------------|--------------|----------
+  Male (reference)         | 48.3%          | 1.00         | —
+  Female                   | 39.6%          | 0.82         | PASS
+  White (reference)        | 47.1%          | 1.00         | —
+  Asian                    | 43.2%          | 0.92         | PASS
+  Hispanic or Latino       | 40.1%          | 0.85         | PASS
+  Black or African American| 38.3%          | 0.81         | PASS
+
+---
+
+5. LIMITATIONS OF THIS AUDIT
+
+- Test set size (n=500) is limited. Results may not generalize to the full production candidate population.
+- Demographic labels were inferred or self-reported from legacy records; this introduces label noise.
+- The audit was self-conducted by the internal ML team. No independent third-party auditor was engaged.
+- The four-fifths rule is a threshold test, not a comprehensive fairness analysis. Statistical significance testing was not performed.
+- Intersectional analysis (e.g., Black women vs. White men) was not conducted due to insufficient sample sizes in intersecting subgroups.
+
+---
+
+6. RECOMMENDATIONS
+
+6a. Deployment decision: The model is approved for production launch based on these results. All impact ratios fall within the acceptable range under the four-fifths rule.
+
+6b. Ongoing monitoring: Recommend annual re-audit of the model using production data once sufficient volume has accumulated. The ML team should schedule a follow-up audit by Q1 2024.
+
+6c. Data quality: Recommend improving demographic data collection practices to support more robust future audits, including capturing non-binary gender identities and reducing reliance on name-inference methods.
+
+6d. Third-party review: As the model scales, consider engaging an external auditor for an independent review.
+
+---
+
+7. SIGN-OFF
+
+Approved for production deployment.
+
+Priya Nambiar — Senior ML Engineer
+Dev Kapoor — Data Analyst
+Marcus Webb — VP of Engineering
+
+Date: March 28, 2023
+
+---
+
+APPENDIX A — Notes
+
+This audit was conducted in advance of the QuickHire Resume Screener launch. All analysis used internal tooling (Python, pandas, scipy). Raw audit data is stored in the ml-team/bias-audit-2023 S3 bucket.
+
+Next scheduled audit: Q1 2024 (to be confirmed by ML team lead).

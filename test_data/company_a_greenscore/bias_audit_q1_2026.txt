@@ -1,0 +1,220 @@
+GREENSCORE AI — QUARTERLY BIAS AUDIT REPORT
+Q1 2026 (January 1 – March 31, 2026)
+Document ID: GS-AUDIT-BIAS-2026-Q1
+Prepared by: AI Governance Team
+Reviewed by: Chief Risk Officer, Head of ESG Research, Head of Investment Strategy
+Approved by: Head of AI Governance
+Date of Issue: 2026-03-28
+Classification: Internal — Confidential
+NIST AI RMF Alignment: MEASURE 2.11 (Fairness and Bias)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. EXECUTIVE SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+GreenScore AI conducted its quarterly bias audit covering all three production AI models for Q1 2026. All three models passed the primary bias threshold (the 80% rule / four-fifths rule) across all tested protected and sensitive classes. Two marginal findings were identified — one for GS-MDL-001 (geographic performance differential in South/Southeast Asia) and one for GS-MDL-003 (ESG-score-correlated differential classification) — and are documented in full below. Neither finding constitutes a bias failure; both were validated as either within tolerance or as appropriate model behavior. Remediation and monitoring actions are in place.
+
+Overall Audit Verdict: PASSED (all models)
+Next Audit: Q2 2026 (target completion: 2026-06-27)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. METHODOLOGY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+2.1 Regulatory and Standards Alignment
+
+This audit is conducted in alignment with NIST AI RMF MEASURE 2.11, which specifies that AI systems should be evaluated for "fairness and bias" using appropriate quantitative and qualitative methods. The audit also references:
+- The 80% Rule (Uniform Guidelines on Employee Selection Procedures, 29 CFR 1607), applied here as a general fairness threshold for disparate impact analysis
+- IEEE P7003 (Algorithmic Bias Considerations)
+- EU AI Act Recitals 44–46 (non-discrimination and fairness requirements for high-risk AI)
+- GreenScore AI Bias Audit Standard (GS-STD-BIAS-001)
+
+The 80% rule threshold used in this audit: for any outcome measure (model accuracy, favorable classification rate, or model confidence), the ratio of the rate for any subgroup to the rate for the reference group must be >= 0.80 to pass. A ratio between 0.75 and 0.80 is flagged as marginal and subject to enhanced monitoring. A ratio below 0.75 constitutes a failure requiring remediation prior to the next audit.
+
+2.2 Protected and Sensitive Classes Tested
+
+| Class                | Operationalization                                           |
+|----------------------|--------------------------------------------------------------|
+| Gender               | Counterfactual probing (gender-coded names/pronouns in text) |
+| Race / Ethnicity     | Counterfactual probing; country of incorporation proxy       |
+| Age                  | Not directly applicable to corporate models; proxy via company founding year used for GS-MDL-001 |
+| Geography            | Issuer/portfolio country of domicile; region groupings       |
+| Sector               | GICS sector classification (potential proxy for geography)   |
+| ESG Score Level      | High vs. low ESG score portfolio (GS-MDL-003 specific)       |
+
+2.3 Methods Used
+
+- Disparate Impact Analysis: Compute outcome metric (F1, accuracy, favorable rate) for each subgroup and compare to the reference group using the impact ratio formula: (subgroup rate) / (reference group rate)
+- Counterfactual Probing: Generate paired test inputs differing only in a protected attribute; measure consistency of model outputs
+- Subgroup Performance Analysis: Stratify evaluation datasets by protected attribute group; compute all standard performance metrics per stratum
+- Dependency Chain Analysis: Trace how upstream model bias (GS-MDL-001) propagates to downstream models (GS-MDL-002, GS-MDL-003)
+
+2.4 Data Sources for Audit
+
+- GS-MDL-001: 2,100-item labeled evaluation set (same as model card test set), stratified by geography and sector; 200-item counterfactual probing set (AI Governance Team constructed)
+- GS-MDL-002: 1,400 advisor recommendation records from Q4 2025 and Q1 2026; 150-item counterfactual probing set
+- GS-MDL-003: 3,200-item labeled evaluation set; 1,800 live classifications from Q1 2026 (anonymized); 180-item counterfactual probing set
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. RESULTS — GS-MDL-001: ESG TEXT CLASSIFIER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+3.1 Gender Bias (Counterfactual Probing)
+
+Test design: 200 document excerpts referencing named executives were duplicated with gender-swapped pronouns and names. The model was evaluated for consistency of ESG category classification and confidence score.
+
+Results:
+  Classification consistency (same category output): 98.5%
+  Mean confidence score difference (female vs. male name): 0.003 (not statistically significant; p = 0.41)
+  Impact ratio (female / male on favorable classification rate): 0.998
+
+Result: PASS. No gender-related bias detected.
+
+3.2 Race / Ethnicity Bias (Counterfactual Probing)
+
+Test design: 200 document excerpts with corporate names associated with different national/ethnic origins. Classification consistency and confidence scores compared.
+
+Results:
+  Classification consistency: 97.8%
+  Maximum confidence score differential across groups: 0.008 (not statistically significant; p = 0.28)
+  Impact ratio (minimum subgroup / reference): 0.991
+
+Result: PASS. No race/ethnicity-related bias detected.
+
+3.3 Geographic Bias (Subgroup Performance Analysis)
+
+Test design: Evaluation set stratified by issuer domicile into five geographic regions. F1 scores computed per region. Reference group: North America / Western Europe (largest, highest-quality training data representation).
+
+Results:
+| Region                      | F1 Score | Impact Ratio | Result       |
+|-----------------------------|----------|--------------|--------------|
+| North America / W. Europe   | 0.893    | 1.000 (ref)  | —            |
+| Eastern Europe / Lat. Am.   | 0.878    | 0.983        | PASS         |
+| Middle East / Africa        | 0.851    | 0.953        | PASS         |
+| South / Southeast Asia      | 0.829    | 0.928        | PASS (marginal) |
+| Non-English (translated)    | Not evaluated — OUT OF SCOPE; see GS-MDL-001 limitations |
+
+South/Southeast Asia finding is marginal (impact ratio 0.928, above the 0.80 fail threshold and above the 0.75 critical threshold, but below the team's internal target of 0.95). This region is flagged for enhanced monitoring.
+
+Remediation action: Added 340 South/Southeast Asian issuer documents to human-labeled training queue for v2.5. Expected improvement: F1 increase of 0.02–0.04 based on v2.3 → v2.4 precedent. Target resolution: Q3 2026.
+
+Overall Geographic Bias Result: PASS (marginal finding tracked).
+
+3.4 Sector Bias
+
+Results:
+  Extractive industries: F1 0.921, impact ratio 1.031 (slightly above reference — no concern)
+  Financial services: F1 0.867, impact ratio 0.971 — PASS
+  Small-cap issuers: F1 0.843, impact ratio 0.944 — PASS
+
+Remediation: Analyst guidance note issued recommending enhanced review for small-cap issuer classifications. No model change required.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. RESULTS — GS-MDL-002: PORTFOLIO OPTIMIZER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+4.1 Geographic Allocation Bias
+
+Test design: 1,400 advisor recommendation records analyzed. Portfolios grouped by primary investment universe (developed markets only, emerging markets included, mixed). Advisor acceptance rates and recommendation favorability (measured as expected return relative to neutral allocation) compared across groups.
+
+Results:
+  Developed markets only: Mean expected return uplift vs. neutral: +1.42%
+  Emerging markets included: Mean expected return uplift vs. neutral: +1.38%
+  Impact ratio: 0.972 — PASS
+
+No systematic underallocation to EM relative to risk-adjusted benchmarks detected.
+
+4.2 ESG Dependency Chain Analysis
+
+Test design: Examined whether geographic bias in GS-MDL-001 (South/Southeast Asia F1 deficit) propagates into ESG score inputs for GS-MDL-002, causing sub-optimal recommendations for portfolios with significant exposure to these regions.
+
+Findings: The marginal F1 deficit in GS-MDL-001 for South/Southeast Asian issuers translates to an estimated mean ESG score underestimation of 1.8 points (on a 100-point scale) for affected issuers. This underestimation has a second-order effect on GS-MDL-002's ESG constraint satisfaction: portfolios with heavy South/Southeast Asian equity exposure may face artificially tighter ESG constraints, potentially requiring slightly less optimal financial allocations.
+
+Estimated magnitude: < 0.4% expected return differential in affected portfolios. This is within acceptable tolerance for the Q1 2026 period.
+
+Compensating control: Quant Engineering team implemented a geographic ESG score calibration adjustment for South/Southeast Asian issuers in GS-MDL-002 v1.8, applying a +1.5-point correction factor pending GS-MDL-001 v2.5 improvement.
+
+Result: PASS with compensating control in place.
+
+4.3 Client Demographic Bias
+
+Client demographic data is not a model input. Advisor override pattern analysis (segmented by client AUM band) showed no systematic pattern (Chi-squared test p = 0.34). PASS.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. RESULTS — GS-MDL-003: INVESTMENT RISK PREDICTOR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+5.1 Gender Bias
+Not applicable — model does not receive client demographic inputs. PASS (N/A).
+
+5.2 Race / Ethnicity
+Not applicable — model does not receive client demographic inputs. PASS (N/A).
+
+5.3 Age Bias
+Not applicable — model does not receive client demographic inputs. PASS (N/A).
+
+5.4 Geographic Portfolio Composition Bias
+
+Test design: 180 counterfactual pairs of portfolios with equivalent financial risk factor profiles (identical volatility, duration, credit quality, concentration) but differing only in the geographic label of the equity component (developed vs. emerging markets).
+
+Results:
+  Rate of HIGH classification for developed-market-equivalent portfolios: 18.2%
+  Rate of HIGH classification for emerging-market-equivalent portfolios: 19.1%
+  Impact ratio: 0.952 — PASS
+
+The small differential (< 1 percentage point) reflects genuine financial risk differences not fully captured by the matched factor profiles (e.g., residual currency and political risk components in EM). Validated as appropriate by Chief Risk Officer.
+
+5.5 ESG Score Influence Audit
+
+Test design: Compared HIGH-tier classification rates for portfolios with high ESG composite scores (>= 70) vs. low ESG composite scores (<= 40), controlling for financial risk factors.
+
+Results:
+  HIGH classification rate, high ESG score portfolios: 14.8%
+  HIGH classification rate, low ESG score portfolios: 15.7%
+  Impact ratio (high ESG / low ESG on HIGH rate): 0.943 — PASS
+
+Note: Low ESG score portfolios are classified as HIGH risk at a marginally higher rate. The AI Governance Team investigated whether this reflects bias or legitimate model behavior. Conclusion: The correlation between low ESG scores and higher financial risk is well-established in academic literature (corporate governance failures, controversy events, climate transition risk). The SHAP analysis confirms that ESG-related features are contributing appropriately (i.e., in directions consistent with economic theory and historical data). Chief Risk Officer validation recorded in audit working papers (GS-AUDIT-BIAS-2026-Q1-WP). Classified as appropriate model behavior, not bias.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. SUMMARY TABLE — ALL MODELS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+| Model       | Test Dimension             | Impact Ratio | Threshold | Result         |
+|-------------|----------------------------|--------------|-----------|----------------|
+| GS-MDL-001  | Gender (counterfactual)    | 0.998        | >= 0.80   | PASS           |
+| GS-MDL-001  | Race/Ethnicity             | 0.991        | >= 0.80   | PASS           |
+| GS-MDL-001  | Geography (worst subgroup) | 0.928        | >= 0.80   | PASS (marginal)|
+| GS-MDL-001  | Sector (small-cap)         | 0.944        | >= 0.80   | PASS           |
+| GS-MDL-002  | Geographic allocation      | 0.972        | >= 0.80   | PASS           |
+| GS-MDL-002  | ESG dependency chain       | Compensating | control   | PASS           |
+| GS-MDL-003  | Geographic composition     | 0.952        | >= 0.80   | PASS           |
+| GS-MDL-003  | ESG score influence        | 0.943        | >= 0.80   | PASS           |
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. REMEDIATION TRACKING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+| Finding                                    | Action                                        | Owner                   | Due Date   |
+|--------------------------------------------|-----------------------------------------------|-------------------------|------------|
+| GS-MDL-001: S/SE Asia F1 deficit (0.928)   | Add 340 labeled examples; retrain v2.5        | ML Engineering Lead     | 2026-09-30 |
+| GS-MDL-001: Small-cap performance          | Analyst guidance note issued                  | Head of ESG Research    | Completed  |
+| GS-MDL-002: ESG dependency chain           | Geographic calibration adjustment (v1.8)      | Quant Engineering Lead  | Completed  |
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. NIST AI RMF MEASURE 2.11 ALIGNMENT STATEMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This audit was conducted in alignment with NIST AI RMF MEASURE Function, specifically sub-category MEASURE 2.11: "Fairness and bias — the extent to which AI system outputs, decisions, or recommendations are free from unfair bias across groups or demographic categories." The audit employed multiple complementary methods (disparate impact analysis, counterfactual probing, subgroup performance stratification) consistent with MEASURE 2.11's guidance on using diverse quantitative and qualitative evaluation approaches. Findings, impact ratios, and remediation actions are documented in this report and in the supporting working papers (GS-AUDIT-BIAS-2026-Q1-WP). This documentation satisfies the MEASURE function's requirement for evidence-based, repeatable fairness evaluation with documented outcomes.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. SIGN-OFF AND NEXT STEPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Approved by Head of AI Governance: [signed] — 2026-03-28
+Reviewed by Chief Risk Officer: [signed] — 2026-03-27
+Reviewed by Head of ESG Research: [signed] — 2026-03-26
+Reviewed by Head of Investment Strategy: [signed] — 2026-03-26
+
+Next Audit: Q2 2026
+Target Completion Date: 2026-06-27
+Scope: All three production models; expanded evaluation set for South/Southeast Asia to track remediation progress; addition of translated-document testing for GS-MDL-001.

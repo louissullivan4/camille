@@ -1,0 +1,39 @@
+AutoClaim Pro — Responsible AI Statement
+
+Our Commitment to Ethical AI in Insurance
+
+At AutoClaim Pro, we believe in the transformative power of AI to make insurance fairer and more accessible. Artificial intelligence is changing every industry, and insurance is no exception. At AutoClaim Pro, we are proud to be at the forefront of that transformation — bringing speed, consistency, and data-driven insight to a process that has historically been slow, opaque, and frustrating for consumers.
+
+But we also believe that innovation must be responsible. That's why we've made a deep, organization-wide commitment to building and deploying AI in a way that reflects our values: fairness, transparency, and putting people first.
+
+Our Responsible AI Commitments
+
+- We are committed to responsible AI. Technology should serve people, not the other way around. Every AI system we build is designed with the end user in mind — the claimant waiting for a resolution, the adjuster trying to do their best work, the carrier trying to serve their customers well.
+
+- We believe in fairness and transparency. We work to ensure that our AI systems produce consistent, unbiased outcomes. We continuously evaluate our models and remain committed to transparency about how our technology works and what it is designed to do.
+
+- We use AI to help people, not to replace human judgment. Artificial intelligence is a tool — a powerful one, but a tool nonetheless. Our platform is designed to augment human decision-making, giving professionals better information and freeing them to focus on the cases that need their expertise and care.
+
+- We take data privacy seriously. We handle personal and sensitive information with the utmost care, in compliance with all applicable laws and regulations, and in accordance with the trust our clients and their customers place in us.
+
+- We are committed to ongoing improvement. AI is not a "set it and forget it" technology. We continuously monitor, evaluate, and improve our systems to ensure they perform as intended and remain aligned with our ethical principles.
+
+- We engage with our stakeholders. We welcome feedback from clients, claimants, regulators, and the broader public. We believe that diverse perspectives make our AI better and our company stronger.
+
+- We hold ourselves accountable. When something doesn't work the way it should, we acknowledge it and fix it. We do not hide behind technology. We take responsibility for the outcomes our platform produces.
+
+Innovation With Integrity
+
+Insurance exists to protect people in their most vulnerable moments — after an accident, a disaster, or an unexpected loss. That's a profound responsibility. We take it seriously. Our AI systems are not designed to find reasons to deny claims or to put efficiency ahead of fairness. They are designed to process information quickly, accurately, and consistently — so that every claimant gets a fair, timely outcome.
+
+We know that trust is earned, not assumed. We are committed to earning and maintaining the trust of the claimants our platform touches, the carriers who rely on our technology, and the regulators who oversee our industry.
+
+The Road Ahead
+
+AI in insurance is still evolving, and so are we. We continuously review and improve our AI systems to ensure they meet the highest ethical standards. We follow developments in AI governance, regulation, and best practices closely, and we adapt our approach as the field matures.
+
+We believe that the insurers who will lead the industry in the years ahead are those who embrace innovation responsibly — who harness the power of AI without losing sight of the human beings at the center of every claim. That is the company AutoClaim Pro is committed to being.
+
+For questions about our AI practices, please contact us at responsibility@autoclaimpro.com.
+
+AutoClaim Pro — Smarter Claims. Responsible Innovation.

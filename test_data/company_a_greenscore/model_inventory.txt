@@ -1,0 +1,151 @@
+GREENSCORE AI — ENTERPRISE AI MODEL INVENTORY
+Document ID: GS-INV-2026-001
+Version: 3.2
+Owner: AI Governance Team
+Last Updated: 2026-03-31
+Classification: Internal — Confidential
+Review Cycle: Quarterly
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 1: PURPOSE AND SCOPE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This document constitutes the official AI Model Inventory for GreenScore AI. It is maintained by the AI Governance Team and reviewed on a quarterly basis in alignment with the NIST AI Risk Management Framework (AI RMF 1.0) and GreenScore AI's internal AI Lifecycle Policy (GS-POL-AI-001). All AI systems that (a) generate predictions, recommendations, or decisions that influence client outcomes, (b) process personal or organizational data, or (c) operate in a regulated product context are required to be registered in this inventory.
+
+This inventory supports GreenScore AI's obligations under the EU Artificial Intelligence Act (Regulation 2024/1689), GDPR Article 25 (data protection by design), and internal board-level governance requirements established by the AI Ethics Committee (established Q2 2024).
+
+Inventory entries are assigned a unique model identifier, a risk tier, and a regulatory classification. Any new AI system must be registered prior to deployment. Retired systems remain in the registry for a minimum of five years for audit trail purposes.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 2: MODEL INVENTORY TABLE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌──────────────────────────────────┬─────────────────────────────────┬──────────────────────────────────┐
+│ FIELD                            │ MODEL 1                         │ MODEL 2                          │
+│                                  │ ESG Text Classifier             │ Portfolio Optimizer              │
+├──────────────────────────────────┼─────────────────────────────────┼──────────────────────────────────┤
+│ Model ID                         │ GS-MDL-001                      │ GS-MDL-002                       │
+│ Model Name                       │ ESG Text Classifier v2.4        │ Portfolio Optimizer v1.8         │
+│ Business Owner                   │ Head of ESG Research            │ Head of Investment Strategy      │
+│ Technical Owner                  │ ML Engineering Lead             │ Quant Engineering Lead           │
+│ Purpose                          │ Classify corporate disclosures  │ Generate portfolio allocation    │
+│                                  │ into ESG categories (E, S, G,   │ recommendations across asset     │
+│                                  │ or Not Relevant); generate      │ classes based on client risk     │
+│                                  │ ESG sub-scores per document     │ profile and ESG constraints      │
+│ Deployment Date                  │ 2023-08-14                      │ 2024-02-01                       │
+│ Last Review Date                 │ 2026-01-15                      │ 2026-01-15                       │
+│ Next Scheduled Review            │ 2026-04-15                      │ 2026-04-15                       │
+│ Model Type                       │ Fine-tuned LLM (GPT-4 via       │ Constrained optimization +       │
+│                                  │ Azure OpenAI); GreenScore       │ gradient boosted forecasting     │
+│                                  │ prompt layer + post-processing  │ ensemble (XGBoost + CVXPY)       │
+│ Training / Grounding Data        │ MSCI ESG reports (licensed),    │ 15 years MSCI World returns,     │
+│                                  │ GRI Standards corpus, CDP       │ Bloomberg factor data, internal  │
+│                                  │ disclosures, SEC 10-K filings   │ ESG scores from GS-MDL-001       │
+│                                  │ (public domain), GreenScore     │                                  │
+│                                  │ human-labeled dataset (8,400    │                                  │
+│                                  │ examples, internally produced)  │                                  │
+│ Third-Party Model Dependency     │ YES — Azure OpenAI (GPT-4 Turbo)│ NO                               │
+│ Risk Classification              │ LOW                             │ MEDIUM                           │
+│ EU AI Act Classification         │ Limited Risk (Art. 52)          │ Not classified as high-risk;     │
+│                                  │ (transparency obligations apply │ voluntary Code of Practice       │
+│                                  │ for AI-generated content)       │ compliance maintained            │
+│ Human Oversight Level            │ ADVISORY — analyst reviews      │ REQUIRED — all recommendations   │
+│                                  │ flagged low-confidence outputs; │ reviewed by human advisor before │
+│                                  │ high-volume routine outputs     │ client delivery; SHAP            │
+│                                  │ accepted without per-item review│ explainability provided          │
+│ Monitoring Status                │ ACTIVE — weekly performance     │ ACTIVE — real-time drift         │
+│                                  │ dashboards; monthly data drift  │ monitoring; weekly back-test     │
+│                                  │ checks                          │ comparison                       │
+│ Incident History                 │ Zero recorded incidents         │ Zero recorded incidents          │
+│ Bias Audit Status                │ PASSED — Q1 2026               │ PASSED — Q1 2026                 │
+│ Explainability Approach          │ Confidence scores per           │ SHAP values per recommendation;  │
+│                                  │ classification; category        │ plain-language rationale for     │
+│                                  │ rationale strings               │ advisor review interface         │
+└──────────────────────────────────┴─────────────────────────────────┴──────────────────────────────────┘
+
+┌──────────────────────────────────┬──────────────────────────────────┐
+│ FIELD                            │ MODEL 3                          │
+│                                  │ Risk Predictor                   │
+├──────────────────────────────────┼──────────────────────────────────┤
+│ Model ID                         │ GS-MDL-003                       │
+│ Model Name                       │ Investment Risk Predictor v2.1   │
+│ Business Owner                   │ Chief Risk Officer               │
+│ Technical Owner                  │ ML Engineering Lead              │
+│ Purpose                          │ Classify portfolio or investment  │
+│                                  │ proposals into risk tiers (LOW,  │
+│                                  │ MEDIUM, HIGH) for client suitability│
+│                                  │ matching and regulatory reporting │
+│ Deployment Date                  │ 2023-11-20                       │
+│ Last Review Date                 │ 2026-01-15                       │
+│ Next Scheduled Review            │ 2026-04-15                       │
+│ Model Type                       │ Gradient boosted classifier      │
+│                                  │ (LightGBM); 47 engineered features│
+│ Training / Grounding Data        │ 8 years internal portfolio data,  │
+│                                  │ anonymized client outcomes (consent│
+│                                  │ obtained), Refinitiv market data  │
+│                                  │ (licensed), macroeconomic indices │
+│ Third-Party Model Dependency     │ NO                               │
+│ Risk Classification              │ MEDIUM                           │
+│ EU AI Act Classification         │ Potential High-Risk under Annex  │
+│                                  │ III (financial services); legal  │
+│                                  │ review ongoing; precautionary    │
+│                                  │ high-risk compliance posture     │
+│                                  │ adopted as of Q4 2025            │
+│ Human Oversight Level            │ MANDATORY — all HIGH-tier        │
+│                                  │ classifications require senior   │
+│                                  │ analyst sign-off before client   │
+│                                  │ communication; MEDIUM reviewed   │
+│                                  │ by analyst within 24 hours       │
+│ Monitoring Status                │ ACTIVE — daily classification    │
+│                                  │ distribution monitoring;         │
+│                                  │ monthly calibration checks       │
+│ Incident History                 │ Zero recorded incidents          │
+│ Bias Audit Status                │ PASSED — Q1 2026                │
+│ Explainability Approach          │ SHAP waterfall charts for HIGH   │
+│                                  │ classifications; top-5 features  │
+│                                  │ surfaced in analyst review UI    │
+└──────────────────────────────────┴──────────────────────────────────┘
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 3: NARRATIVE DESCRIPTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+3.1 ESG Text Classifier (GS-MDL-001)
+
+The ESG Text Classifier is GreenScore AI's highest-volume AI system, processing approximately 14,000 corporate disclosure documents per month. It is built on GPT-4 Turbo via Azure OpenAI Service, with a proprietary prompt engineering layer and a post-processing pipeline that normalizes outputs, enforces category exclusivity, and assigns confidence scores. The underlying foundation model is operated by Microsoft Azure and is subject to a Data Processing Agreement (DPA) and Azure's AI Acceptable Use Policy.
+
+The classifier's outputs feed directly into GreenScore AI's flagship ESG Scoring product, which is delivered to institutional clients including pension funds, family offices, and ESG-focused asset managers operating primarily in the EU and UK. Because this model generates ESG ratings that appear in client-facing reports, it triggers transparency obligations under EU AI Act Article 52 — specifically, the requirement to disclose when content is AI-generated. GreenScore AI's report templates include a standardized AI disclosure footer.
+
+The model is classified as LOW risk internally because: (1) its outputs are advisory and reviewed by ESG analysts before publication, (2) it does not make consequential decisions about individuals, and (3) the domain (corporate ESG scoring) does not appear in the EU AI Act Annex III high-risk list. However, given the potential for its outputs to influence capital allocation decisions, the AI Governance Team has elected to apply MEDIUM-level monitoring and quarterly bias auditing.
+
+The primary known limitation is geographic coverage: the model performs meaningfully better on English-language disclosures from North American and Western European issuers than on disclosures from emerging market issuers, particularly those in South and Southeast Asia. This limitation is documented in the model card (GS-MC-001), disclosed to clients in product documentation, and is a stated priority for the 2026 model improvement roadmap.
+
+3.2 Portfolio Optimizer (GS-MDL-002)
+
+The Portfolio Optimizer is a hybrid quantitative system combining a gradient boosted return forecasting model (XGBoost) with a convex optimization solver (CVXPY) that enforces client-specific constraints including ESG score floors, sector concentration limits, and regulatory asset-class restrictions. It does not use any third-party foundation model. The system generates allocation recommendations — it does not execute trades or modify portfolios autonomously.
+
+All outputs are delivered to human advisors through a proprietary review interface that displays SHAP value breakdowns for each recommended allocation change. Advisors may accept, modify, or reject recommendations. Any change exceeding a 5% shift in asset class allocation requires a documented override decision per the Human-in-the-Loop Policy (GS-POL-HITL-001).
+
+Risk classification is MEDIUM because: (1) portfolio allocation changes can materially affect client financial outcomes, and (2) the model ingests outputs from GS-MDL-001 (ESG scores), creating a dependency that must be monitored. The model is not currently classified as high-risk under EU AI Act Annex III; however, legal and compliance teams continue to monitor regulatory guidance from the European AI Office regarding AI systems used in investment advisory contexts.
+
+3.3 Investment Risk Predictor (GS-MDL-003)
+
+The Investment Risk Predictor classifies investment proposals and existing portfolios into three risk tiers: LOW, MEDIUM, and HIGH. These classifications are used to (a) match client suitability profiles, (b) generate regulatory MiFID II suitability disclosures, and (c) flag portfolios for senior risk review. Because this model's outputs have a direct bearing on client financial access and regulatory filings, GreenScore AI has adopted a precautionary posture and treats it as potentially high-risk under EU AI Act Annex III pending formal legal determination.
+
+Human oversight is the strictest among all three models: all HIGH-tier classifications are withheld from client communication until a senior analyst has reviewed the supporting SHAP explanation and signed off. This review must occur within 24 hours per the HITL Policy SLA. MEDIUM-tier classifications are surfaced to analysts for review but may proceed without sign-off if no analyst flag is raised within the SLA window.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 4: GOVERNANCE AND REVIEW OBLIGATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+All models in this inventory are subject to:
+- Quarterly bias audits per the Bias Audit Standard (GS-STD-BIAS-001)
+- Annual model validation by a member of the AI Governance Team not involved in original development
+- Continuous monitoring per thresholds defined in each model card
+- Board AI Ethics Committee reporting on a semi-annual basis
+- Mandatory re-evaluation upon any material change to training data, model architecture, or regulatory classification
+
+The AI Governance Team is responsible for maintaining this inventory. The Head of AI Governance is the primary owner. Questions regarding specific model entries should be directed to the relevant business or technical owner identified in Section 2.
+
+Document approved by: Head of AI Governance, Chief Risk Officer, General Counsel
+Next scheduled inventory review: 2026-04-30

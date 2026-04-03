@@ -1,0 +1,153 @@
+{
+  "organization": "AutoClaim Pro",
+  "industry": "Insurtech — AI-powered claims auto-adjudication",
+  "employee_count": 150,
+  "ai_systems_count": 5,
+  "expected_overall_score": { "min": 8, "max": 28 },
+  "expected_risk_tier": "critical",
+  "expected_dimension_scores": {
+    "model_inventory": {
+      "min": 0,
+      "max": 10,
+      "rationale": "No model inventory submitted. Product overview mentions AI vaguely. 5+ models with zero individual documentation.",
+      "key_flags": [
+        "no_model_inventory",
+        "ai_systems_count_unknown_from_docs",
+        "no_model_cards_for_any_system",
+        "auto_denial_engine_not_disclosed_as_automated_decision_system",
+        "three_foundation_models_used_undisclosed"
+      ]
+    },
+    "human_oversight": {
+      "min": 0,
+      "max": 10,
+      "rationale": "Claims under $10K auto-denied with no human review. AI ethics statement claims 'AI to help people not replace human judgment' — directly contradicted by auto-denial engine.",
+      "key_flags": [
+        "auto_denial_for_claims_under_10k_no_human_review",
+        "no_hitl_policy_documented",
+        "ai_ethics_statement_contradicts_actual_practice",
+        "no_appeal_process_documented",
+        "no_escalation_path"
+      ]
+    },
+    "bias_fairness": {
+      "min": 0,
+      "max": 5,
+      "rationale": "Zero bias testing documentation. No mention of testing in any submitted document. Auto-denial engine creates significant disparate impact risk.",
+      "key_flags": [
+        "no_bias_testing_documentation",
+        "no_protected_class_analysis",
+        "auto_denial_engine_high_disparate_impact_risk",
+        "fraud_detection_model_unaudited"
+      ]
+    },
+    "data_governance": {
+      "min": 5,
+      "max": 20,
+      "rationale": "Generic privacy policy exists with GDPR/CCPA boilerplate. No AI-specific data governance. Processes medical/health data with no DPIA.",
+      "key_flags": [
+        "no_dpia_despite_processing_health_data",
+        "no_training_data_provenance",
+        "no_consent_mechanism_for_ai_training_use",
+        "vague_automated_processing_disclosure",
+        "no_data_minimization_policy_for_ai"
+      ]
+    },
+    "incident_response": {
+      "min": 0,
+      "max": 5,
+      "rationale": "No AI incident response plan. 2 active lawsuits and 1 regulatory inquiry with no documented response process.",
+      "key_flags": [
+        "no_ai_incident_response_plan",
+        "2_active_lawsuits_no_documented_ir_process",
+        "colorado_ag_inquiry_march_2025_no_documented_response",
+        "no_rollback_procedures",
+        "no_regulator_notification_procedure"
+      ]
+    },
+    "monitoring_drift": {
+      "min": 0,
+      "max": 10,
+      "rationale": "No monitoring documentation. Auto-denial engine operating without documented performance monitoring creates liability accumulation risk.",
+      "key_flags": [
+        "no_monitoring_documentation_for_any_model",
+        "auto_denial_engine_no_drift_detection",
+        "no_retraining_triggers",
+        "no_performance_alerting"
+      ]
+    },
+    "regulatory_compliance": {
+      "min": 0,
+      "max": 10,
+      "rationale": "Colorado AG inquiry specifically about AI in claims. Colorado SB21-169 (insurance AI anti-discrimination) may apply. No compliance documentation.",
+      "key_flags": [
+        "colorado_ag_inquiry_march_2025",
+        "colorado_sb21_169_likely_applies_no_compliance_docs",
+        "auto_denial_engine_may_trigger_state_unfair_claims_practices_acts",
+        "2_active_lawsuits_class_action_and_bad_faith"
+      ]
+    },
+    "third_party_risk": {
+      "min": 0,
+      "max": 10,
+      "rationale": "Uses GPT-4, Claude, and Gemini with no vendor risk assessments, no contractual AI protections, no supply chain governance.",
+      "key_flags": [
+        "three_foundation_models_no_vendor_assessment",
+        "no_contractual_ai_protections_with_any_vendor",
+        "correlated_failure_risk_multiple_llm_providers",
+        "no_supply_chain_governance"
+      ]
+    }
+  },
+  "external_signals": {
+    "litigation": [
+      {
+        "type": "class_action",
+        "description": "Wrongful denial class action — alleges systematic underpayment of claims under $10K via automated denial engine",
+        "filed": "2024-12",
+        "status": "active",
+        "severity": "critical"
+      },
+      {
+        "type": "individual_claim",
+        "description": "Bad faith claim — individual claimant denied valid medical claim via automated system",
+        "filed": "2025-02",
+        "status": "active",
+        "severity": "high"
+      }
+    ],
+    "regulatory": [
+      {
+        "type": "regulatory_inquiry",
+        "description": "Colorado Attorney General inquiry into AI decision-making in claims adjudication",
+        "started": "2025-03",
+        "status": "active",
+        "severity": "critical"
+      }
+    ]
+  },
+  "expected_critical_flags": [
+    "Auto-denial engine denies claims under $10K with ZERO human review",
+    "2 active lawsuits — class action (wrongful denial) + individual bad faith",
+    "Colorado AG inquiry into AI claims decision-making — active March 2025",
+    "No bias testing documentation for any of 5 AI models",
+    "No incident response plan despite active litigation",
+    "No DPIA despite processing medical/health data",
+    "AI ethics statement directly contradicts operational practice (claims 'AI to help people not replace human judgment' — auto-denial engine does exactly that)",
+    "Three different foundation models with no vendor risk assessment"
+  ],
+  "expected_amber_flags": [
+    "Generic privacy policy with no AI-specific disclosures",
+    "No formal model inventory — cannot determine full AI system scope"
+  ],
+  "recommended_underwriting_decision": "DECLINE or EXCLUDE auto-adjudication liability",
+  "recommended_coverage_conditions": [
+    "Recommend DECLINE unless auto-denial engine is suspended pending governance buildout",
+    "If binding: EXCLUDE all claims arising from automated denial decisions",
+    "EXCLUDE Colorado AG inquiry and all related claims (known loss)",
+    "EXCLUDE class action and bad faith claim (known losses)",
+    "Require minimum 90-day governance remediation before any coverage: model inventory, bias testing, HITL for all claim decisions, IR plan, DPIA",
+    "Sublimit auto-adjudication to $0 (full exclusion) until human review implemented"
+  ],
+  "validation_notes": "AutoClaim should score CRITICAL (0-24) on almost all dimensions. The most important extractions: (1) detecting auto-denial engine operating without HITL, (2) detecting active litigation, (3) detecting Colorado AG inquiry, (4) detecting DPIA gap for health data, (5) detecting the contradiction between ethics statement and actual practice. The external_signals layer is critical for this company — without it, the score might be just HIGH; with litigation data, it's CRITICAL."
+}
