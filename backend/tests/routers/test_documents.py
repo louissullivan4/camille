@@ -7,9 +7,7 @@ from httpx import AsyncClient
 
 async def _setup(client: AsyncClient, slug: str) -> str:
     org = await client.post("/api/v1/organizations", json={"name": "DocOrg", "slug": slug})
-    a = await client.post(
-        "/api/v1/assessments", json={"organization_id": org.json()["id"]}
-    )
+    a = await client.post("/api/v1/assessments", json={"organization_id": org.json()["id"]})
     return a.json()["id"]
 
 
@@ -63,15 +61,14 @@ async def test_list_documents(client: AsyncClient) -> None:
 @pytest.mark.asyncio
 async def test_get_document_not_found(client: AsyncClient) -> None:
     a_id = await _setup(client, "doc-org-404")
-    resp = await client.get(
-        f"/api/v1/assessments/{a_id}/documents/00000000-0000-0000-0000-000000000000"
-    )
+    resp = await client.get(f"/api/v1/assessments/{a_id}/documents/00000000-0000-0000-0000-000000000000")
     assert resp.status_code == 404
 
 
 @pytest.mark.asyncio
 async def test_upload_document_storage_error_returns_502(client: AsyncClient) -> None:
     from app.services.storage import StorageError
+
     a_id = await _setup(client, "doc-org-s3err")
     with patch("app.routers.documents.upload_bytes", new_callable=AsyncMock, side_effect=StorageError("S3 down")):
         resp = await client.post(
@@ -102,6 +99,7 @@ async def test_list_documents_assessment_not_found(client: AsyncClient) -> None:
 @pytest.mark.asyncio
 async def test_get_document_success(client: AsyncClient) -> None:
     from io import BytesIO
+
     a_id = await _setup(client, "doc-org-get-ok")
     with (
         patch("app.routers.documents.upload_bytes", new_callable=AsyncMock),

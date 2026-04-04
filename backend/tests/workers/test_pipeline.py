@@ -4,6 +4,7 @@ Pipeline worker tests.
 Mocks LLM client, storage, and report generator — only the DB interactions
 and status-transition logic are tested against the real test DB.
 """
+
 from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
@@ -39,14 +40,70 @@ async def _setup_assessment(db: AsyncSession, with_document: bool = True) -> Ass
 
 
 MOCK_FINDINGS = {
-    "model_inventory": {"models_fully_documented": True, "model_count": 1, "all_risk_tiers_assigned": False, "deployment_environments_listed": False, "decision_types_documented": False, "last_updated_months_ago": None},
-    "human_oversight": {"has_hitl_policy": True, "consequential_decisions_covered": ["hiring"], "escalation_path_documented": True, "override_authority_defined": False, "review_frequency": "quarterly", "misleading_hitl_claim": False},
-    "bias_fairness": {"has_bias_testing": False, "protected_classes_tested": [], "adverse_impact_ratio": None, "remediation_process_documented": False, "testing_frequency": None, "nyc_ll144_compliant": False, "last_audit_months_ago": None},
-    "data_governance": {"has_data_governance_policy": False, "consent_mechanism_documented": False, "data_provenance_tracked": False, "retention_policy_exists": False, "retention_adequate_for_litigation": False, "cross_border_transfers_addressed": False, "dpia_completed": False},
-    "incident_response": {"has_ir_plan": False, "has_ai_ir_plan": False, "notification_procedures_documented": False, "rollback_procedure_documented": False, "post_incident_review_required": False, "sla_defined": False},
-    "monitoring_drift": {"has_monitoring": False, "drift_detection_implemented": False, "retraining_triggers_defined": False, "alerting_configured": False, "monitoring_frequency": None, "last_review_months_ago": None},
-    "regulatory_compliance": {"nist_rmf_aligned": False, "eu_ai_act_assessed": False, "colorado_sb21_compliant": None, "nyc_ll144_compliant": False, "iso_42001_certified": False, "known_violations": False},
-    "third_party_risk": {"has_vendor_inventory": False, "vendor_contracts_reviewed": False, "assessment_frequency": None, "ungoverned_ai_tools": False},
+    "model_inventory": {
+        "models_fully_documented": True,
+        "model_count": 1,
+        "all_risk_tiers_assigned": False,
+        "deployment_environments_listed": False,
+        "decision_types_documented": False,
+        "last_updated_months_ago": None,
+    },
+    "human_oversight": {
+        "has_hitl_policy": True,
+        "consequential_decisions_covered": ["hiring"],
+        "escalation_path_documented": True,
+        "override_authority_defined": False,
+        "review_frequency": "quarterly",
+        "misleading_hitl_claim": False,
+    },
+    "bias_fairness": {
+        "has_bias_testing": False,
+        "protected_classes_tested": [],
+        "adverse_impact_ratio": None,
+        "remediation_process_documented": False,
+        "testing_frequency": None,
+        "nyc_ll144_compliant": False,
+        "last_audit_months_ago": None,
+    },
+    "data_governance": {
+        "has_data_governance_policy": False,
+        "consent_mechanism_documented": False,
+        "data_provenance_tracked": False,
+        "retention_policy_exists": False,
+        "retention_adequate_for_litigation": False,
+        "cross_border_transfers_addressed": False,
+        "dpia_completed": False,
+    },
+    "incident_response": {
+        "has_ir_plan": False,
+        "has_ai_ir_plan": False,
+        "notification_procedures_documented": False,
+        "rollback_procedure_documented": False,
+        "post_incident_review_required": False,
+        "sla_defined": False,
+    },
+    "monitoring_drift": {
+        "has_monitoring": False,
+        "drift_detection_implemented": False,
+        "retraining_triggers_defined": False,
+        "alerting_configured": False,
+        "monitoring_frequency": None,
+        "last_review_months_ago": None,
+    },
+    "regulatory_compliance": {
+        "nist_rmf_aligned": False,
+        "eu_ai_act_assessed": False,
+        "colorado_sb21_compliant": None,
+        "nyc_ll144_compliant": False,
+        "iso_42001_certified": False,
+        "known_violations": False,
+    },
+    "third_party_risk": {
+        "has_vendor_inventory": False,
+        "vendor_contracts_reviewed": False,
+        "assessment_frequency": None,
+        "ungoverned_ai_tools": False,
+    },
 }
 
 
@@ -100,10 +157,6 @@ async def test_pipeline_sets_failed_on_exception(db: AsyncSession) -> None:
 async def test_pipeline_status_transitions(db: AsyncSession) -> None:
     """Verify that at least 'extracting' and 'scoring' transitions fire."""
     assessment = await _setup_assessment(db)
-    statuses_seen: list[str] = []
-
-    original_set_status_attr = run_assessment_pipeline
-
     with (
         patch(
             "app.workers.pipeline.extract_all_dimensions",
@@ -136,15 +189,14 @@ def _selective_import_error(blocked_module: str):
 
 # ── S3 fallback tests ────────────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_pipeline_s3_fallback_downloads_and_persists(db: AsyncSession) -> None:
     """Lines 67-102: when raw_text is None but s3_key is set, download from S3."""
     assessment = await _setup_assessment(db, with_document=False)
 
-    org_result = await db.execute(
-        select(Organization).where(Organization.id == assessment.organization_id)
-    )
-    org = org_result.scalar_one()
+    org_result = await db.execute(select(Organization).where(Organization.id == assessment.organization_id))
+    org_result.scalar_one()  # ensure org exists
 
     doc = Document(
         assessment_id=assessment.id,
@@ -207,6 +259,7 @@ async def test_pipeline_skips_doc_with_no_text_and_no_s3_key(db: AsyncSession) -
 
 # ── External signals tests ───────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_pipeline_external_signals_gathered(db: AsyncSession) -> None:
     """Lines 125-139: gather_signals is called when available; empty list is handled gracefully."""
@@ -229,10 +282,12 @@ async def test_pipeline_external_signals_gathered(db: AsyncSession) -> None:
 
 # ── Assessment missing mid-pipeline ─────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_pipeline_returns_cleanly_when_assessment_not_found(db: AsyncSession) -> None:
     """Lines 147-148: if assessment is not in DB at scoring step, pipeline returns without raising."""
     from uuid import uuid4 as _uuid4
+
     non_existent_id = _uuid4()
 
     with (
@@ -244,6 +299,7 @@ async def test_pipeline_returns_cleanly_when_assessment_not_found(db: AsyncSessi
 
 
 # ── Report generator tests ───────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_pipeline_report_generator_sets_report_url(db: AsyncSession) -> None:
@@ -302,6 +358,7 @@ async def test_pipeline_s3_download_failure_skips_doc(db: AsyncSession) -> None:
     await db.commit()
 
     from botocore.exceptions import ClientError
+
     mock_s3_client = MagicMock()
     mock_s3_client.get_object.side_effect = ClientError(
         {"Error": {"Code": "NoSuchKey", "Message": "not found"}}, "GetObject"

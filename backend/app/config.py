@@ -27,4 +27,5 @@ class Settings(BaseSettings):
     # Observability
     SENTRY_DSN: str = ""
 
+
 settings = Settings()

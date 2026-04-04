@@ -18,17 +18,13 @@ async def test_create_organization(client: AsyncClient) -> None:
 @pytest.mark.asyncio
 async def test_create_organization_slug_conflict(client: AsyncClient) -> None:
     await client.post("/api/v1/organizations", json={"name": "Org A", "slug": "conflict-slug"})
-    resp = await client.post(
-        "/api/v1/organizations", json={"name": "Org B", "slug": "conflict-slug"}
-    )
+    resp = await client.post("/api/v1/organizations", json={"name": "Org B", "slug": "conflict-slug"})
     assert resp.status_code == 409
 
 
 @pytest.mark.asyncio
 async def test_get_organization(client: AsyncClient) -> None:
-    create = await client.post(
-        "/api/v1/organizations", json={"name": "GetOrg", "slug": "get-org-unique"}
-    )
+    create = await client.post("/api/v1/organizations", json={"name": "GetOrg", "slug": "get-org-unique"})
     org_id = create.json()["id"]
     resp = await client.get(f"/api/v1/organizations/{org_id}")
     assert resp.status_code == 200
@@ -43,9 +39,7 @@ async def test_get_organization_not_found(client: AsyncClient) -> None:
 
 @pytest.mark.asyncio
 async def test_list_org_assessments(client: AsyncClient) -> None:
-    org = await client.post(
-        "/api/v1/organizations", json={"name": "ListOrg", "slug": "list-org-unique"}
-    )
+    org = await client.post("/api/v1/organizations", json={"name": "ListOrg", "slug": "list-org-unique"})
     org_id = org.json()["id"]
     resp = await client.get(f"/api/v1/organizations/{org_id}/assessments")
     assert resp.status_code == 200

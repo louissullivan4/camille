@@ -1,5 +1,4 @@
 """Tests for document_processor.py — chunk_text and extract_text_from_file."""
-import pytest
 
 from app.services.document_processor import chunk_text, extract_text_from_file
 

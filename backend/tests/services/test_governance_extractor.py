@@ -1,4 +1,5 @@
 """Tests for governance_extractor.py — extract_dimension and extract_all_dimensions."""
+
 import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -39,6 +40,7 @@ def mock_client():
 # extract_dimension
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.asyncio
 async def test_missing_dimension_docs_sets_no_documentation_provided(mock_client):
     """Empty chunk list must return no_documentation_provided without LLM call."""
@@ -61,9 +63,7 @@ async def test_extract_dimension_returns_llm_findings(mock_client):
         "undocumented_systems": [],
         "chatgpt_or_third_party_undisclosed": False,
     }
-    mock_client.messages.create = AsyncMock(
-        return_value=_make_tool_use_response(findings)
-    )
+    mock_client.messages.create = AsyncMock(return_value=_make_tool_use_response(findings))
 
     result = await extract_dimension("model_inventory", ["Model inventory document..."], mock_client)
 
@@ -85,6 +85,7 @@ async def test_extraction_failure_returns_no_documentation_provided(mock_client)
 # extract_all_dimensions
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.asyncio
 async def test_all_dimensions_extracted_with_semaphore(mock_client):
     """
@@ -104,9 +105,7 @@ async def test_all_dimensions_extracted_with_semaphore(mock_client):
     ]
 
     # All LLM calls return a minimal valid response
-    mock_client.messages.create = AsyncMock(
-        return_value=_make_tool_use_response({"no_documentation_provided": False})
-    )
+    mock_client.messages.create = AsyncMock(return_value=_make_tool_use_response({"no_documentation_provided": False}))
 
     result = await extract_all_dimensions(chunks, mock_client)
 
@@ -116,7 +115,6 @@ async def test_all_dimensions_extracted_with_semaphore(mock_client):
 @pytest.mark.asyncio
 async def test_semaphore_limits_concurrency(mock_client):
     """Concurrent in-flight LLM calls must never exceed EXTRACTION_CONCURRENCY."""
-    from unittest.mock import patch, AsyncMock
     import app.services.governance_extractor as extractor_module
 
     # Patch settings to use concurrency=2
@@ -138,7 +136,8 @@ async def test_semaphore_limits_concurrency(mock_client):
         chunks = [
             f"model inventory bias fairness human review data governance "
             f"incident response monitoring drift regulatory compliance "
-            f"vendor third party risk {i}" for i in range(8)
+            f"vendor third party risk {i}"
+            for i in range(8)
         ]
 
         await extract_all_dimensions(chunks, mock_client)
@@ -153,9 +152,7 @@ async def test_no_chunks_all_dimensions_no_documentation(mock_client):
 
     assert set(result.keys()) == set(GOVERNANCE_DIMENSIONS)
     for dim, findings in result.items():
-        assert findings == {"no_documentation_provided": True}, (
-            f"Expected no_documentation_provided for {dim}"
-        )
+        assert findings == {"no_documentation_provided": True}, f"Expected no_documentation_provided for {dim}"
     mock_client.messages.create.assert_not_called()
 
 
@@ -163,11 +160,8 @@ async def test_no_chunks_all_dimensions_no_documentation(mock_client):
 async def test_extraction_logs_token_counts(mock_client, caplog):
     """Token counts must be logged via structlog (captured via caplog or log output)."""
     import logging
-    import structlog
 
-    mock_client.messages.create = AsyncMock(
-        return_value=_make_tool_use_response({"no_documentation_provided": False})
-    )
+    mock_client.messages.create = AsyncMock(return_value=_make_tool_use_response({"no_documentation_provided": False}))
 
     # structlog writes to stdlib logging when not configured otherwise in tests
     with caplog.at_level(logging.DEBUG):
@@ -184,6 +178,7 @@ async def test_extraction_logs_token_counts(mock_client, caplog):
 # ---------------------------------------------------------------------------
 # _filter_chunks_for_dimension
 # ---------------------------------------------------------------------------
+
 
 def test_filter_chunks_returns_relevant_only():
     chunks = [
@@ -212,6 +207,7 @@ def test_filter_chunks_respects_max_chunks():
 # QuickHire shape test (fixture-based — checks field presence, not values)
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.asyncio
 async def test_quickhire_extractions_produce_correct_findings_shape(mock_client):
     """
@@ -224,9 +220,11 @@ async def test_quickhire_extractions_produce_correct_findings_shape(mock_client)
     def make_full_response(dimension: str) -> MagicMock:
         schema_props = DIMENSION_TOOLS[dimension]["input_schema"]["properties"]
         findings = {
-            k: ([] if v.get("type") == "array" else
-                (0 if v.get("type") == "integer" else
-                 (False if v.get("type") == "boolean" else None)))
+            k: (
+                []
+                if v.get("type") == "array"
+                else (0 if v.get("type") == "integer" else (False if v.get("type") == "boolean" else None))
+            )
             for k, v in schema_props.items()
         }
         findings["no_documentation_provided"] = False
@@ -234,10 +232,7 @@ async def test_quickhire_extractions_produce_correct_findings_shape(mock_client)
 
     mock_client.messages.create = AsyncMock(
         side_effect=lambda **kwargs: make_full_response(
-            next(
-                dim for dim in GOVERNANCE_DIMENSIONS
-                if dim in kwargs["tools"][0]["name"]
-            )
+            next(dim for dim in GOVERNANCE_DIMENSIONS if dim in kwargs["tools"][0]["name"])
         )
     )
 
@@ -257,6 +252,4 @@ async def test_quickhire_extractions_produce_correct_findings_shape(mock_client)
     assert set(result.keys()) == set(GOVERNANCE_DIMENSIONS)
     for dim in GOVERNANCE_DIMENSIONS:
         assert isinstance(result[dim], dict), f"{dim} findings must be a dict"
-        assert "no_documentation_provided" in result[dim], (
-            f"{dim} findings missing no_documentation_provided field"
-        )
+        assert "no_documentation_provided" in result[dim], f"{dim} findings missing no_documentation_provided field"

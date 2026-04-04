@@ -8,8 +8,7 @@ keys consumed by the corresponding scoring rule in app/services/scoring_rules/.
 CLASSIFY_DOCUMENT_TOOL: dict = {
     "name": "classify_document",
     "description": (
-        "Classify an AI governance document by type and identify which "
-        "scoring dimensions it contains evidence for."
+        "Classify an AI governance document by type and identify which scoring dimensions it contains evidence for."
     ),
     "input_schema": {
         "type": "object",

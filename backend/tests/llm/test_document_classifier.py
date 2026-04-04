@@ -1,5 +1,6 @@
 """Tests for document_classifier.py — classify_document."""
-from unittest.mock import AsyncMock, MagicMock, patch
+
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -33,12 +34,14 @@ def mock_client():
 @pytest.mark.asyncio
 async def test_classifies_model_card_correctly(mock_client):
     mock_client.messages.create = AsyncMock(
-        return_value=_make_tool_use_response({
-            "doc_type": "model_card",
-            "confidence": 0.95,
-            "relevant_dimensions": ["model_inventory", "bias_fairness"],
-            "reasoning": "Document describes model architecture and training data.",
-        })
+        return_value=_make_tool_use_response(
+            {
+                "doc_type": "model_card",
+                "confidence": 0.95,
+                "relevant_dimensions": ["model_inventory", "bias_fairness"],
+                "reasoning": "Document describes model architecture and training data.",
+            }
+        )
     )
 
     result = await classify_document("Model card text...", mock_client)
@@ -53,12 +56,14 @@ async def test_classifies_model_card_correctly(mock_client):
 @pytest.mark.asyncio
 async def test_classifies_bias_audit_correctly(mock_client):
     mock_client.messages.create = AsyncMock(
-        return_value=_make_tool_use_response({
-            "doc_type": "bias_audit",
-            "confidence": 0.90,
-            "relevant_dimensions": ["bias_fairness"],
-            "reasoning": "Document contains impact ratio analysis.",
-        })
+        return_value=_make_tool_use_response(
+            {
+                "doc_type": "bias_audit",
+                "confidence": 0.90,
+                "relevant_dimensions": ["bias_fairness"],
+                "reasoning": "Document contains impact ratio analysis.",
+            }
+        )
     )
 
     result = await classify_document("Bias audit report...", mock_client)
@@ -70,12 +75,14 @@ async def test_classifies_bias_audit_correctly(mock_client):
 @pytest.mark.asyncio
 async def test_unknown_doc_type_returned_for_irrelevant_text(mock_client):
     mock_client.messages.create = AsyncMock(
-        return_value=_make_tool_use_response({
-            "doc_type": "unknown",
-            "confidence": 0.30,
-            "relevant_dimensions": [],
-            "reasoning": "Document is a catering menu.",
-        })
+        return_value=_make_tool_use_response(
+            {
+                "doc_type": "unknown",
+                "confidence": 0.30,
+                "relevant_dimensions": [],
+                "reasoning": "Document is a catering menu.",
+            }
+        )
     )
 
     result = await classify_document("Today's lunch menu: pizza, salad...", mock_client)
@@ -87,12 +94,14 @@ async def test_unknown_doc_type_returned_for_irrelevant_text(mock_client):
 @pytest.mark.asyncio
 async def test_classifies_hitl_policy_correctly(mock_client):
     mock_client.messages.create = AsyncMock(
-        return_value=_make_tool_use_response({
-            "doc_type": "hitl_policy",
-            "confidence": 0.88,
-            "relevant_dimensions": ["human_oversight"],
-            "reasoning": "Document describes human review process for AI decisions.",
-        })
+        return_value=_make_tool_use_response(
+            {
+                "doc_type": "hitl_policy",
+                "confidence": 0.88,
+                "relevant_dimensions": ["human_oversight"],
+                "reasoning": "Document describes human review process for AI decisions.",
+            }
+        )
     )
 
     result = await classify_document("Human review policy text...", mock_client)
@@ -105,12 +114,14 @@ async def test_classifies_hitl_policy_correctly(mock_client):
 async def test_long_text_is_truncated_before_classification(mock_client):
     """Classifier should truncate to ~3000 chars to keep costs down."""
     mock_client.messages.create = AsyncMock(
-        return_value=_make_tool_use_response({
-            "doc_type": "model_card",
-            "confidence": 0.80,
-            "relevant_dimensions": ["model_inventory"],
-            "reasoning": "Model card.",
-        })
+        return_value=_make_tool_use_response(
+            {
+                "doc_type": "model_card",
+                "confidence": 0.80,
+                "relevant_dimensions": ["model_inventory"],
+                "reasoning": "Model card.",
+            }
+        )
     )
 
     long_text = "model card content " * 1000  # ~19000 chars
