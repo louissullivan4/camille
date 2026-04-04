@@ -11,7 +11,6 @@ from anthropic import AsyncAnthropic
 
 from app.config import settings
 from app.llm.client import call_tool_use
-from app.llm.schemas import DIMENSION_TOOLS
 
 log = structlog.get_logger()
 

@@ -1,12 +1,20 @@
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
 import structlog
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import health
+from app.middleware.auth import APIKeyMiddleware
+from app.routers import (
+    assessments,
+    documents,
+    health,
+    organizations,
+    reports,
+    scores,
+)
 
 structlog.configure(
     processors=[
@@ -18,6 +26,12 @@ structlog.configure(
 )
 
 log = structlog.get_logger()
+
+if settings.SENTRY_DSN:
+    import sentry_sdk  # type: ignore[import-untyped]
+
+    sentry_sdk.init(dsn=settings.SENTRY_DSN, traces_sample_rate=0.1)
+    log.info("sentry.initialized")
 
 
 @asynccontextmanager
@@ -41,5 +55,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(APIKeyMiddleware)
 
-app.include_router(health.router, prefix="/api/v1")
+PREFIX = "/api/v1"
+
+app.include_router(health.router, prefix=PREFIX)
+app.include_router(organizations.router, prefix=PREFIX)
+app.include_router(assessments.router, prefix=PREFIX)
+app.include_router(documents.router, prefix=PREFIX)
+app.include_router(scores.router, prefix=PREFIX)
+app.include_router(reports.router, prefix=PREFIX)

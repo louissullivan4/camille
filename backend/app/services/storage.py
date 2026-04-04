@@ -29,6 +29,9 @@ def _get_client() -> "boto3.client":  # type: ignore[name-defined]
     if settings.AWS_ACCESS_KEY_ID:
         kwargs["aws_access_key_id"] = settings.AWS_ACCESS_KEY_ID
         kwargs["aws_secret_access_key"] = settings.AWS_SECRET_ACCESS_KEY
+    if settings.S3_ENDPOINT_URL:
+        # Point at local MinIO (or any S3-compatible endpoint)
+        kwargs["endpoint_url"] = settings.S3_ENDPOINT_URL
     return boto3.client("s3", **kwargs)
 
 

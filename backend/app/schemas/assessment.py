@@ -3,6 +3,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
+from app.schemas.score import AssessmentScoreResponse
+
 
 class AssessmentCreate(BaseModel):
     organization_id: UUID
@@ -20,5 +22,21 @@ class AssessmentResponse(BaseModel):
     dimension_scores: dict | None = None
     flags: dict | None = None
     assessment_config: dict | None = None
+    report_url: str | None = None
     created_at: datetime
     updated_at: datetime
+
+
+class AssessmentDetailResponse(AssessmentResponse):
+    """Extended response that embeds computed scores when assessment is complete."""
+
+    scores: AssessmentScoreResponse | None = None
+
+
+class AssessmentConfigUpdate(BaseModel):
+    assessment_config: dict
+
+
+class ProcessResponse(BaseModel):
+    status: str
+    assessment_id: UUID

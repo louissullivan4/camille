@@ -1,5 +1,5 @@
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Callable
 
 import structlog
 
@@ -72,11 +72,11 @@ def score_assessment(
     assessment_config: optional dict with {"weight_overrides": {...}}
     """
     # Import here to avoid circular imports at module load time
-    from app.services.scoring_rules.model_inventory import score_model_inventory
-    from app.services.scoring_rules.human_oversight import score_human_oversight
     from app.services.scoring_rules.bias_fairness import score_bias_fairness
     from app.services.scoring_rules.data_governance import score_data_governance
+    from app.services.scoring_rules.human_oversight import score_human_oversight
     from app.services.scoring_rules.incident_response import score_incident_response
+    from app.services.scoring_rules.model_inventory import score_model_inventory
     from app.services.scoring_rules.monitoring_drift import score_monitoring_drift
     from app.services.scoring_rules.regulatory_compliance import score_regulatory_compliance
     from app.services.scoring_rules.third_party_risk import score_third_party_risk

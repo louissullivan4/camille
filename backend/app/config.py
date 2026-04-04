@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     AWS_SECRET_ACCESS_KEY: str = ""
     AWS_REGION: str = "us-east-1"
     S3_BUCKET_NAME: str = "camille-documents-local"
+    # Set to MinIO endpoint for local dev; leave blank in prod to use real AWS
+    S3_ENDPOINT_URL: str = ""
     # External signals
     NEWS_API_KEY: str = ""
     PACER_API_KEY: str = ""

@@ -10,6 +10,7 @@ from app.config import settings
 from app.database import get_db
 from app.main import app
 from app.models.base import Base
+import app.models as _models  # noqa: F401 — ensure all models are registered with Base.metadata
 
 # Derive test DB URL from settings - swap DB name to camille_test, keep all other config
 _default_test_url = settings.DATABASE_URL.rsplit("/", 1)[0] + "/camille_test"
@@ -43,6 +44,10 @@ async def client(db: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
         yield db
 
     app.dependency_overrides[get_db] = override_get_db
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+    async with AsyncClient(
+        transport=ASGITransport(app=app),
+        base_url="http://test",
+        headers={"X-API-Key": settings.API_KEY_SECRET},
+    ) as ac:
         yield ac
     app.dependency_overrides.clear()
