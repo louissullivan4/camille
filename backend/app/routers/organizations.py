@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import UUID
 
 import structlog
@@ -53,6 +54,10 @@ async def get_organization(
 async def list_org_assessments(
     org_id: UUID,
     db: AsyncSession = Depends(get_db),
+    status: str | None = Query(None, description="Filter by status (pending, processing, complete, failed)"),
+    risk_tier: str | None = Query(None, description="Filter by risk tier (low, medium, high, critical)"),
+    created_after: datetime | None = Query(None, description="Return assessments created after this ISO datetime"),
+    created_before: datetime | None = Query(None, description="Return assessments created before this ISO datetime"),
     offset: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
 ) -> list[AssessmentResponse]:
@@ -61,12 +66,17 @@ async def list_org_assessments(
     if not org_result.scalar_one_or_none():
         raise HTTPException(status_code=404, detail="Organization not found")
 
-    result = await db.execute(
-        select(Assessment)
-        .where(Assessment.organization_id == org_id)
-        .order_by(Assessment.created_at.desc())
-        .offset(offset)
-        .limit(limit)
-    )
+    query = select(Assessment).where(Assessment.organization_id == org_id).order_by(Assessment.created_at.desc())
+    if status:
+        query = query.where(Assessment.status == status)
+    if risk_tier:
+        query = query.where(Assessment.risk_tier == risk_tier)
+    if created_after:
+        query = query.where(Assessment.created_at >= created_after)
+    if created_before:
+        query = query.where(Assessment.created_at <= created_before)
+    query = query.offset(offset).limit(limit)
+
+    result = await db.execute(query)
     assessments = result.scalars().all()
     return [AssessmentResponse.model_validate(a) for a in assessments]

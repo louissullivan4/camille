@@ -262,9 +262,10 @@ _MAX_DIMENSION_RETRIES = 1
 async def extract_all_dimensions(
     doc_chunks: list[str],
     client: AsyncAnthropic,
+    dimensions: list[str] | None = None,
 ) -> dict[str, dict]:
     """
-    Run extraction for all 8 governance dimensions in parallel.
+    Run extraction for the specified governance dimensions in parallel.
 
     Failed dimensions (due to API overload or transient errors) are retried once
     after a delay.  Only genuinely absent documents produce no_documentation_provided.
@@ -272,34 +273,35 @@ async def extract_all_dimensions(
     Args:
         doc_chunks: All document chunks from the assessment's uploaded documents.
         client: AsyncAnthropic client.
+        dimensions: Subset of GOVERNANCE_DIMENSIONS to run. Defaults to all 8.
 
     Returns:
-        Dict mapping dimension name → findings dict.
+        Dict mapping dimension name to findings dict.
     """
+    active_dims = dimensions if dimensions else list(GOVERNANCE_DIMENSIONS)
+
     log.info(
         "extraction.pipeline.start",
         total_chunks=len(doc_chunks),
         concurrency=settings.EXTRACTION_CONCURRENCY,
+        active_dimensions=active_dims,
     )
 
     # Pre-filter chunks per dimension before the gather
-    dimension_chunks = {dim: _filter_chunks_for_dimension(doc_chunks, dim) for dim in GOVERNANCE_DIMENSIONS}
+    dimension_chunks = {dim: _filter_chunks_for_dimension(doc_chunks, dim) for dim in active_dims}
 
     # Semaphore caps concurrent LLM calls to avoid hitting per-minute token rate limits.
     semaphore = asyncio.Semaphore(settings.EXTRACTION_CONCURRENCY)
 
     raw_results = await asyncio.gather(
-        *[
-            _extract_dimension_with_semaphore(dim, dimension_chunks[dim], client, semaphore)
-            for dim in GOVERNANCE_DIMENSIONS
-        ],
+        *[_extract_dimension_with_semaphore(dim, dimension_chunks[dim], client, semaphore) for dim in active_dims],
         return_exceptions=True,
     )
 
     findings: dict[str, dict] = {}
     failed_dims: list[str] = []
 
-    for dim, result in zip(GOVERNANCE_DIMENSIONS, raw_results, strict=True):
+    for dim, result in zip(active_dims, raw_results, strict=True):
         if isinstance(result, Exception):
             log.warning(
                 "extraction.dimension_failed",

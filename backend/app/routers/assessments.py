@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 from uuid import UUID
 
 import structlog
@@ -14,6 +15,7 @@ from app.schemas.assessment import (
     AssessmentCreate,
     AssessmentDetailResponse,
     AssessmentResponse,
+    ProcessOptions,
     ProcessResponse,
 )
 
@@ -44,8 +46,11 @@ async def create_assessment(
 @router.get("", response_model=list[AssessmentResponse])
 async def list_assessments(
     db: AsyncSession = Depends(get_db),
-    org_id: UUID | None = Query(None),
-    status: str | None = Query(None),
+    org_id: UUID | None = Query(None, description="Filter by organization ID"),
+    status: str | None = Query(None, description="Filter by status (pending, processing, complete, failed)"),
+    risk_tier: str | None = Query(None, description="Filter by risk tier (low, medium, high, critical)"),
+    created_after: datetime | None = Query(None, description="Return assessments created after this ISO datetime"),
+    created_before: datetime | None = Query(None, description="Return assessments created before this ISO datetime"),
     offset: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
 ) -> list[AssessmentResponse]:
@@ -54,6 +59,12 @@ async def list_assessments(
         query = query.where(Assessment.organization_id == org_id)
     if status:
         query = query.where(Assessment.status == status)
+    if risk_tier:
+        query = query.where(Assessment.risk_tier == risk_tier)
+    if created_after:
+        query = query.where(Assessment.created_at >= created_after)
+    if created_before:
+        query = query.where(Assessment.created_at <= created_before)
     query = query.offset(offset).limit(limit)
 
     result = await db.execute(query)
@@ -75,6 +86,7 @@ async def get_assessment(
 @router.post("/{assessment_id}/process", response_model=ProcessResponse)
 async def trigger_process(
     assessment_id: UUID,
+    options: ProcessOptions | None = None,
     db: AsyncSession = Depends(get_db),
 ) -> ProcessResponse:
     result = await db.execute(select(Assessment).where(Assessment.id == assessment_id))
@@ -89,12 +101,20 @@ async def trigger_process(
     assessment.status = "processing"
     await db.commit()
 
+    resolved_options = options or ProcessOptions()
+
     # Import here to avoid circular imports at module level
     from app.workers.tasks import run_pipeline_task  # noqa: PLC0415
 
-    asyncio.create_task(run_pipeline_task(assessment_id))
-    log.info("assessment.process_triggered", assessment_id=str(assessment_id))
-    return ProcessResponse(status="processing", assessment_id=assessment_id)
+    asyncio.create_task(run_pipeline_task(assessment_id, resolved_options))
+    log.info(
+        "assessment.process_triggered",
+        assessment_id=str(assessment_id),
+        dimensions=resolved_options.dimensions,
+        include_external_signals=resolved_options.include_external_signals,
+        include_report=resolved_options.include_report,
+    )
+    return ProcessResponse(status="processing", assessment_id=assessment_id, options=resolved_options)
 
 
 @router.put("/{assessment_id}/config", response_model=AssessmentResponse)

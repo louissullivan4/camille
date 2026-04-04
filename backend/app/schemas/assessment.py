@@ -5,10 +5,35 @@ from pydantic import BaseModel, ConfigDict
 
 from app.schemas.score import AssessmentScoreResponse
 
+GOVERNANCE_DIMENSIONS = [
+    "model_inventory",
+    "human_oversight",
+    "bias_fairness",
+    "data_governance",
+    "incident_response",
+    "monitoring_drift",
+    "regulatory_compliance",
+    "third_party_risk",
+]
+
 
 class AssessmentCreate(BaseModel):
     organization_id: UUID
     assessment_config: dict | None = None
+
+
+class ProcessOptions(BaseModel):
+    """Options for controlling which parts of the pipeline run."""
+
+    dimensions: list[str] | None = None
+    """Subset of governance dimensions to extract and score. Defaults to all 8.
+    Unrecognized dimension names are ignored."""
+
+    include_external_signals: bool = True
+    """Whether to fetch and incorporate external signals (news, regulatory) during scoring."""
+
+    include_report: bool = True
+    """Whether to generate the PDF report after scoring."""
 
 
 class AssessmentResponse(BaseModel):
@@ -40,3 +65,4 @@ class AssessmentConfigUpdate(BaseModel):
 class ProcessResponse(BaseModel):
     status: str
     assessment_id: UUID
+    options: ProcessOptions | None = None

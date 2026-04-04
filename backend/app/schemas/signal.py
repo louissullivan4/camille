@@ -20,3 +20,12 @@ class ExternalSignalResponse(BaseModel):
 
 class SignalSearchRequest(BaseModel):
     company: str
+
+
+class SignalSearchResponse(BaseModel):
+    signal_type: str
+    source: str
+    title: str
+    summary: str
+    severity: str
+    url: str | None = None
