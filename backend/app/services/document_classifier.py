@@ -2,6 +2,7 @@
 Document classifier: determines the type of an AI governance document
 and which scoring dimensions it contains evidence for.
 """
+
 from dataclasses import dataclass
 
 import structlog

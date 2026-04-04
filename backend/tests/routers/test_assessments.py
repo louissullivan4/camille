@@ -1,14 +1,11 @@
 from unittest.mock import AsyncMock, patch
-from uuid import UUID
 
 import pytest
 from httpx import AsyncClient
 
 
 async def _create_org(client: AsyncClient, slug: str = "assess-org") -> str:
-    resp = await client.post(
-        "/api/v1/organizations", json={"name": "Assess Org", "slug": slug}
-    )
+    resp = await client.post("/api/v1/organizations", json={"name": "Assess Org", "slug": slug})
     assert resp.status_code == 201
     return resp.json()["id"]
 
@@ -113,9 +110,11 @@ async def test_process_trigger_404_if_not_found(client: AsyncClient) -> None:
 
 @pytest.mark.asyncio
 async def test_process_trigger_409_if_already_complete(client: AsyncClient, db) -> None:
+    import uuid
+
     from app.models.assessment import Assessment
     from app.models.organization import Organization
-    import uuid
+
     org = Organization(name="CompleteOrg", slug=f"complete-{uuid.uuid4().hex[:6]}")
     db.add(org)
     await db.flush()

@@ -118,10 +118,7 @@ def score_assessment(
             flags=len(dim_score.flags),
         )
 
-    overall_score = sum(
-        dimension_scores[dim].score * weights[dim]
-        for dim in scorers
-    )
+    overall_score = sum(dimension_scores[dim].score * weights[dim] for dim in scorers)
     risk_tier = _assign_risk_tier(overall_score)
 
     log.info(

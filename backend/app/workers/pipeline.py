@@ -9,6 +9,7 @@ Status transitions:
   pending → processing → extracting → scoring → generating_report → complete
   Any step failure → failed
 """
+
 import uuid
 
 import structlog
@@ -51,9 +52,7 @@ async def run_assessment_pipeline(
         await _set_status("extracting")
         bound_log.info("pipeline.step1.loading_documents")
 
-        docs_result = await db.execute(
-            select(Document).where(Document.assessment_id == assessment_id)
-        )
+        docs_result = await db.execute(select(Document).where(Document.assessment_id == assessment_id))
         documents = docs_result.scalars().all()
 
         all_chunks: list[str] = []
@@ -71,9 +70,10 @@ async def run_assessment_pipeline(
                 )
                 try:
                     import asyncio  # noqa: PLC0415
+
                     import boto3  # noqa: PLC0415
+
                     from app.config import settings  # noqa: PLC0415
-                    from functools import partial  # noqa: PLC0415
 
                     def _download() -> bytes:
                         kwargs: dict = {
@@ -122,18 +122,12 @@ async def run_assessment_pipeline(
         try:
             from app.services.external_signals import gather_signals  # noqa: PLC0415
 
-            result_a = await db.execute(
-                select(Assessment).where(Assessment.id == assessment_id)
-            )
+            result_a = await db.execute(select(Assessment).where(Assessment.id == assessment_id))
             assessment = result_a.scalar_one_or_none()
             if assessment:
                 from app.models.organization import Organization  # noqa: PLC0415
 
-                org_result = await db.execute(
-                    select(Organization).where(
-                        Organization.id == assessment.organization_id
-                    )
-                )
+                org_result = await db.execute(select(Organization).where(Organization.id == assessment.organization_id))
                 org = org_result.scalar_one_or_none()
                 if org:
                     signals = await gather_signals(org.name, db)  # noqa: F841

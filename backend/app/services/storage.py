@@ -8,6 +8,7 @@ throughput gains at this scale. boto3 + executor keeps things simple and testabl
 All methods raise StorageError on S3 failures so callers don't need to
 import botocore exceptions directly.
 """
+
 import asyncio
 from functools import partial
 

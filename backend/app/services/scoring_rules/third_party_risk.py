@@ -6,11 +6,13 @@ def score_third_party_risk(findings: dict) -> DimensionScore:
     flags: list[dict] = []
 
     if findings.get("no_documentation_provided"):
-        flags.append({
-            "severity": "critical",
-            "text": "No documentation provided for this dimension",
-            "field": "no_documentation_provided",
-        })
+        flags.append(
+            {
+                "severity": "critical",
+                "text": "No documentation provided for this dimension",
+                "field": "no_documentation_provided",
+            }
+        )
         return DimensionScore(dimension="third_party_risk", score=0, max_score=100, flags=flags)
 
     score = 0.0
@@ -28,28 +30,34 @@ def score_third_party_risk(findings: dict) -> DimensionScore:
         score += 25
 
     for system in findings.get("undocumented_third_party_ai", []):
-        flags.append({
-            "severity": "critical",
-            "text": f"Third-party AI system used without governance documentation: {system}",
-            "field": "undocumented_third_party_ai",
-        })
+        flags.append(
+            {
+                "severity": "critical",
+                "text": f"Third-party AI system used without governance documentation: {system}",
+                "field": "undocumented_third_party_ai",
+            }
+        )
 
     if findings.get("candidate_or_customer_data_shared_with_vendor") and not contractual_protections:
-        flags.append({
-            "severity": "critical",
-            "text": "Customer/candidate data shared with third-party AI — no contractual protections documented",
-            "field": "contractual_ai_protections_documented",
-        })
+        flags.append(
+            {
+                "severity": "critical",
+                "text": "Customer/candidate data shared with third-party AI — no contractual protections documented",
+                "field": "contractual_ai_protections_documented",
+            }
+        )
 
     # Apply staleness multiplier
     months_old = findings.get("assessment_months_old")
     multiplier = get_staleness_multiplier(months_old)
     if multiplier < 1.0:
-        flags.append({
-            "severity": "warning",
-            "text": f"Third-party risk assessment is {months_old} months old — staleness penalty applied",
-            "field": "assessment_months_old",
-        })
+        flags.append(
+            {
+                "severity": "warning",
+                "text": f"Third-party risk assessment is {months_old} months old — staleness penalty applied",
+                "field": "assessment_months_old",
+            }
+        )
     score *= multiplier
 
     return DimensionScore(dimension="third_party_risk", score=score, max_score=100, flags=flags)

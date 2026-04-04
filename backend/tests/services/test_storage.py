@@ -29,7 +29,9 @@ async def test_generate_download_url_returns_string() -> None:
         url = await generate_download_url("assessments/123/doc.pdf")
 
     assert url == "https://s3.example.com/get-url"
-    assert call_kwargs[1]["ExpiresIn"] == 3600 if (call_kwargs := mock_client.generate_presigned_url.call_args) else True
+    assert (
+        call_kwargs[1]["ExpiresIn"] == 3600 if (call_kwargs := mock_client.generate_presigned_url.call_args) else True
+    )
 
 
 @pytest.mark.asyncio
@@ -100,6 +102,7 @@ async def test_get_client_includes_endpoint_url_when_configured() -> None:
         mock_settings.S3_BUCKET_NAME = "test-bucket"
 
         from app.services.storage import _get_client
+
         _get_client()
 
     call_kwargs = mock_boto3_client.call_args[1]

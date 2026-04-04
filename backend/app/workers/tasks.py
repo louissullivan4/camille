@@ -4,6 +4,7 @@ Thin task wrappers for background execution.
 Each task creates its own DB session so it can run outside the request lifecycle.
 These are called via asyncio.create_task() from routers.
 """
+
 import uuid
 
 import structlog

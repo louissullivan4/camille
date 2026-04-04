@@ -26,9 +26,7 @@ async def create_assessment(
     payload: AssessmentCreate,
     db: AsyncSession = Depends(get_db),
 ) -> AssessmentResponse:
-    org_result = await db.execute(
-        select(Organization).where(Organization.id == payload.organization_id)
-    )
+    org_result = await db.execute(select(Organization).where(Organization.id == payload.organization_id))
     if not org_result.scalar_one_or_none():
         raise HTTPException(status_code=404, detail="Organization not found")
 

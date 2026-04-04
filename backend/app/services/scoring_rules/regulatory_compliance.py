@@ -14,11 +14,13 @@ def score_regulatory_compliance(findings: dict) -> DimensionScore:
     flags: list[dict] = []
 
     if findings.get("no_documentation_provided"):
-        flags.append({
-            "severity": "critical",
-            "text": "No documentation provided for this dimension",
-            "field": "no_documentation_provided",
-        })
+        flags.append(
+            {
+                "severity": "critical",
+                "text": "No documentation provided for this dimension",
+                "field": "no_documentation_provided",
+            }
+        )
         return DimensionScore(dimension="regulatory_compliance", score=0, max_score=100, flags=flags)
 
     score = 0.0
@@ -36,36 +38,44 @@ def score_regulatory_compliance(findings: dict) -> DimensionScore:
     if nyc_applies and nyc_compliant:
         score += 20
     elif nyc_applies and not nyc_compliant:
-        flags.append({
-            "severity": "critical",
-            "text": "NYC LL144 applies — no compliance documentation",
-            "field": "nyc_ll144_compliant",
-        })
+        flags.append(
+            {
+                "severity": "critical",
+                "text": "NYC LL144 applies — no compliance documentation",
+                "field": "nyc_ll144_compliant",
+            }
+        )
 
     # Colorado SB21-169
     if findings.get("colorado_sb21_169_applies") and not findings.get("colorado_sb21_169_compliant", False):
-        flags.append({
-            "severity": "critical",
-            "text": "Colorado SB21-169 likely applies — no compliance documentation",
-            "field": "colorado_sb21_169_applies",
-        })
+        flags.append(
+            {
+                "severity": "critical",
+                "text": "Colorado SB21-169 likely applies — no compliance documentation",
+                "field": "colorado_sb21_169_applies",
+            }
+        )
 
     if findings.get("eu_ai_act_classification_documented"):
         score += 10
 
     if findings.get("active_regulatory_inquiry"):
-        flags.append({
-            "severity": "critical",
-            "text": "Active regulatory inquiry",
-            "field": "active_regulatory_inquiry",
-        })
+        flags.append(
+            {
+                "severity": "critical",
+                "text": "Active regulatory inquiry",
+                "field": "active_regulatory_inquiry",
+            }
+        )
 
     if findings.get("active_litigation"):
-        flags.append({
-            "severity": "critical",
-            "text": "Active litigation creates regulatory exposure",
-            "field": "active_litigation",
-        })
+        flags.append(
+            {
+                "severity": "critical",
+                "text": "Active litigation creates regulatory exposure",
+                "field": "active_litigation",
+            }
+        )
 
     if findings.get("general_legal_awareness"):
         score += 20  # Company shows awareness of applicable law
@@ -74,11 +84,13 @@ def score_regulatory_compliance(findings: dict) -> DimensionScore:
     months_old = findings.get("compliance_months_old")
     multiplier = get_staleness_multiplier(months_old)
     if multiplier < 1.0:
-        flags.append({
-            "severity": "warning",
-            "text": f"Compliance documentation is {months_old} months old — staleness penalty applied",
-            "field": "compliance_months_old",
-        })
+        flags.append(
+            {
+                "severity": "warning",
+                "text": f"Compliance documentation is {months_old} months old — staleness penalty applied",
+                "field": "compliance_months_old",
+            }
+        )
     score *= multiplier
 
     return DimensionScore(dimension="regulatory_compliance", score=score, max_score=100, flags=flags)

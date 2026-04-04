@@ -1,39 +1,54 @@
-import os
 from collections.abc import AsyncGenerator
 
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.pool import NullPool
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.pool import StaticPool
 
+import app.models as _models  # noqa: F401 — ensure all models are registered with Base.metadata
 from app.config import settings
 from app.database import get_db
 from app.main import app
 from app.models.base import Base
-import app.models as _models  # noqa: F401 — ensure all models are registered with Base.metadata
 
-# Derive test DB URL from settings - swap DB name to camille_test, keep all other config
-_default_test_url = settings.DATABASE_URL.rsplit("/", 1)[0] + "/camille_test"
-TEST_DATABASE_URL = os.getenv("TEST_DATABASE_URL", _default_test_url)
 
-# NullPool: no connection pooling in tests - each operation gets a fresh connection.
-# This avoids asyncpg binding pool connections to a specific event loop, which causes
-# "Future attached to a different loop" when pytest-asyncio uses per-test loops.
-test_engine = create_async_engine(TEST_DATABASE_URL, echo=False, poolclass=NullPool)
+# SQLite does not have a JSONB type; render it as plain JSON (stored as TEXT).
+# This must be declared before any engine.begin() / create_all call.
+@compiles(JSONB, "sqlite")
+def _compile_jsonb_sqlite(element, compiler, **kw):  # type: ignore[misc]
+    return compiler.visit_JSON(element, **kw)
+
+
+# SQLite in-memory with StaticPool: all connections share one in-memory database,
+# which avoids the "each connection gets its own DB" pitfall of NullPool + in-memory SQLite.
+# check_same_thread=False is required because asyncio may access SQLite from different threads
+# internally when using aiosqlite.
+test_engine = create_async_engine(
+    "sqlite+aiosqlite:///:memory:",
+    echo=False,
+    poolclass=StaticPool,
+    connect_args={"check_same_thread": False},
+)
 TestSessionLocal = async_sessionmaker(test_engine, expire_on_commit=False)
 
 
-@pytest_asyncio.fixture(scope="session", autouse=True)
+@pytest_asyncio.fixture(autouse=True)
 async def setup_database() -> AsyncGenerator[None, None]:
-    async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    yield
+    """Drop and recreate all tables before each test for complete isolation.
+
+    Function-scoped (default) so every test starts with a clean slate regardless
+    of what previous tests committed. Fast for SQLite in-memory.
+    """
     async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
+    yield
 
 
 @pytest_asyncio.fixture
-async def db() -> AsyncGenerator[AsyncSession, None]:
+async def db(setup_database: None) -> AsyncGenerator[AsyncSession, None]:
     async with TestSessionLocal() as session:
         yield session
 

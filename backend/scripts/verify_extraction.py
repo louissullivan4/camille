@@ -18,7 +18,6 @@ Requires ANTHROPIC_API_KEY set in .env or environment.
 
 import asyncio
 import json
-import os
 import sys
 from pathlib import Path
 

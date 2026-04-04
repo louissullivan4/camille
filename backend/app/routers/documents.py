@@ -85,9 +85,7 @@ async def list_documents(
         raise HTTPException(status_code=404, detail="Assessment not found")
 
     docs_result = await db.execute(
-        select(Document)
-        .where(Document.assessment_id == assessment_id)
-        .order_by(Document.created_at)
+        select(Document).where(Document.assessment_id == assessment_id).order_by(Document.created_at)
     )
     return [DocumentResponse.model_validate(d) for d in docs_result.scalars().all()]
 

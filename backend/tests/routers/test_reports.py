@@ -53,6 +53,7 @@ async def test_get_report_not_found(client: AsyncClient) -> None:
 @pytest.mark.asyncio
 async def test_get_report_storage_error_returns_502(client: AsyncClient, db: AsyncSession) -> None:
     from app.services.storage import StorageError
+
     a_id = await _make_assessment_with_report(db, "assessments/key/report.pdf")
     with patch(
         "app.routers.reports.generate_download_url",

@@ -1,9 +1,6 @@
 import pytest
 
 from app.services.scoring_engine import (
-    AssessmentScore,
-    DEFAULT_WEIGHTS,
-    DimensionScore,
     get_staleness_multiplier,
     score_assessment,
 )
@@ -15,7 +12,6 @@ from app.services.scoring_rules.model_inventory import score_model_inventory
 from app.services.scoring_rules.monitoring_drift import score_monitoring_drift
 from app.services.scoring_rules.regulatory_compliance import score_regulatory_compliance
 from app.services.scoring_rules.third_party_risk import score_third_party_risk
-
 
 # ---------------------------------------------------------------------------
 # Staleness tests
@@ -835,32 +831,24 @@ autoclaim_findings: dict[str, dict] = {
 
 def test_quickhire_scores_medium_tier():
     result = score_assessment(quickhire_findings)
-    assert 38 <= result.overall_score <= 62, (
-        f"QuickHire score {result.overall_score:.2f} not in [38, 62]"
-    )
+    assert 38 <= result.overall_score <= 62, f"QuickHire score {result.overall_score:.2f} not in [38, 62]"
     assert result.risk_tier == "medium"
     # Verify all required critical flags are present
     critical_texts = " ".join(f["text"] for f in result.all_flags if f["severity"] == "critical")
     assert "ChatGPT" in critical_texts or "Third-party AI" in critical_texts, "Missing ChatGPT flag"
     assert "EEOC" in critical_texts, "Missing EEOC complaint flag"
     assert "144" in critical_texts or "LL144" in critical_texts, "Missing LL144 flag"
-    assert "incident response" in critical_texts.lower() or "IR plan" in critical_texts, (
-        "Missing IR plan flag"
-    )
+    assert "incident response" in critical_texts.lower() or "IR plan" in critical_texts, "Missing IR plan flag"
     assert "senior" in critical_texts.lower() or "HITL" in critical_texts, "Missing HITL flag"
 
 
 def test_greenscore_scores_low_tier():
     result = score_assessment(greenscore_findings)
-    assert 78 <= result.overall_score <= 90, (
-        f"GreenScore score {result.overall_score:.2f} not in [78, 90]"
-    )
+    assert 78 <= result.overall_score <= 90, f"GreenScore score {result.overall_score:.2f} not in [78, 90]"
     assert result.risk_tier == "low"
 
 
 def test_autoclaim_scores_critical_tier():
     result = score_assessment(autoclaim_findings)
-    assert 8 <= result.overall_score <= 28, (
-        f"AutoClaim score {result.overall_score:.2f} not in [8, 28]"
-    )
+    assert 8 <= result.overall_score <= 28, f"AutoClaim score {result.overall_score:.2f} not in [8, 28]"
     assert result.risk_tier == "critical"

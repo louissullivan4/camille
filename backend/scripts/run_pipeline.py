@@ -22,7 +22,7 @@ import httpx
 
 # ── Config ────────────────────────────────────────────────────────────────────
 BASE = "http://localhost:8000/api/v1"
-KEY  = "change-me-in-production-use-a-long-random-string"
+KEY = "change-me-in-production-use-a-long-random-string"
 SLUG = "quickhire-demo"
 DOCS_DIR = Path(__file__).parent.parent.parent / "test_data" / "company_b_quickhire"
 
@@ -30,9 +30,9 @@ HEADERS = {"X-API-Key": KEY}
 
 
 def pp(label: str, data: dict | list) -> None:
-    print(f"\n{'─'*60}")
+    print(f"\n{'─' * 60}")
     print(f"  {label}")
-    print(f"{'─'*60}")
+    print(f"{'─' * 60}")
     print(json.dumps(data, indent=2, default=str))
 
 
@@ -54,13 +54,15 @@ def cleanup(client: httpx.Client, label: str) -> None:
     try:
         # Import here so the script still works if run outside the venv with DB
         import os
+
         sys.path.insert(0, str(Path(__file__).parent.parent))
-        os.environ.setdefault("DATABASE_URL",
-            "postgresql+asyncpg://camille:localdev@localhost:5433/camille")
+        os.environ.setdefault("DATABASE_URL", "postgresql+asyncpg://camille:localdev@localhost:5433/camille")
 
         import asyncio
+
         from sqlalchemy import delete, select
-        from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+        from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+
         from app.config import settings
         from app.models.assessment import Assessment
         from app.models.document import Document
@@ -71,22 +73,16 @@ def cleanup(client: httpx.Client, label: str) -> None:
 
         async def _delete() -> None:
             async with SessionLocal() as db:
-                result = await db.execute(
-                    select(Organization).where(Organization.slug == SLUG)
-                )
+                result = await db.execute(select(Organization).where(Organization.slug == SLUG))
                 org = result.scalar_one_or_none()
                 if not org:
                     print("  nothing to clean up")
                     return
                 # Delete documents → assessments → org
-                assessments = await db.execute(
-                    select(Assessment).where(Assessment.organization_id == org.id)
-                )
+                assessments = await db.execute(select(Assessment).where(Assessment.organization_id == org.id))
                 for a in assessments.scalars().all():
                     await db.execute(delete(Document).where(Document.assessment_id == a.id))
-                await db.execute(
-                    delete(Assessment).where(Assessment.organization_id == org.id)
-                )
+                await db.execute(delete(Assessment).where(Assessment.organization_id == org.id))
                 await db.execute(delete(Organization).where(Organization.id == org.id))
                 await db.commit()
                 print(f"  deleted org {org.id}")
@@ -100,14 +96,12 @@ def cleanup(client: httpx.Client, label: str) -> None:
 # ── Main ───────────────────────────────────────────────────────────────────────
 def main() -> None:
     with httpx.Client(headers=HEADERS, timeout=30) as client:
-
         # ── Pre-run cleanup ──────────────────────────────────────────────────
         cleanup(client, "PRE-RUN")
 
         # ── 1. Create org ────────────────────────────────────────────────────
         org = check(
-            client.post(f"{BASE}/organizations",
-                        json={"name": "QuickHire (Demo)", "slug": SLUG}),
+            client.post(f"{BASE}/organizations", json={"name": "QuickHire (Demo)", "slug": SLUG}),
             "Create org",
         )
         pp("Organization", org)
@@ -166,13 +160,15 @@ def main() -> None:
         pp("SCORES", scores)
 
         overall = scores["overall_score"]
-        tier    = scores["risk_tier"]
-        passed  = 48 <= overall <= 58 and tier == "medium"
+        tier = scores["risk_tier"]
+        passed = 48 <= overall <= 58 and tier == "medium"
 
-        print(f"\n{'─'*60}")
+        print(f"\n{'─' * 60}")
         print(f"  RESULT: overall_score={overall:.1f}  risk_tier={tier}")
-        print(f"  {'✓ PASS — within expected range [48, 58]' if passed else '✗ FAIL — outside expected range [48, 58]'}")
-        print(f"{'─'*60}")
+        print(
+            f"  {'✓ PASS — within expected range [48, 58]' if passed else '✗ FAIL — outside expected range [48, 58]'}"
+        )
+        print(f"{'─' * 60}")
 
         # ── Post-run cleanup ─────────────────────────────────────────────────
         cleanup(client, "POST-RUN")

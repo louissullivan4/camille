@@ -4,6 +4,7 @@ API key middleware.
 Checks the X-API-Key header against settings.API_KEY_SECRET.
 Excluded paths: /health, /docs, /openapi.json, /redoc.
 """
+
 import structlog
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -12,7 +13,7 @@ from app.config import settings
 
 log = structlog.get_logger()
 
-_EXCLUDED_PREFIXES = ("/api/v1/health", "/docs", "/openapi.json", "/redoc")
+_EXCLUDED_PREFIXES = ("/health", "/docs", "/openapi.json", "/redoc")
 
 
 class APIKeyMiddleware(BaseHTTPMiddleware):

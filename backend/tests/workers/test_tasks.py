@@ -6,11 +6,11 @@ AsyncSessionLocal session. In tests we patch AsyncSessionLocal with a
 context manager that yields the test fixture's db session so changes
 are visible to the test without a cross-DB lookup.
 """
+
 from contextlib import asynccontextmanager
 from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
-import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -42,13 +42,16 @@ async def _make_document(db: AsyncSession) -> tuple[Organization, Assessment, Do
 
 def _make_session_factory(db: AsyncSession):
     """Return a callable that acts like AsyncSessionLocal but yields the test db."""
+
     @asynccontextmanager
     async def _factory():
         yield db
+
     return _factory
 
 
 # ── process_document_task ────────────────────────────────────────────────────
+
 
 async def test_process_document_task_success(db: AsyncSession) -> None:
     """Happy path: task extracts text, classifies, persists status='processed'."""
@@ -93,6 +96,7 @@ async def test_process_document_task_handles_exception(db: AsyncSession) -> None
 
 
 # ── run_pipeline_task ────────────────────────────────────────────────────────
+
 
 async def test_run_pipeline_task_delegates_to_pipeline(db: AsyncSession) -> None:
     """run_pipeline_task must call run_assessment_pipeline with the assessment_id."""

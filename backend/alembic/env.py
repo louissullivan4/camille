@@ -6,10 +6,9 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
-
 from app.config import settings
+from app.models import assessment, document, organization  # noqa: F401 - registers models
 from app.models.base import Base
-from app.models import organization, assessment, document  # noqa: F401 - registers models
 
 config = context.config
 
