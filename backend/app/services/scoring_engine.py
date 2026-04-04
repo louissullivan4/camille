@@ -39,8 +39,8 @@ def get_staleness_multiplier(months_old: int | None) -> float:
 
     Tiers:
       ≤12 months  → 1.0  (current)
-      13–24 months → 0.75 (recent — minor penalty)
-      >24 months   → 0.50 (stale — significant penalty)
+      13–24 months → 0.75 (recent - minor penalty)
+      >24 months   → 0.50 (stale - significant penalty)
     """
     if months_old is None or months_old == 0:
         return 1.0

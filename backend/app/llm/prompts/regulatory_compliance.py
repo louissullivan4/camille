@@ -11,7 +11,7 @@ Instructions:
 - Regulatory applicability requires reasoning about geography AND use case:
   * nyc_ll144_applies: does the company use AEDTs for employment decisions (hiring, promotion, performance) affecting NYC workers?
   * colorado_sb21_169_applies: does the company use AI in insurance decisions in Colorado?
-  * eu_ai_act applies to EU-facing AI systems — if the company only operates in the US, this likely does not apply.
+  * eu_ai_act applies to EU-facing AI systems; if the company only operates in the US, this likely does not apply.
 - general_legal_awareness: true if the company demonstrates general awareness of applicable AI laws/regulations even without full compliance documentation (e.g., mentions EEOC, FCRA, GDPR without claiming full compliance).
 - active_regulatory_inquiry: true if any active regulatory investigation or inquiry is mentioned.
 - active_litigation: true if active litigation with regulatory exposure is mentioned.

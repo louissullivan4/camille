@@ -38,7 +38,7 @@ def score_human_oversight(findings: dict) -> DimensionScore:
         flags.append(
             {
                 "severity": "critical",
-                "text": "HITL covers senior roles only — majority of decisions unreviewed",
+                "text": "HITL covers senior roles only: majority of decisions unreviewed",
                 "field": "hitl_scope",
             }
         )
@@ -65,7 +65,7 @@ def score_human_oversight(findings: dict) -> DimensionScore:
         flags.append(
             {
                 "severity": "warning",
-                "text": "HITL claim may be misleading — model filters before human review",
+                "text": "HITL claim may be misleading: model filters before human review",
                 "field": "misleading_hitl_claim",
             }
         )
@@ -77,7 +77,7 @@ def score_human_oversight(findings: dict) -> DimensionScore:
         flags.append(
             {
                 "severity": "warning",
-                "text": f"HITL policy is {months_old} months old — staleness penalty applied",
+                "text": f"HITL policy is {months_old} months old - staleness penalty applied",
                 "field": "hitl_policy_months_old",
             }
         )

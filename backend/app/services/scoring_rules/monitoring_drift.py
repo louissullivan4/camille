@@ -20,7 +20,7 @@ def score_monitoring_drift(findings: dict) -> DimensionScore:
     vague_only = findings.get("vague_monitoring_reference_only", False)
 
     if vague_only:
-        # Vague reference only — overrides has_monitoring_documentation full credit
+        # Vague reference only: overrides has_monitoring_documentation full credit
         score += 10
         flags.append(
             {
@@ -46,7 +46,7 @@ def score_monitoring_drift(findings: dict) -> DimensionScore:
         flags.append(
             {
                 "severity": "warning",
-                "text": f"Monitoring documentation is {months_old} months old — staleness penalty applied",
+                "text": f"Monitoring documentation is {months_old} months old - staleness penalty applied",
                 "field": "monitoring_months_old",
             }
         )

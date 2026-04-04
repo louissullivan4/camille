@@ -159,7 +159,7 @@ HUMAN_OVERSIGHT_TOOL: dict = {
             },
             "misleading_hitl_claim": {
                 "type": "boolean",
-                "description": "HITL is claimed but the model pre-filters candidates before humans ever see them — human 'review' is effectively nominal.",
+                "description": "HITL is claimed but the model pre-filters candidates before humans ever see them; human 'review' is effectively nominal.",
             },
             "hitl_policy_months_old": {
                 "type": ["number", "null"],
@@ -231,7 +231,7 @@ BIAS_FAIRNESS_TOOL: dict = {
             },
             "nyc_ll144_applies": {
                 "type": "boolean",
-                "description": "NYC Local Law 144 applies — company uses AEDTs for employment decisions in NYC.",
+                "description": "NYC Local Law 144 applies: company uses AEDTs for employment decisions in NYC.",
             },
             "nyc_ll144_compliant": {
                 "type": "boolean",
@@ -452,7 +452,7 @@ REGULATORY_COMPLIANCE_TOOL: dict = {
             },
             "nyc_ll144_applies": {
                 "type": "boolean",
-                "description": "NYC Local Law 144 applies — company uses AEDTs for employment decisions in NYC.",
+                "description": "NYC Local Law 144 applies: company uses AEDTs for employment decisions in NYC.",
             },
             "nyc_ll144_compliant": {
                 "type": "boolean",
@@ -460,7 +460,7 @@ REGULATORY_COMPLIANCE_TOOL: dict = {
             },
             "colorado_sb21_169_applies": {
                 "type": "boolean",
-                "description": "Colorado SB21-169 applies — company uses AI in insurance decisions in Colorado.",
+                "description": "Colorado SB21-169 applies: company uses AI in insurance decisions in Colorado.",
             },
             "colorado_sb21_169_compliant": {
                 "type": "boolean",

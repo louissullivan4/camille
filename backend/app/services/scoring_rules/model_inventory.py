@@ -35,7 +35,7 @@ def score_model_inventory(findings: dict) -> DimensionScore:
         flags.append(
             {
                 "severity": "warning",
-                "text": f"Model inventory is {months_old} months old — staleness penalty applied",
+                "text": f"Model inventory is {months_old} months old - staleness penalty applied",
                 "field": "inventory_months_old",
             }
         )

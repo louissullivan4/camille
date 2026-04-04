@@ -25,7 +25,7 @@ def score_regulatory_compliance(findings: dict) -> DimensionScore:
 
     score = 0.0
 
-    # Framework alignment — capped at 40
+    # Framework alignment - capped at 40
     framework_score = 0
     for fw in findings.get("framework_alignment", []):
         framework_score += FRAMEWORK_POINTS.get(fw, 0)
@@ -41,7 +41,7 @@ def score_regulatory_compliance(findings: dict) -> DimensionScore:
         flags.append(
             {
                 "severity": "critical",
-                "text": "NYC LL144 applies — no compliance documentation",
+                "text": "NYC LL144 applies: no compliance documentation",
                 "field": "nyc_ll144_compliant",
             }
         )
@@ -51,7 +51,7 @@ def score_regulatory_compliance(findings: dict) -> DimensionScore:
         flags.append(
             {
                 "severity": "critical",
-                "text": "Colorado SB21-169 likely applies — no compliance documentation",
+                "text": "Colorado SB21-169 likely applies: no compliance documentation",
                 "field": "colorado_sb21_169_applies",
             }
         )
@@ -87,7 +87,7 @@ def score_regulatory_compliance(findings: dict) -> DimensionScore:
         flags.append(
             {
                 "severity": "warning",
-                "text": f"Compliance documentation is {months_old} months old — staleness penalty applied",
+                "text": f"Compliance documentation is {months_old} months old - staleness penalty applied",
                 "field": "compliance_months_old",
             }
         )

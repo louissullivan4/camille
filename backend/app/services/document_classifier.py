@@ -58,7 +58,7 @@ async def classify_document(
     Returns:
         DocumentClassification with doc_type, confidence, relevant_dimensions, reasoning.
     """
-    # Truncate to ~3000 chars for classification — we only need enough to identify type
+    # Truncate to ~3000 chars for classification - we only need enough to identify type
     excerpt = text[:3000] if len(text) > 3000 else text
 
     result = await call_tool_use(

@@ -42,7 +42,7 @@ def score_third_party_risk(findings: dict) -> DimensionScore:
         flags.append(
             {
                 "severity": "critical",
-                "text": "Customer/candidate data shared with third-party AI — no contractual protections documented",
+                "text": "Customer/candidate data shared with third-party AI: no contractual protections documented",
                 "field": "contractual_ai_protections_documented",
             }
         )
@@ -54,7 +54,7 @@ def score_third_party_risk(findings: dict) -> DimensionScore:
         flags.append(
             {
                 "severity": "warning",
-                "text": f"Third-party risk assessment is {months_old} months old — staleness penalty applied",
+                "text": f"Third-party risk assessment is {months_old} months old - staleness penalty applied",
                 "field": "assessment_months_old",
             }
         )

@@ -26,13 +26,13 @@ GOVERNANCE_DIMENSIONS = [
     "third_party_risk",
 ]
 
-# Relevance keywords per dimension — used to filter chunks before sending to LLM.
+# Relevance keywords per dimension - used to filter chunks before sending to LLM.
 # Rules:
 #  - Prefer specific phrases over single common words to avoid false matches from
 #    unrelated documents (e.g. "model" appears everywhere; "model inventory" does not).
 #  - Keywords also match the [Source: filename] header prepended by verify_extraction.py,
 #    so e.g. "inventory" will include all chunks from "model_inventory.txt" even if the
-#    chunk body doesn't mention it — this is intentional and desirable.
+#    chunk body doesn't mention it - this is intentional and desirable.
 _DIMENSION_KEYWORDS: dict[str, list[str]] = {
     "model_inventory": [
         "model inventory",  # matches inventory doc title + header tag
@@ -124,7 +124,7 @@ _DIMENSION_KEYWORDS: dict[str, list[str]] = {
         # "performance" ← removed: appears heavily in model cards and bias audits
         # "precision"   ← removed: appears in bias audits
         # "recall"      ← removed: appears in bias audits
-        # "f1"          ← kept below only as substring — too noisy when removed
+        # "f1"          ← kept below only as substring - too noisy when removed
         "f1",
         "accuracy",
     ],
@@ -244,20 +244,19 @@ async def extract_dimension(
     combined = "\n---\n".join(relevant_chunks)
     user_message = f"Analyze the following governance document excerpts for the '{dimension}' dimension:\n\n{combined}"
 
-    try:
-        result = await call_tool_use(
-            client=client,
-            model=settings.LLM_EXTRACTION_MODEL,
-            system_prompt=system_prompt,
-            user_message=user_message,
-            tool_schema=tool_schema,
-        )
-        bound_log.info("extraction.complete", fields=list(result.keys()))
-        return result
-    except Exception as exc:
-        bound_log.error("extraction.failed", error=str(exc))
-        # Safe fallback: treat as no documentation rather than crashing the pipeline
-        return {"no_documentation_provided": True}
+    result = await call_tool_use(
+        client=client,
+        model=settings.LLM_EXTRACTION_MODEL,
+        system_prompt=system_prompt,
+        user_message=user_message,
+        tool_schema=tool_schema,
+    )
+    bound_log.info("extraction.complete", fields=list(result.keys()))
+    return result
+
+
+_RETRY_DELAY_SECONDS = 45
+_MAX_DIMENSION_RETRIES = 1
 
 
 async def extract_all_dimensions(
@@ -266,6 +265,9 @@ async def extract_all_dimensions(
 ) -> dict[str, dict]:
     """
     Run extraction for all 8 governance dimensions in parallel.
+
+    Failed dimensions (due to API overload or transient errors) are retried once
+    after a delay.  Only genuinely absent documents produce no_documentation_provided.
 
     Args:
         doc_chunks: All document chunks from the assessment's uploaded documents.
@@ -286,13 +288,40 @@ async def extract_all_dimensions(
     # Semaphore caps concurrent LLM calls to avoid hitting per-minute token rate limits.
     semaphore = asyncio.Semaphore(settings.EXTRACTION_CONCURRENCY)
 
-    results = await asyncio.gather(
+    raw_results = await asyncio.gather(
         *[
             _extract_dimension_with_semaphore(dim, dimension_chunks[dim], client, semaphore)
             for dim in GOVERNANCE_DIMENSIONS
-        ]
+        ],
+        return_exceptions=True,
     )
 
-    findings = dict(zip(GOVERNANCE_DIMENSIONS, results, strict=True))
+    findings: dict[str, dict] = {}
+    failed_dims: list[str] = []
+
+    for dim, result in zip(GOVERNANCE_DIMENSIONS, raw_results, strict=True):
+        if isinstance(result, Exception):
+            log.warning(
+                "extraction.dimension_failed",
+                dimension=dim,
+                error=str(result),
+                retry_in=_RETRY_DELAY_SECONDS,
+            )
+            failed_dims.append(dim)
+        else:
+            findings[dim] = result
+
+    # Retry failed dimensions sequentially after a delay so the API can recover.
+    if failed_dims:
+        log.info("extraction.retrying_failed", dimensions=failed_dims, delay=_RETRY_DELAY_SECONDS)
+        await asyncio.sleep(_RETRY_DELAY_SECONDS)
+        for dim in failed_dims:
+            try:
+                findings[dim] = await extract_dimension(dim, dimension_chunks[dim], client)
+            except Exception as exc:
+                log.error("extraction.dimension_failed_final", dimension=dim, error=str(exc))
+                # Only after exhausting retries do we fall back to no_documentation_provided.
+                findings[dim] = {"no_documentation_provided": True}
+
     log.info("extraction.pipeline.complete", dimensions=list(findings.keys()))
     return findings

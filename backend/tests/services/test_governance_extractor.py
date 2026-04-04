@@ -72,13 +72,12 @@ async def test_extract_dimension_returns_llm_findings(mock_client):
 
 
 @pytest.mark.asyncio
-async def test_extraction_failure_returns_no_documentation_provided(mock_client):
-    """API failure must not raise — returns safe fallback."""
+async def test_extraction_failure_propagates_exception(mock_client):
+    """API failure must propagate so the caller can retry or fall back explicitly."""
     mock_client.messages.create = AsyncMock(side_effect=Exception("API timeout"))
 
-    result = await extract_dimension("incident_response", ["some text"], mock_client)
-
-    assert result == {"no_documentation_provided": True}
+    with pytest.raises(Exception, match="API timeout"):
+        await extract_dimension("incident_response", ["some text"], mock_client)
 
 
 # ---------------------------------------------------------------------------
@@ -154,6 +153,34 @@ async def test_no_chunks_all_dimensions_no_documentation(mock_client):
     for dim, findings in result.items():
         assert findings == {"no_documentation_provided": True}, f"Expected no_documentation_provided for {dim}"
     mock_client.messages.create.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_failed_dimension_retried_after_delay(mock_client):
+    """Dimensions that fail with an API error must be retried once; no_documentation_provided
+    is only set after the retry also fails."""
+    import app.services.governance_extractor as extractor_module
+
+    call_count = 0
+
+    async def fail_then_succeed(**kwargs):
+        nonlocal call_count
+        call_count += 1
+        # First call fails (simulates 529 overload), second succeeds.
+        if call_count == 1:
+            raise Exception("529 Overloaded")
+        return _make_tool_use_response({"has_bias_audit": True})
+
+    mock_client.messages.create = fail_then_succeed
+
+    chunks = ["bias audit impact ratio protected class demographic"]
+
+    with patch.object(extractor_module, "_RETRY_DELAY_SECONDS", 0):
+        result = await extract_all_dimensions(chunks, mock_client)
+
+    # bias_fairness should have succeeded on retry - not no_documentation_provided
+    assert result["bias_fairness"].get("has_bias_audit") is True
+    assert call_count == 2
 
 
 @pytest.mark.asyncio

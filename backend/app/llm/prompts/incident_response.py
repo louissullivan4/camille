@@ -14,7 +14,7 @@ Instructions:
 - active_incidents_or_complaints: true if currently active AI-related incidents or complaints are mentioned.
 - active_litigation: true if currently active litigation related to AI decisions is mentioned.
 - For ir_plan_months_old: calculate from document date to April 2026. Null if no date.
-- CRITICAL: absence of an IR plan is a critical risk signal. If no IR plan is found in provided documents, set has_ai_ir_plan: false — do NOT set no_documentation_provided unless truly no relevant documents were submitted.
+- CRITICAL: absence of an IR plan is a critical risk signal. If no IR plan is found in provided documents, set has_ai_ir_plan: false; do NOT set no_documentation_provided unless truly no relevant documents were submitted.
 - If no relevant documentation is provided at all, set no_documentation_provided: true.
 """
 

@@ -9,7 +9,7 @@ def score_incident_response(findings: dict) -> DimensionScore:
         flags.append(
             {
                 "severity": "critical",
-                "text": "No AI incident response plan — critical gap",
+                "text": "No AI incident response plan: critical gap",
                 "field": "no_documentation_provided",
             }
         )
@@ -45,7 +45,7 @@ def score_incident_response(findings: dict) -> DimensionScore:
         flags.append(
             {
                 "severity": "warning",
-                "text": f"Incident response plan is {months_old} months old — staleness penalty applied",
+                "text": f"Incident response plan is {months_old} months old - staleness penalty applied",
                 "field": "ir_plan_months_old",
             }
         )
@@ -64,7 +64,7 @@ def score_incident_response(findings: dict) -> DimensionScore:
         flags.append(
             {
                 "severity": "critical",
-                "text": "Active litigation — IR plan absence is critical",
+                "text": "Active litigation: IR plan absence is critical",
                 "field": "active_litigation",
             }
         )

@@ -10,7 +10,7 @@ def score_bias_fairness(findings: dict) -> DimensionScore:
     - Quality points: how good/rigorous the audit is (staleness-penalized)
 
     This distinction matters: a 3-year-old audit still proves the company ran
-    impact ratios — but the rigor and cadence signals are stale.
+    impact ratios - but the rigor and cadence signals are stale.
     """
     flags: list[dict] = []
 
@@ -24,7 +24,7 @@ def score_bias_fairness(findings: dict) -> DimensionScore:
         )
         return DimensionScore(dimension="bias_fairness", score=0, max_score=100, flags=flags)
 
-    # Presence signals — not staleness-penalized
+    # Presence signals - not staleness-penalized
     presence = 0.0
 
     if findings.get("has_bias_audit"):
@@ -40,7 +40,7 @@ def score_bias_fairness(findings: dict) -> DimensionScore:
     elif protected_count >= 1:
         presence += 8
 
-    # Quality signals — staleness-penalized
+    # Quality signals - staleness-penalized
     quality = 0.0
 
     if findings.get("third_party_auditor"):
@@ -72,7 +72,7 @@ def score_bias_fairness(findings: dict) -> DimensionScore:
         flags.append(
             {
                 "severity": "warning",
-                "text": f"Bias audit is {months_old} months old — staleness penalty applied to quality signals",
+                "text": f"Bias audit is {months_old} months old - staleness penalty applied to quality signals",
                 "field": "audit_months_old",
             }
         )
@@ -83,7 +83,7 @@ def score_bias_fairness(findings: dict) -> DimensionScore:
         flags.append(
             {
                 "severity": "warning",
-                "text": "Impact ratios borderline — near 80% rule threshold",
+                "text": "Impact ratios borderline: near 80% rule threshold",
                 "field": "impact_ratios_borderline",
             }
         )
@@ -112,7 +112,7 @@ def score_bias_fairness(findings: dict) -> DimensionScore:
         flags.append(
             {
                 "severity": "critical",
-                "text": "LL144 requires independent auditor — self-assessment does not comply",
+                "text": "LL144 requires independent auditor: self-assessment does not comply",
                 "field": "nyc_ll144_independent_auditor_required",
             }
         )
