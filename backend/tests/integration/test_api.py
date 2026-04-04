@@ -9,11 +9,12 @@ Coverage:
   - Authentication (missing / wrong API key)
   - Organizations: create, conflict, get, 404, list assessments
   - Assessments: create, get, list, process trigger, config update
-  - Documents: upload (mocked S3), list, get, 404, wrong type, too large
+  - Documents: upload (mocked S3), list, get, 404, wrong type, too large, S3 failure (local only)
   - Scores: complete assessment, pending assessment, not found
   - Reports: redirect, 404
 """
 
+import os
 from io import BytesIO
 from unittest.mock import AsyncMock, patch
 from uuid import UUID
@@ -355,6 +356,7 @@ async def test_upload_document_assessment_not_found(client: AsyncClient) -> None
     assert resp.status_code == 404
 
 
+@pytest.mark.skipif(bool(os.environ.get("API_BASE_URL")), reason="Cannot inject S3 failure into a real running server")
 @pytest.mark.asyncio
 async def test_upload_document_s3_failure(client: AsyncClient) -> None:
     from app.services.storage import StorageError
