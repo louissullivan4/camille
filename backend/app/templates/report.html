@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Liability Risk Assessment: {{ org_name }}</title>
+<style>
+  /* ── Reset & base ─────────────────────────────────────── */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 10pt;
+    color: #212121;
+    background: #ffffff;
+    line-height: 1.5;
+  }
+
+  /* ── Page layout (WeasyPrint) ─────────────────────────── */
+  @page {
+    size: A4;
+    margin: 20mm 18mm 22mm 18mm;
+    @bottom-center {
+      content: "CONFIDENTIAL - AI Liability Risk Assessment - " string(org-name);
+      font-size: 8pt;
+      color: #757575;
+    }
+    @bottom-right {
+      content: "Page " counter(page) " of " counter(pages);
+      font-size: 8pt;
+      color: #757575;
+    }
+  }
+
+  /* ── Cover page ───────────────────────────────────────── */
+  .cover {
+    page: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 240mm;
+    padding: 30mm 0;
+    border-bottom: 3px solid #1565c0;
+  }
+  @page cover { margin-top: 30mm; }
+
+  .cover-label {
+    font-size: 9pt;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #1565c0;
+    margin-bottom: 8pt;
+  }
+  .cover-title {
+    font-size: 24pt;
+    font-weight: 700;
+    color: #0d2b6b;
+    margin-bottom: 6pt;
+  }
+  .cover-org {
+    font-size: 16pt;
+    color: #1565c0;
+    margin-bottom: 24pt;
+  }
+  .cover-meta {
+    font-size: 9pt;
+    color: #546e7a;
+    margin-bottom: 4pt;
+  }
+  .cover-score-box {
+    margin-top: 32pt;
+    display: inline-block;
+    border: 2px solid {{ risk_tier_color }};
+    padding: 16pt 24pt;
+    border-radius: 4px;
+    width: fit-content;
+  }
+  .cover-score-number {
+    font-size: 42pt;
+    font-weight: 700;
+    color: {{ risk_tier_color }};
+    line-height: 1;
+  }
+  .cover-score-label {
+    font-size: 9pt;
+    color: #546e7a;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .cover-tier-badge {
+    display: inline-block;
+    margin-top: 10pt;
+    padding: 4pt 12pt;
+    background: {{ risk_tier_color }};
+    color: #ffffff;
+    font-size: 10pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 3px;
+  }
+  .cover-confidential {
+    margin-top: 40pt;
+    font-size: 8pt;
+    color: #bdbdbd;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  /* ── Section headings ─────────────────────────────────── */
+  .section-heading {
+    font-size: 13pt;
+    font-weight: 700;
+    color: #0d2b6b;
+    border-bottom: 2px solid #1565c0;
+    padding-bottom: 4pt;
+    margin-top: 20pt;
+    margin-bottom: 10pt;
+  }
+  .sub-heading {
+    font-size: 10pt;
+    font-weight: 700;
+    color: #1565c0;
+    margin-top: 12pt;
+    margin-bottom: 4pt;
+  }
+
+  /* ── Executive summary ────────────────────────────────── */
+  .narrative-box {
+    background: #f5f5f5;
+    border-left: 4px solid #1565c0;
+    padding: 12pt 14pt;
+    margin: 8pt 0 16pt;
+    font-size: 10pt;
+    line-height: 1.6;
+  }
+
+  /* ── Score summary table ──────────────────────────────── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8pt 0 16pt;
+  }
+  th {
+    background: #1565c0;
+    color: #ffffff;
+    font-size: 9pt;
+    font-weight: 600;
+    text-align: left;
+    padding: 6pt 8pt;
+  }
+  td {
+    padding: 5pt 8pt;
+    font-size: 9pt;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: middle;
+  }
+  tr:nth-child(even) td { background: #fafafa; }
+
+  .score-cell {
+    font-weight: 700;
+    font-size: 10pt;
+  }
+
+  /* ── Score bar ────────────────────────────────────────── */
+  .score-bar-bg {
+    background: #e0e0e0;
+    border-radius: 2px;
+    height: 8px;
+    width: 100%;
+    min-width: 80px;
+  }
+  .score-bar-fill {
+    height: 8px;
+    border-radius: 2px;
+  }
+
+  /* ── Flag severity badges ─────────────────────────────── */
+  .badge {
+    display: inline-block;
+    padding: 1pt 6pt;
+    border-radius: 2px;
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+  }
+  .badge-critical { background: #c62828; }
+  .badge-warning  { background: #f57c00; }
+  .badge-info     { background: #0277bd; }
+
+  /* ── Flags list ───────────────────────────────────────── */
+  .flag-item {
+    margin-bottom: 5pt;
+    padding: 5pt 8pt;
+    border-left: 3px solid #e0e0e0;
+  }
+  .flag-item.critical { border-color: #c62828; background: #ffebee; }
+  .flag-item.warning  { border-color: #f57c00; background: #fff3e0; }
+  .flag-item.info     { border-color: #0277bd; background: #e3f2fd; }
+
+  .flag-dimension {
+    font-size: 8pt;
+    color: #757575;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .flag-text {
+    font-size: 9pt;
+    color: #212121;
+  }
+
+  /* ── Dimension detail sections ────────────────────────── */
+  .dim-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 14pt;
+    margin-bottom: 4pt;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 3pt;
+  }
+  .dim-name {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #1565c0;
+  }
+  .dim-score {
+    font-size: 11pt;
+    font-weight: 700;
+  }
+  .dim-weight {
+    font-size: 8pt;
+    color: #9e9e9e;
+  }
+
+  /* ── Appendix ─────────────────────────────────────────── */
+  .doc-row {
+    display: flex;
+    gap: 8pt;
+    padding: 4pt 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .doc-type-badge {
+    display: inline-block;
+    padding: 1pt 6pt;
+    background: #e3f2fd;
+    color: #1565c0;
+    font-size: 8pt;
+    font-weight: 600;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .doc-filename {
+    font-size: 9pt;
+    color: #424242;
+  }
+
+  /* ── Page breaks ──────────────────────────────────────── */
+  .page-break { page-break-before: always; }
+  .avoid-break { page-break-inside: avoid; }
+
+  /* ── Methodology box ──────────────────────────────────── */
+  .methodology-box {
+    background: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    padding: 10pt 12pt;
+    font-size: 9pt;
+    color: #424242;
+    margin-top: 8pt;
+    line-height: 1.6;
+  }
+  .methodology-box p { margin-bottom: 6pt; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     COVER PAGE
+══════════════════════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-label">AI Liability Risk Assessment</div>
+  <div class="cover-title">Governance Risk Report</div>
+  <div class="cover-org">{{ org_name }}</div>
+
+  <div class="cover-meta">Report Date: {{ report_date }}</div>
+  <div class="cover-meta">Prepared by: {{ generated_by }}</div>
+
+  <div class="cover-score-box">
+    <div class="cover-score-label">Overall Governance Score</div>
+    <div class="cover-score-number">{{ "%.1f"|format(overall_score) }}</div>
+    <div class="cover-score-label">out of 100</div>
+  </div>
+  <div><span class="cover-tier-badge">{{ risk_tier }} Risk</span></div>
+
+  <div class="cover-confidential">Confidential - Not for Distribution</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     SECTION 1: EXECUTIVE SUMMARY
+══════════════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+
+<div class="section-heading">1. Executive Summary</div>
+<div class="narrative-box">{{ narrative }}</div>
+
+{% if critical_flags %}
+<div class="sub-heading">Critical Findings ({{ critical_flags|length }})</div>
+{% for flag in critical_flags %}
+<div class="flag-item critical avoid-break">
+  <div class="flag-dimension">{{ flag.get("dimension", "-") | replace("_", " ") | title }}</div>
+  <div class="flag-text">{{ flag.get("text", "") }}</div>
+</div>
+{% endfor %}
+{% endif %}
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     SECTION 2: SCORE SUMMARY
+══════════════════════════════════════════════════════════════════════ -->
+<div class="section-heading">2. Governance Score Summary</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Dimension</th>
+      <th>Weight</th>
+      <th>Score</th>
+      <th style="width:120px;">Visual</th>
+      <th>Critical</th>
+      <th>Warnings</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in dimension_rows %}
+    <tr class="avoid-break">
+      <td>{{ row.label }}</td>
+      <td>{{ row.weight_pct }}%</td>
+      <td class="score-cell" style="color: {{ row.score_color }};">
+        {{ "%.0f"|format(row.score) }}/100
+      </td>
+      <td>
+        <div class="score-bar-bg">
+          <div class="score-bar-fill"
+               style="width: {{ row.score }}%; background: {{ row.score_color }};"></div>
+        </div>
+      </td>
+      <td>
+        {% if row.critical_count > 0 %}
+        <span class="badge badge-critical">{{ row.critical_count }}</span>
+        {% else %}-{% endif %}
+      </td>
+      <td>
+        {% if row.warning_count > 0 %}
+        <span class="badge badge-warning">{{ row.warning_count }}</span>
+        {% else %}-{% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+    <tr style="background:#e8f0fe;">
+      <td><strong>Overall</strong></td>
+      <td><strong>100%</strong></td>
+      <td class="score-cell" style="color: {{ risk_tier_color }};">
+        <strong>{{ "%.1f"|format(overall_score) }}/100</strong>
+      </td>
+      <td>
+        <div class="score-bar-bg">
+          <div class="score-bar-fill"
+               style="width: {{ overall_score }}%; background: {{ risk_tier_color }};"></div>
+        </div>
+      </td>
+      <td colspan="2">
+        <span class="badge" style="background: {{ risk_tier_color }};">
+          {{ risk_tier | upper }} RISK
+        </span>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     SECTION 3: DIMENSION DETAIL
+══════════════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<div class="section-heading">3. Dimension Detail</div>
+
+{% for row in dimension_rows %}
+<div class="avoid-break">
+  <div class="dim-header">
+    <span class="dim-name">{{ row.label }}</span>
+    <span>
+      <span class="dim-score" style="color: {{ row.score_color }};">
+        {{ "%.0f"|format(row.score) }}/100
+      </span>
+      <span class="dim-weight">&nbsp;(weight: {{ row.weight_pct }}%)</span>
+    </span>
+  </div>
+
+  {% if row.flags %}
+    {% for flag in row.flags %}
+    <div class="flag-item {{ flag.get('severity', 'info') }}">
+      <span class="badge badge-{{ flag.get('severity', 'info') }}">
+        {{ flag.get("severity", "info") }}
+      </span>
+      <span class="flag-text"> {{ flag.get("text", "") }}</span>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div style="color:#757575; font-size:9pt; padding:4pt 0;">No flags - dimension meets requirements.</div>
+  {% endif %}
+</div>
+{% endfor %}
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     SECTION 4: ALL FLAGS
+══════════════════════════════════════════════════════════════════════ -->
+{% if critical_flags or warning_flags %}
+<div class="page-break"></div>
+<div class="section-heading">4. All Risk Flags</div>
+
+{% if critical_flags %}
+<div class="sub-heading">Critical Findings ({{ critical_flags|length }})</div>
+{% for flag in critical_flags %}
+<div class="flag-item critical avoid-break">
+  <div class="flag-dimension">{{ flag.get("dimension", "-") | replace("_", " ") | title }}</div>
+  <div class="flag-text">{{ flag.get("text", "") }}</div>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if warning_flags %}
+<div class="sub-heading">Warnings ({{ warning_flags|length }})</div>
+{% for flag in warning_flags %}
+<div class="flag-item warning avoid-break">
+  <div class="flag-dimension">{{ flag.get("dimension", "-") | replace("_", " ") | title }}</div>
+  <div class="flag-text">{{ flag.get("text", "") }}</div>
+</div>
+{% endfor %}
+{% endif %}
+{% endif %}
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     SECTION 5: METHODOLOGY
+══════════════════════════════════════════════════════════════════════ -->
+<div class="section-heading">5. Methodology</div>
+<div class="methodology-box">
+  <p><strong>Scoring model:</strong> Each of 8 governance dimensions is scored 0–100 using deterministic
+  rules applied to structured data extracted from submitted governance documents.
+  Dimension scores are weighted and summed to produce the overall score.</p>
+
+  <p><strong>Dimension weights:</strong> Model Inventory 15% · Human Oversight 20% · Bias &amp; Fairness 15% ·
+  Data Governance 10% · Incident Response 15% · Monitoring &amp; Drift 10% ·
+  Regulatory Compliance 10% · Third-Party Risk 5%.</p>
+
+  <p><strong>Risk tiers:</strong> Low (75–100) · Medium (50–74) · High (25–49) · Critical (0–24).</p>
+
+  <p><strong>Staleness penalty:</strong> Governance documents older than 12 months receive a
+  scoring penalty (13–24 months: 0.75×; &gt;24 months: 0.50×) on quality sub-scores.</p>
+
+  <p><strong>Missing documentation:</strong> Dimensions with no submitted documentation are
+  treated as critical risk signals and scored at 0.</p>
+
+  <p><strong>Extraction:</strong> Governance data is extracted from submitted documents using
+  Claude (Anthropic) with structured tool-use schemas. All extractions are
+  evidence-linked to source documents.</p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     APPENDIX: DOCUMENT INVENTORY
+══════════════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<div class="section-heading">Appendix: Document Inventory</div>
+
+{% if documents %}
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Filename</th>
+      <th>Classified Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for doc in documents %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td class="doc-filename">{{ doc.filename }}</td>
+      <td>
+        <span class="doc-type-badge">
+          {{ doc.doc_type | replace("_", " ") | title }}
+        </span>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p style="color:#757575; font-size:9pt;">No documents recorded for this assessment.</p>
+{% endif %}
+
+<div style="margin-top:30pt; font-size:8pt; color:#9e9e9e; text-align:center;">
+  Generated by {{ generated_by }} · {{ report_date }} · CONFIDENTIAL
+</div>
+
+</body>
+</html>

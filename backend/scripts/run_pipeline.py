@@ -2,18 +2,24 @@
 Full pipeline walkthrough script.
 
 Creates an org + assessment, uploads all QuickHire documents, triggers the
-pipeline, polls until complete, then prints scores. Cleans up (deletes the
-assessment + org records) at start and end so re-runs are always fresh.
+pipeline, polls until complete, prints scores, and downloads the PDF report.
 
 Usage (from backend/):
     python scripts/run_pipeline.py
 
 Requires:
+    - docker compose up -d db minio minio-init
     - API running: uvicorn app.main:app --reload
-    - API_KEY_SECRET set in .env (default: change-me-in-production-use-a-long-random-string)
+    - ANTHROPIC_API_KEY set in .env
+
+The script cleans up (deletes the assessment + org) at the start so re-runs
+are always fresh.
 """
 
 import json
+import os
+import platform
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -25,8 +31,12 @@ BASE = "http://localhost:8000/api/v1"
 KEY = "change-me-in-production-use-a-long-random-string"
 SLUG = "quickhire-demo"
 DOCS_DIR = Path(__file__).parent.parent.parent / "test_data" / "company_b_quickhire"
+REPORT_OUT = Path(__file__).parent.parent / "report_output.pdf"
 
 HEADERS = {"X-API-Key": KEY}
+
+
+# ── Helpers ───────────────────────────────────────────────────────────────────
 
 
 def pp(label: str, data: dict | list) -> None:
@@ -46,17 +56,32 @@ def check(resp: httpx.Response, label: str) -> dict:
     return data
 
 
-# ── Cleanup helper ─────────────────────────────────────────────────────────────
-def cleanup(client: httpx.Client, label: str) -> None:
-    """Delete the demo org and all its assessments via direct DB — API has no
-    DELETE endpoints yet, so we use SQLAlchemy directly."""
+def open_file(path: Path) -> None:
+    """Open a file with the OS default viewer."""
+    try:
+        system = platform.system()
+        if system == "Darwin":
+            subprocess.run(["open", str(path)], check=False)
+        elif system == "Windows":
+            os.startfile(str(path))  # type: ignore[attr-defined]
+        else:
+            subprocess.run(["xdg-open", str(path)], check=False)
+    except Exception as exc:
+        print(f"  (could not auto-open: {exc})")
+
+
+# ── Cleanup ───────────────────────────────────────────────────────────────────
+
+
+def cleanup(label: str) -> None:
+    """Delete the demo org + all its assessments directly via SQLAlchemy."""
     print(f"\n[{label}] Cleaning up slug='{SLUG}' ...")
     try:
-        # Import here so the script still works if run outside the venv with DB
-        import os
-
         sys.path.insert(0, str(Path(__file__).parent.parent))
-        os.environ.setdefault("DATABASE_URL", "postgresql+asyncpg://camille:localdev@localhost:5433/camille")
+        os.environ.setdefault(
+            "DATABASE_URL",
+            "postgresql+asyncpg://camille:localdev@localhost:5433/camille",
+        )
 
         import asyncio
 
@@ -78,7 +103,6 @@ def cleanup(client: httpx.Client, label: str) -> None:
                 if not org:
                     print("  nothing to clean up")
                     return
-                # Delete documents → assessments → org
                 assessments = await db.execute(select(Assessment).where(Assessment.organization_id == org.id))
                 for a in assessments.scalars().all():
                     await db.execute(delete(Document).where(Document.assessment_id == a.id))
@@ -93,15 +117,20 @@ def cleanup(client: httpx.Client, label: str) -> None:
         print(f"  cleanup skipped: {exc}")
 
 
-# ── Main ───────────────────────────────────────────────────────────────────────
-def main() -> None:
-    with httpx.Client(headers=HEADERS, timeout=30) as client:
-        # ── Pre-run cleanup ──────────────────────────────────────────────────
-        cleanup(client, "PRE-RUN")
+# ── Main ──────────────────────────────────────────────────────────────────────
 
+
+def main() -> None:
+    # Pre-run cleanup so re-runs are always fresh
+    cleanup("PRE-RUN")
+
+    with httpx.Client(headers=HEADERS, timeout=60) as client:
         # ── 1. Create org ────────────────────────────────────────────────────
         org = check(
-            client.post(f"{BASE}/organizations", json={"name": "QuickHire (Demo)", "slug": SLUG}),
+            client.post(
+                f"{BASE}/organizations",
+                json={"name": "QuickHire (Demo)", "slug": SLUG},
+            ),
             "Create org",
         )
         pp("Organization", org)
@@ -121,7 +150,7 @@ def main() -> None:
             print(f"\n✗  No .txt files found in {DOCS_DIR}")
             sys.exit(1)
 
-        print(f"\n[UPLOAD] Uploading {len(docs)} documents ...")
+        print(f"\n[UPLOAD] Uploading {len(docs)} documents from {DOCS_DIR.name} ...")
         for doc_path in docs:
             with open(doc_path, "rb") as f:
                 resp = client.post(
@@ -139,12 +168,14 @@ def main() -> None:
 
         # ── 5. Poll until complete ───────────────────────────────────────────
         print("\n[POLL] Waiting for pipeline to complete ...")
+        elapsed = 0
         while True:
-            time.sleep(4)
+            time.sleep(5)
+            elapsed += 5
             status_resp = client.get(f"{BASE}/assessments/{a_id}")
             data = status_resp.json()
             status = data.get("status", "unknown")
-            print(f"  {time.strftime('%H:%M:%S')}  status: {status}")
+            print(f"  {time.strftime('%H:%M:%S')}  [{elapsed:>3}s]  status: {status}")
             if status == "complete":
                 break
             if status == "failed":
@@ -152,7 +183,7 @@ def main() -> None:
                 pp("Assessment detail", data)
                 sys.exit(1)
 
-        # ── 6. Get scores ────────────────────────────────────────────────────
+        # ── 6. Print scores ──────────────────────────────────────────────────
         scores = check(
             client.get(f"{BASE}/assessments/{a_id}/scores"),
             "Get scores",
@@ -165,13 +196,45 @@ def main() -> None:
 
         print(f"\n{'─' * 60}")
         print(f"  RESULT: overall_score={overall:.1f}  risk_tier={tier}")
-        print(
-            f"  {'✓ PASS — within expected range [48, 58]' if passed else '✗ FAIL — outside expected range [48, 58]'}"
-        )
+        if passed:
+            print("  ✓ PASS — score in expected range [48, 58], tier=medium")
+        else:
+            print(f"  ✗ FAIL — expected [48, 58] / medium, got {overall:.1f} / {tier}")
         print(f"{'─' * 60}")
 
+        # Print critical flags
+        dim_scores = scores.get("dimension_scores", {})
+        all_flags = []
+        for dim, ds in dim_scores.items():
+            for flag in ds.get("flags", []):
+                all_flags.append({**flag, "dimension": dim})
+        critical = [f for f in all_flags if f.get("severity") == "critical"]
+        if critical:
+            print(f"\n  Critical flags ({len(critical)}):")
+            for f in critical:
+                dim_label = f.get("dimension", "").replace("_", " ").title()
+                print(f"    ✗  [{dim_label}] {f.get('text', '')}")
+
+        # ── 7. Download PDF report ───────────────────────────────────────────
+        print("\n[REPORT] Downloading PDF report ...")
+        report_resp = client.get(
+            f"{BASE}/assessments/{a_id}/report",
+            follow_redirects=True,
+        )
+
+        if report_resp.status_code == 200 and report_resp.headers.get("content-type", "").startswith("application/pdf"):
+            REPORT_OUT.write_bytes(report_resp.content)
+            size_kb = len(report_resp.content) / 1024
+            print(f"  ✓ Saved → {REPORT_OUT}  ({size_kb:.0f} KB)")
+            print("\n  Opening report ...")
+            open_file(REPORT_OUT)
+        elif report_resp.status_code == 404:
+            print("  ⚠  Report not generated yet (report_generator may not be wired in).")
+        else:
+            print(f"  ⚠  Unexpected response [{report_resp.status_code}]: {report_resp.text[:200]}")
+
         # ── Post-run cleanup ─────────────────────────────────────────────────
-        cleanup(client, "POST-RUN")
+        cleanup("POST-RUN")
 
     sys.exit(0 if passed else 1)
 

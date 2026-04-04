@@ -1,7 +1,7 @@
 """
 Assessment pipeline orchestrator.
 
-Runs as a background asyncio task (not a separate process) — keeps things
+Runs as a background asyncio task (not a separate process) - keeps things
 simple while the app is single-instance. Move to Celery/ARQ when horizontal
 scaling is needed.
 
@@ -116,7 +116,7 @@ async def run_assessment_pipeline(
         findings = await extract_all_dimensions(all_chunks, client)
         bound_log.info("pipeline.step2.extraction_complete")
 
-        # ── Step 3: Gather external signals (stub — Group 5 implements this) ─
+        # ── Step 3: Gather external signals (stub - Group 5 implements this) ─
         await _set_status("scoring")
         signals: list[dict] = []
         try:
@@ -174,7 +174,7 @@ async def run_assessment_pipeline(
             bound_log.info("pipeline.step5.report_generator_not_available")
         except Exception as exc:
             bound_log.warning("pipeline.step5.report_failed", error=str(exc))
-            # Report failure is non-fatal — still mark complete
+            # Report failure is non-fatal - still mark complete
 
         # ── Done ─────────────────────────────────────────────────────────────
         await _set_status("complete")

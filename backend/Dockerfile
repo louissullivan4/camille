@@ -2,6 +2,15 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
+# System libraries required by WeasyPrint (pycairo + pango)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libcairo2-dev \
+    libpango1.0-dev \
+    libffi-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY pyproject.toml .
 RUN pip install --no-cache-dir -e .
 

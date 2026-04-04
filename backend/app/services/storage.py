@@ -1,7 +1,7 @@
 """
 S3 storage service.
 
-Uses boto3 with run_in_executor for async compat — aiobotocore requires a
+Uses boto3 with run_in_executor for async compat - aiobotocore requires a
 separate event-loop-aware session setup that adds complexity without meaningful
 throughput gains at this scale. boto3 + executor keeps things simple and testable.
 

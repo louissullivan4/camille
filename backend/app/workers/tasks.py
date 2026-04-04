@@ -5,6 +5,7 @@ Each task creates its own DB session so it can run outside the request lifecycle
 These are called via asyncio.create_task() from routers.
 """
 
+import asyncio
 import uuid
 
 import structlog
@@ -18,6 +19,18 @@ from app.services.document_processor import chunk_text, extract_text_from_file
 from app.workers.pipeline import run_assessment_pipeline
 
 log = structlog.get_logger()
+
+# Cap concurrent classification calls to avoid rate-limit bursts when many
+# documents are uploaded at once. Mirrors the EXTRACTION_CONCURRENCY pattern
+# used in the pipeline.
+_CLASSIFICATION_SEMAPHORE: asyncio.Semaphore | None = None
+
+
+def _get_classification_semaphore() -> asyncio.Semaphore:
+    global _CLASSIFICATION_SEMAPHORE
+    if _CLASSIFICATION_SEMAPHORE is None:
+        _CLASSIFICATION_SEMAPHORE = asyncio.Semaphore(3)
+    return _CLASSIFICATION_SEMAPHORE
 
 
 async def process_document_task(
@@ -35,7 +48,8 @@ async def process_document_task(
             chunks = chunk_text(text, chunk_size=1000, overlap=200)
 
             client = get_anthropic_client()
-            classification = await classify_document(text[:4000], client)
+            async with _get_classification_semaphore():
+                classification = await classify_document(text[:4000], client)
 
             result = await db.execute(select(Document).where(Document.id == doc_id))
             doc = result.scalar_one_or_none()

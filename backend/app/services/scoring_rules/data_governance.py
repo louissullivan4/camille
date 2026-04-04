@@ -66,7 +66,7 @@ def score_data_governance(findings: dict) -> DimensionScore:
             }
         )
 
-    # candidate_right_to_explanation: no points, no deduction — absence noted per spec
+    # candidate_right_to_explanation: no points, no deduction - absence noted per spec
 
     # Apply staleness multiplier
     months_old = findings.get("policy_months_old")
@@ -75,7 +75,7 @@ def score_data_governance(findings: dict) -> DimensionScore:
         flags.append(
             {
                 "severity": "warning",
-                "text": f"Data governance policy is {months_old} months old — staleness penalty applied",
+                "text": f"Data governance policy is {months_old} months old - staleness penalty applied",
                 "field": "policy_months_old",
             }
         )
