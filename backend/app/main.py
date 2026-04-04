@@ -59,7 +59,7 @@ app.add_middleware(APIKeyMiddleware)
 
 PREFIX = "/api/v1"
 
-app.include_router(health.router, prefix=PREFIX)
+app.include_router(health.router)
 app.include_router(organizations.router, prefix=PREFIX)
 app.include_router(assessments.router, prefix=PREFIX)
 app.include_router(documents.router, prefix=PREFIX)
