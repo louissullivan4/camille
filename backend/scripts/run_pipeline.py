@@ -215,7 +215,28 @@ def main() -> None:
                 dim_label = f.get("dimension", "").replace("_", " ").title()
                 print(f"    ✗  [{dim_label}] {f.get('text', '')}")
 
-        # ── 7. Download PDF report ───────────────────────────────────────────
+        # ── 7. External signals search ───────────────────────────────────────
+        print("\n[SIGNALS] Searching external signals for 'QuickHire' ...")
+        signals_resp = client.get(
+            f"{BASE}/signals/search",
+            params={"company": "QuickHire"},
+            timeout=60,
+        )
+        if signals_resp.status_code == 200:
+            signals = signals_resp.json()
+            if signals:
+                pp(f"External Signals ({len(signals)} found)", signals)
+                severity_counts: dict[str, int] = {}
+                for s in signals:
+                    sev = s.get("severity", "unknown")
+                    severity_counts[sev] = severity_counts.get(sev, 0) + 1
+                print(f"\n  Severity breakdown: {severity_counts}")
+            else:
+                print("  (no signals found - NEWS_API_KEY may not be configured)")
+        else:
+            print(f"  ⚠  signals/search returned [{signals_resp.status_code}]: {signals_resp.text[:200]}")
+
+        # ── 8. Download PDF report ───────────────────────────────────────────
         print("\n[REPORT] Downloading PDF report ...")
         report_resp = client.get(
             f"{BASE}/assessments/{a_id}/report",

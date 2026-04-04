@@ -14,6 +14,7 @@ from app.routers import (
     organizations,
     reports,
     scores,
+    signals,
 )
 
 structlog.configure(
@@ -65,3 +66,4 @@ app.include_router(assessments.router, prefix=PREFIX)
 app.include_router(documents.router, prefix=PREFIX)
 app.include_router(scores.router, prefix=PREFIX)
 app.include_router(reports.router, prefix=PREFIX)
+app.include_router(signals.router, prefix=PREFIX)

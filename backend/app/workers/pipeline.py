@@ -130,7 +130,7 @@ async def run_assessment_pipeline(
                 org_result = await db.execute(select(Organization).where(Organization.id == assessment.organization_id))
                 org = org_result.scalar_one_or_none()
                 if org:
-                    signals = await gather_signals(org.name, db)  # noqa: F841
+                    signals = await gather_signals(org.name, assessment_id, db)  # noqa: F841
         except ImportError:
             bound_log.info("pipeline.step3.signals_not_available")
 
