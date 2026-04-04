@@ -14,6 +14,7 @@ from sqlalchemy import select
 from app.database import AsyncSessionLocal
 from app.llm.client import get_anthropic_client
 from app.models.document import Document
+from app.schemas.assessment import ProcessOptions
 from app.services.document_classifier import classify_document
 from app.services.document_processor import chunk_text, extract_text_from_file
 from app.workers.pipeline import run_assessment_pipeline
@@ -81,9 +82,9 @@ async def process_document_task(
                 pass
 
 
-async def run_pipeline_task(assessment_id: uuid.UUID) -> None:
+async def run_pipeline_task(assessment_id: uuid.UUID, options: ProcessOptions | None = None) -> None:
     """
     Run the full assessment pipeline in a background task with its own DB session.
     """
     async with AsyncSessionLocal() as db:
-        await run_assessment_pipeline(assessment_id, db)
+        await run_assessment_pipeline(assessment_id, db, options=options or ProcessOptions())

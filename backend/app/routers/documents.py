@@ -3,7 +3,7 @@ import uuid
 from uuid import UUID
 
 import structlog
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -79,14 +79,22 @@ async def upload_document(
 async def list_documents(
     assessment_id: UUID,
     db: AsyncSession = Depends(get_db),
+    status: str | None = Query(
+        None, description="Filter by processing status (pending, processing, processed, failed)"
+    ),
+    doc_type: str | None = Query(None, description="Filter by classified document type (e.g. model_card, bias_audit)"),
 ) -> list[DocumentResponse]:
     result = await db.execute(select(Assessment).where(Assessment.id == assessment_id))
     if not result.scalar_one_or_none():
         raise HTTPException(status_code=404, detail="Assessment not found")
 
-    docs_result = await db.execute(
-        select(Document).where(Document.assessment_id == assessment_id).order_by(Document.created_at)
-    )
+    query = select(Document).where(Document.assessment_id == assessment_id).order_by(Document.created_at)
+    if status:
+        query = query.where(Document.status == status)
+    if doc_type:
+        query = query.where(Document.doc_type == doc_type)
+
+    docs_result = await db.execute(query)
     return [DocumentResponse.model_validate(d) for d in docs_result.scalars().all()]
 
 

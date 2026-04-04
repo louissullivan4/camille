@@ -19,6 +19,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.llm.client import get_anthropic_client
 from app.models.assessment import Assessment
 from app.models.document import Document
+from app.schemas.assessment import GOVERNANCE_DIMENSIONS, ProcessOptions
 from app.services.document_processor import chunk_text, extract_text_from_file
 from app.services.governance_extractor import extract_all_dimensions
 from app.services.scoring_engine import score_assessment
@@ -30,15 +31,32 @@ log = structlog.get_logger()
 async def run_assessment_pipeline(
     assessment_id: uuid.UUID,
     db: AsyncSession,
+    options: ProcessOptions | None = None,
 ) -> None:
     """
-    Full pipeline: extract → score → generate report → complete.
+    Full pipeline: extract -> score -> generate report -> complete.
+
+    options.dimensions: restrict extraction/scoring to a subset of the 8 governance dimensions.
+    options.include_external_signals: skip Step 3 (external signals) when False.
+    options.include_report: skip Step 5 (PDF report generation) when False.
 
     On any unhandled exception, sets status = "failed" and logs the error.
     The caller is responsible for providing a session; this function commits
     status updates but does not manage session lifecycle.
     """
-    bound_log = log.bind(assessment_id=str(assessment_id))
+    opts = options or ProcessOptions()
+
+    # Resolve which dimensions to run; validate against the known set
+    active_dimensions = (
+        [d for d in opts.dimensions if d in GOVERNANCE_DIMENSIONS] if opts.dimensions else list(GOVERNANCE_DIMENSIONS)
+    )
+
+    bound_log = log.bind(
+        assessment_id=str(assessment_id),
+        active_dimensions=active_dimensions,
+        include_external_signals=opts.include_external_signals,
+        include_report=opts.include_report,
+    )
 
     async def _set_status(status: str) -> None:
         result = await db.execute(select(Assessment).where(Assessment.id == assessment_id))
@@ -113,26 +131,31 @@ async def run_assessment_pipeline(
 
         # ── Step 2: Extract all governance dimensions via LLM ───────────────
         client = get_anthropic_client()
-        findings = await extract_all_dimensions(all_chunks, client)
+        findings = await extract_all_dimensions(all_chunks, client, dimensions=active_dimensions)
         bound_log.info("pipeline.step2.extraction_complete")
 
-        # ── Step 3: Gather external signals (stub - Group 5 implements this) ─
+        # ── Step 3: Gather external signals ─────────────────────────────────
         await _set_status("scoring")
         signals: list[dict] = []
-        try:
-            from app.services.external_signals import gather_signals  # noqa: PLC0415
+        if opts.include_external_signals:
+            try:
+                from app.services.external_signals import gather_signals  # noqa: PLC0415
 
-            result_a = await db.execute(select(Assessment).where(Assessment.id == assessment_id))
-            assessment = result_a.scalar_one_or_none()
-            if assessment:
-                from app.models.organization import Organization  # noqa: PLC0415
+                result_a = await db.execute(select(Assessment).where(Assessment.id == assessment_id))
+                assessment = result_a.scalar_one_or_none()
+                if assessment:
+                    from app.models.organization import Organization  # noqa: PLC0415
 
-                org_result = await db.execute(select(Organization).where(Organization.id == assessment.organization_id))
-                org = org_result.scalar_one_or_none()
-                if org:
-                    signals = await gather_signals(org.name, assessment_id, db)  # noqa: F841
-        except ImportError:
-            bound_log.info("pipeline.step3.signals_not_available")
+                    org_result = await db.execute(
+                        select(Organization).where(Organization.id == assessment.organization_id)
+                    )
+                    org = org_result.scalar_one_or_none()
+                    if org:
+                        signals = await gather_signals(org.name, assessment_id, db)  # noqa: F841
+            except ImportError:
+                bound_log.info("pipeline.step3.signals_not_available")
+        else:
+            bound_log.info("pipeline.step3.skipped")
 
         # ── Step 4: Score ────────────────────────────────────────────────────
         result_b = await db.execute(select(Assessment).where(Assessment.id == assessment_id))
@@ -162,19 +185,22 @@ async def run_assessment_pipeline(
         )
 
         # ── Step 5: Generate report ──────────────────────────────────────────
-        await _set_status("generating_report")
-        try:
-            from app.services.report_generator import generate_report  # noqa: PLC0415
+        if opts.include_report:
+            await _set_status("generating_report")
+            try:
+                from app.services.report_generator import generate_report  # noqa: PLC0415
 
-            report_key = await generate_report(assessment_id, db)
-            assessment.report_url = report_key
-            await db.commit()
-            bound_log.info("pipeline.step5.report_complete", report_key=report_key)
-        except ImportError:
-            bound_log.info("pipeline.step5.report_generator_not_available")
-        except Exception as exc:
-            bound_log.warning("pipeline.step5.report_failed", error=str(exc))
-            # Report failure is non-fatal - still mark complete
+                report_key = await generate_report(assessment_id, db)
+                assessment.report_url = report_key
+                await db.commit()
+                bound_log.info("pipeline.step5.report_complete", report_key=report_key)
+            except ImportError:
+                bound_log.info("pipeline.step5.report_generator_not_available")
+            except Exception as exc:
+                bound_log.warning("pipeline.step5.report_failed", error=str(exc))
+                # Report failure is non-fatal - still mark complete
+        else:
+            bound_log.info("pipeline.step5.skipped")
 
         # ── Done ─────────────────────────────────────────────────────────────
         await _set_status("complete")
