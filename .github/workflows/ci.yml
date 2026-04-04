@@ -128,6 +128,28 @@ jobs:
       - name: Load Docker image
         run: docker load -i /tmp/camille-backend.tar
 
+      - name: Start MinIO
+        run: |
+          docker run -d \
+            --name camille-minio \
+            --network host \
+            -e MINIO_ROOT_USER=minioadmin \
+            -e MINIO_ROOT_PASSWORD=minioadmin \
+            minio/minio:latest server /data --console-address ":9001"
+
+      - name: Wait for MinIO and create bucket
+        run: |
+          for i in $(seq 1 20); do
+            if curl -sf http://localhost:9000/minio/health/live; then
+              echo "MinIO is healthy"
+              break
+            fi
+            sleep 2
+          done
+          docker run --rm --network host \
+            -e MC_HOST_ci=http://minioadmin:minioadmin@localhost:9000 \
+            minio/mc:latest mb --ignore-existing ci/camille-documents-ci
+
       - name: Start API container
         run: |
           docker run -d \
@@ -136,9 +158,10 @@ jobs:
             -e DATABASE_URL="postgresql+asyncpg://camille:localdev@localhost:5432/camille" \
             -e API_KEY_SECRET="ci-test-key" \
             -e ANTHROPIC_API_KEY="dummy" \
-            -e AWS_ACCESS_KEY_ID="dummy" \
-            -e AWS_SECRET_ACCESS_KEY="dummy" \
-            -e S3_BUCKET_NAME="camille-ci" \
+            -e AWS_ACCESS_KEY_ID="minioadmin" \
+            -e AWS_SECRET_ACCESS_KEY="minioadmin" \
+            -e S3_BUCKET_NAME="camille-documents-ci" \
+            -e S3_ENDPOINT_URL="http://localhost:9000" \
             -e ENVIRONMENT="test" \
             -e SENTRY_DSN="" \
             camille-backend:${{ github.sha }}
@@ -179,6 +202,8 @@ jobs:
           API_KEY_SECRET: ci-test-key
           DATABASE_URL: postgresql+asyncpg://camille:localdev@localhost:5432/camille
 
-      - name: Dump API logs on failure
+      - name: Dump container logs on failure
         if: failure()
-        run: docker logs camille-api
+        run: |
+          echo "=== API logs ===" && docker logs camille-api || true
+          echo "=== MinIO logs ===" && docker logs camille-minio || true
