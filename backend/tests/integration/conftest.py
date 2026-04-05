@@ -34,7 +34,6 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.pool import NullPool
 
 import app.models as _models  # noqa: F401 — register all ORM models with Base.metadata
-from app.config import settings
 from app.database import get_db
 from app.main import app
 from app.models.base import Base
@@ -72,7 +71,6 @@ if _CI_MODE:
     async def client(setup_integration_db: None) -> AsyncGenerator[AsyncClient, None]:
         async with AsyncClient(
             base_url=_API_BASE_URL,
-            headers={"X-API-Key": settings.API_KEY_SECRET},
             timeout=10.0,
         ) as ac:
             yield ac
@@ -152,7 +150,6 @@ else:
         async with AsyncClient(
             transport=ASGITransport(app=app),
             base_url="http://test",
-            headers={"X-API-Key": settings.API_KEY_SECRET},
         ) as ac:
             yield ac
         app.dependency_overrides.clear()

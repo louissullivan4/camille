@@ -6,8 +6,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.middleware.auth import APIKeyMiddleware
 from app.routers import (
+    admin,
     assessments,
     auth,
     documents,
@@ -59,12 +59,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.add_middleware(APIKeyMiddleware)
-
 PREFIX = "/api/v1"
 
 app.include_router(health.router)
 app.include_router(auth.router, prefix=PREFIX)
+app.include_router(admin.router, prefix=PREFIX)
 app.include_router(invitations.router, prefix=PREFIX)
 app.include_router(users.router, prefix=PREFIX)
 app.include_router(organizations.router, prefix=PREFIX)

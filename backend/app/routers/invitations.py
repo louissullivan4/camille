@@ -64,6 +64,14 @@ async def invite_admin(
         raise HTTPException(status_code=409, detail="Pending invitation for this email already exists")
 
     log.info("invitation.created", role=ROLE_ADMIN, email=payload.email, invited_by=str(inviter.id))
+
+    from app.services.email_service import send_invitation_email  # noqa: PLC0415
+
+    try:
+        send_invitation_email(invitation.email, invitation.token, invitation.role, org_name=None)
+    except Exception as exc:
+        log.error("invitation.email_failed", email=invitation.email, error=str(exc))
+
     return InvitationResponse.model_validate(invitation)
 
 
@@ -116,6 +124,21 @@ async def invite_manager(
         raise HTTPException(status_code=409, detail="Pending invitation for this email already exists")
 
     log.info("invitation.created", role=ROLE_ORG_MANAGER, email=payload.email, org_id=str(org_id))
+
+    from app.services.email_service import send_invitation_email  # noqa: PLC0415
+
+    # Fetch org name for the email if we have an org
+    email_org_name: str | None = None
+    if org_id:
+        org_name_result = await db.execute(select(Organization).where(Organization.id == org_id))
+        email_org = org_name_result.scalar_one_or_none()
+        email_org_name = email_org.name if email_org else None
+
+    try:
+        send_invitation_email(invitation.email, invitation.token, invitation.role, org_name=email_org_name)
+    except Exception as exc:
+        log.error("invitation.email_failed", email=invitation.email, error=str(exc))
+
     return InvitationResponse.model_validate(invitation)
 
 
@@ -157,6 +180,20 @@ async def invite_underwriter(
         raise HTTPException(status_code=409, detail="Pending invitation for this email already exists")
 
     log.info("invitation.created", role=ROLE_ORG_UNDERWRITER, email=payload.email, org_id=str(org_id))
+
+    from app.services.email_service import send_invitation_email  # noqa: PLC0415
+
+    email_org_name: str | None = None
+    if org_id:
+        org_name_result = await db.execute(select(Organization).where(Organization.id == org_id))
+        email_org = org_name_result.scalar_one_or_none()
+        email_org_name = email_org.name if email_org else None
+
+    try:
+        send_invitation_email(invitation.email, invitation.token, invitation.role, org_name=email_org_name)
+    except Exception as exc:
+        log.error("invitation.email_failed", email=invitation.email, error=str(exc))
+
     return InvitationResponse.model_validate(invitation)
 
 
