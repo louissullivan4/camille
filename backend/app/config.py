@@ -7,6 +7,9 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql+asyncpg://camille:localdev@localhost:5432/camille"
     ANTHROPIC_API_KEY: str = ""
     API_KEY_SECRET: str = "change-me-in-production"
+    JWT_SECRET: str = "change-me-in-production-jwt"
+    JWT_ALGORITHM: str = "HS256"
+    JWT_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
     ENVIRONMENT: str = "development"
     LOG_LEVEL: str = "INFO"
     CORS_ORIGINS: list[str] = ["http://localhost:5173", "http://localhost:3000"]

@@ -9,12 +9,15 @@ from app.config import settings
 from app.middleware.auth import APIKeyMiddleware
 from app.routers import (
     assessments,
+    auth,
     documents,
     health,
+    invitations,
     organizations,
     reports,
     scores,
     signals,
+    users,
 )
 
 structlog.configure(
@@ -61,6 +64,9 @@ app.add_middleware(APIKeyMiddleware)
 PREFIX = "/api/v1"
 
 app.include_router(health.router)
+app.include_router(auth.router, prefix=PREFIX)
+app.include_router(invitations.router, prefix=PREFIX)
+app.include_router(users.router, prefix=PREFIX)
 app.include_router(organizations.router, prefix=PREFIX)
 app.include_router(assessments.router, prefix=PREFIX)
 app.include_router(documents.router, prefix=PREFIX)

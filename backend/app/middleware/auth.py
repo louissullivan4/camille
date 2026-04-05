@@ -13,7 +13,15 @@ from app.config import settings
 
 log = structlog.get_logger()
 
-_EXCLUDED_PREFIXES = ("/health", "/docs", "/openapi.json", "/redoc")
+_EXCLUDED_PREFIXES = (
+    "/health",
+    "/docs",
+    "/openapi.json",
+    "/redoc",
+    "/api/v1/auth",
+    "/api/v1/invitations",
+    "/api/v1/users",
+)
 
 
 class APIKeyMiddleware(BaseHTTPMiddleware):
