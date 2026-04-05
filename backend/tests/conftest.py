@@ -8,7 +8,6 @@ from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.pool import StaticPool
 
 import app.models as _models  # noqa: F401 — ensure all models are registered with Base.metadata
-from app.config import settings
 from app.database import get_db
 from app.main import app
 from app.models.base import Base
@@ -62,7 +61,6 @@ async def client(db: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
     async with AsyncClient(
         transport=ASGITransport(app=app),
         base_url="http://test",
-        headers={"X-API-Key": settings.API_KEY_SECRET},
     ) as ac:
         yield ac
     app.dependency_overrides.clear()

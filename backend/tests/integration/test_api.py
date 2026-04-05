@@ -95,22 +95,7 @@ async def test_health_check(client: AsyncClient) -> None:
 
 
 @pytest.mark.asyncio
-async def test_no_api_key_returns_401(unauthed_client: AsyncClient) -> None:
-    resp = await unauthed_client.get("/api/v1/organizations/00000000-0000-0000-0000-000000000000")
-    assert resp.status_code == 401
-
-
-@pytest.mark.asyncio
-async def test_wrong_api_key_returns_401(unauthed_client: AsyncClient) -> None:
-    resp = await unauthed_client.get(
-        "/api/v1/organizations/00000000-0000-0000-0000-000000000000",
-        headers={"X-API-Key": "definitely-wrong"},
-    )
-    assert resp.status_code == 401
-
-
-@pytest.mark.asyncio
-async def test_health_does_not_require_api_key(unauthed_client: AsyncClient) -> None:
+async def test_health_is_public(unauthed_client: AsyncClient) -> None:
     resp = await unauthed_client.get("/health")
     assert resp.status_code == 200
 

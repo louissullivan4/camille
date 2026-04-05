@@ -7,9 +7,9 @@ on:
     branches: [main]
 
 jobs:
-  # ── 1. Lint & format ────────────────────────────────────────────────────────
-  lint:
-    name: Lint & Format
+  # ── 1. Backend: Lint & format ────────────────────────────────────────────────
+  backend-lint:
+    name: Backend Lint & Format
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -32,9 +32,9 @@ jobs:
       - name: ruff format check
         run: python -m ruff format --check app/
 
-  # ── 2. Unit tests (SQLite in-memory, no Docker) ─────────────────────────────
-  unit:
-    name: Unit Tests
+  # ── 2. Backend: Unit tests (SQLite in-memory, no Docker) ────────────────────
+  backend-unit:
+    name: Backend Unit Tests
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -64,20 +64,18 @@ jobs:
             --cov-report=xml \
             --cov-report=term-missing \
             --cov-fail-under=80
-        env:
-          API_KEY_SECRET: ci-test-key
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v7.0.0
         with:
-          name: coverage-xml
+          name: backend-coverage-xml
           path: backend/coverage.xml
 
-  # ── 3. Build Docker image ───────────────────────────────────────────────────
-  build:
-    name: Build Image
+  # ── 3. Backend: Build Docker image ──────────────────────────────────────────
+  backend-build:
+    name: Backend Build Image
     runs-on: ubuntu-latest
-    needs: [lint, unit]
+    needs: [backend-lint, backend-unit]
 
     steps:
       - uses: actions/checkout@v6.0.2
@@ -95,11 +93,11 @@ jobs:
           path: /tmp/camille-backend.tar
           retention-days: 1
 
-  # ── 4. Integration tests (real Postgres + built image) ──────────────────────
-  integration:
-    name: Integration Tests
+  # ── 4. Backend: Integration tests (real Postgres + built image) ─────────────
+  backend-integration:
+    name: Backend Integration Tests
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [backend-build]
 
     services:
       postgres:
@@ -156,7 +154,6 @@ jobs:
             --name camille-api \
             --network host \
             -e DATABASE_URL="postgresql+asyncpg://camille:localdev@localhost:5432/camille" \
-            -e API_KEY_SECRET="ci-test-key" \
             -e ANTHROPIC_API_KEY="dummy" \
             -e AWS_ACCESS_KEY_ID="minioadmin" \
             -e AWS_SECRET_ACCESS_KEY="minioadmin" \
@@ -202,7 +199,6 @@ jobs:
         run: pytest tests/integration/ -v --tb=short
         env:
           API_BASE_URL: http://localhost:8000
-          API_KEY_SECRET: ci-test-key
           DATABASE_URL: postgresql+asyncpg://camille:localdev@localhost:5432/camille
 
       - name: Dump container logs on failure
@@ -210,3 +206,81 @@ jobs:
         run: |
           echo "=== API logs ===" && docker logs camille-api || true
           echo "=== MinIO logs ===" && docker logs camille-minio || true
+
+  # ── 5. Frontend: Lint & type check ──────────────────────────────────────────
+  frontend-lint:
+    name: Frontend Lint & Type Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v6.0.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: TypeScript type check
+        run: npx tsc --noEmit
+
+  # ── 6. Frontend: Unit tests ──────────────────────────────────────────────────
+  frontend-test:
+    name: Frontend Unit Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v6.0.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v7.0.0
+        with:
+          name: frontend-coverage
+          path: frontend/coverage/
+        if: always()
+
+  # ── 7. Frontend: Build & Docker image ────────────────────────────────────────
+  frontend-build:
+    name: Frontend Build Image
+    runs-on: ubuntu-latest
+    needs: [frontend-lint, frontend-test]
+
+    steps:
+      - uses: actions/checkout@v6.0.2
+
+      - name: Build frontend image
+        run: docker build -t camille-frontend:${{ github.sha }} frontend/
+
+      - name: Export image to tar
+        run: docker save camille-frontend:${{ github.sha }} -o /tmp/camille-frontend.tar
+
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v7.0.0
+        with:
+          name: camille-frontend-image
+          path: /tmp/camille-frontend.tar
+          retention-days: 1

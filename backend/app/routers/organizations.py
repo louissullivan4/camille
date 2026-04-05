@@ -1,17 +1,25 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from uuid import UUID
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.assessment import Assessment
-from app.models.organization import Organization
+from app.models.organization import TIER_MONTHLY_LIMITS, Organization
 from app.schemas.assessment import AssessmentResponse
-from app.schemas.organization import OrganizationCreate, OrganizationResponse
+from app.schemas.organization import OrganizationCreate, OrganizationResponse, OrganizationUsageResponse
+
+# Approximate per-assessment cost in USD by tier (midpoint of published ranges)
+TIER_COST_PER_ASSESSMENT: dict[str, float] = {
+    "tier_1": 1000.0,
+    "tier_2": 3500.0,
+    "enterprise": 0.0,  # annual flat fee - no per-assessment charge shown
+    "demo": 0.0,
+}
 
 router = APIRouter(prefix="/organizations", tags=["organizations"])
 log = structlog.get_logger()
@@ -80,3 +88,38 @@ async def list_org_assessments(
     result = await db.execute(query)
     assessments = result.scalars().all()
     return [AssessmentResponse.model_validate(a) for a in assessments]
+
+
+@router.get("/{org_id}/usage", response_model=OrganizationUsageResponse)
+async def get_org_usage(
+    org_id: UUID,
+    db: AsyncSession = Depends(get_db),
+) -> OrganizationUsageResponse:
+    org_result = await db.execute(select(Organization).where(Organization.id == org_id))
+    org = org_result.scalar_one_or_none()
+    if not org:
+        raise HTTPException(status_code=404, detail="Organization not found")
+
+    now = datetime.now(UTC)
+    month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+    count_result = await db.execute(
+        select(func.count(Assessment.id)).where(
+            Assessment.organization_id == org_id,
+            Assessment.created_at >= month_start,
+        )
+    )
+    count = count_result.scalar_one()
+
+    monthly_limit = TIER_MONTHLY_LIMITS.get(org.tier)
+    cost_per = TIER_COST_PER_ASSESSMENT.get(org.tier, 0.0)
+    estimated_cost = count * cost_per if org.tier not in ("enterprise", "demo") else None
+
+    return OrganizationUsageResponse(
+        org_id=org_id,
+        tier=org.tier,
+        is_demo=org.is_demo,
+        assessments_this_month=count,
+        monthly_limit=monthly_limit,
+        estimated_cost_usd=estimated_cost,
+    )

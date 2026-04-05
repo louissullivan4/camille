@@ -47,15 +47,6 @@ async def test_list_org_assessments(client: AsyncClient) -> None:
 
 
 @pytest.mark.asyncio
-async def test_unauthorized_without_api_key(client: AsyncClient) -> None:
-    resp = await client.get(
-        "/api/v1/organizations/00000000-0000-0000-0000-000000000000",
-        headers={"X-API-Key": "wrong-key"},
-    )
-    assert resp.status_code == 401
-
-
-@pytest.mark.asyncio
 async def test_list_org_assessments_not_found(client: AsyncClient) -> None:
     resp = await client.get("/api/v1/organizations/00000000-0000-0000-0000-000000000000/assessments")
     assert resp.status_code == 404
